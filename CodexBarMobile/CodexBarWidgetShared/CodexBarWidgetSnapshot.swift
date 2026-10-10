@@ -26,6 +26,13 @@ struct CodexBarWidgetProviderSummary: Codable, Equatable, Identifiable, Sendable
     /// Quota Pace widget data (Research/065); nil when the provider has no
     /// window of at least one day with a usable observation.
     let quotaPace: CodexBarWidgetPaceSummary?
+    /// Next weekly reset (`WeeklyResetWindow`, Research/073) when the
+    /// summary was built; nil without a weekly window. Orders the overview's
+    /// "By weekly reset" selection.
+    let weeklyResetsAt: Date?
+    /// Used percent of that weekly window while it is current; the "By
+    /// weekly reset" overview shows it next to `weeklyResetsAt`.
+    let weeklyUsedPercent: Double?
 
     init(
         id: String,
@@ -41,7 +48,9 @@ struct CodexBarWidgetProviderSummary: Codable, Equatable, Identifiable, Sendable
         isError: Bool,
         statusMessage: String?,
         lastUpdated: Date,
-        quotaPace: CodexBarWidgetPaceSummary? = nil)
+        quotaPace: CodexBarWidgetPaceSummary? = nil,
+        weeklyResetsAt: Date? = nil,
+        weeklyUsedPercent: Double? = nil)
     {
         self.id = id
         self.providerName = providerName
@@ -57,6 +66,8 @@ struct CodexBarWidgetProviderSummary: Codable, Equatable, Identifiable, Sendable
         self.statusMessage = statusMessage
         self.lastUpdated = lastUpdated
         self.quotaPace = quotaPace
+        self.weeklyResetsAt = weeklyResetsAt
+        self.weeklyUsedPercent = weeklyUsedPercent
     }
 
     /// The same provider with its pace data pointed at another window.
@@ -75,7 +86,9 @@ struct CodexBarWidgetProviderSummary: Codable, Equatable, Identifiable, Sendable
             isError: self.isError,
             statusMessage: self.statusMessage,
             lastUpdated: self.lastUpdated,
-            quotaPace: quotaPace)
+            quotaPace: quotaPace,
+            weeklyResetsAt: self.weeklyResetsAt,
+            weeklyUsedPercent: self.weeklyUsedPercent)
     }
 
     var displaySubtitle: String? {
@@ -571,7 +584,9 @@ struct CodexBarWidgetSnapshot: Codable, Equatable, Sendable {
                     isError: false,
                     statusMessage: nil,
                     lastUpdated: now.addingTimeInterval(-120),
-                    quotaPace: .sample(now: now, weeklyUsed: 39, weeklyResetIn: 2.9, sessionUsed: 22)),
+                    quotaPace: .sample(now: now, weeklyUsed: 39, weeklyResetIn: 2.9, sessionUsed: 22),
+                    weeklyResetsAt: self.sampleWeeklyReset(now: now, days: 2.9),
+                    weeklyUsedPercent: 39),
                 CodexBarWidgetProviderSummary(
                     id: "claude|sample",
                     providerName: "Claude",
@@ -590,7 +605,9 @@ struct CodexBarWidgetSnapshot: Codable, Equatable, Sendable {
                         weeklyUsed: 54,
                         weeklyResetIn: 3.6,
                         sessionUsed: 17,
-                        extraWindows: [(id: "claude-weekly-scoped-fable", label: "Fable only", used: 71)])),
+                        extraWindows: [(id: "claude-weekly-scoped-fable", label: "Fable only", used: 71)]),
+                    weeklyResetsAt: self.sampleWeeklyReset(now: now, days: 3.6),
+                    weeklyUsedPercent: 54),
                 CodexBarWidgetProviderSummary(
                     id: "raycast|sample", providerName: "Raycast", providerID: "raycast",
                     loginMethod: nil, usagePercent: 30, resetsAt: now.addingTimeInterval(3.6 * 86400),
@@ -613,7 +630,37 @@ struct CodexBarWidgetSnapshot: Codable, Equatable, Sendable {
             isStale: false)
     }
 
+    /// The weekly reset `CodexBarWidgetPaceSummary.sample` uses for its lane.
+    private static func sampleWeeklyReset(now: Date, days: Double) -> Date {
+        now.addingTimeInterval(-120).addingTimeInterval(days * 86400)
+    }
+
     #if targetEnvironment(simulator)
+    /// Grok as the Mac syncs it (Research/073): one untyped credits window
+    /// labeled "Weekly" whose length is the floored billing period (10079
+    /// minutes), so the weekly rule, not an exact 10080, has to find it.
+    static func simulatorGrok(now: Date) -> CodexBarWidgetProviderSummary {
+        let window = SyncRateWindow(
+            id: "primary",
+            label: "Weekly",
+            usedPercent: 0,
+            windowMinutes: 10079,
+            resetsAt: now.addingTimeInterval(1.5 * 86400),
+            resetDescription: nil)
+        let grok = ProviderUsageSnapshot(
+            providerID: "grok",
+            providerName: "Grok",
+            primary: window,
+            secondary: nil,
+            accountEmail: nil,
+            loginMethod: "SuperGrok",
+            statusMessage: nil,
+            isError: false,
+            lastUpdated: now.addingTimeInterval(-90),
+            rateWindows: [window])
+        return CodexBarWidgetSnapshotBuilder.summary(for: grok, now: now)
+    }
+
     static func simulatorMock(now: Date = .now) -> CodexBarWidgetSnapshot {
         let sample = Self.placeholder(now: now)
         return CodexBarWidgetSnapshot(
@@ -627,7 +674,8 @@ struct CodexBarWidgetSnapshot: Codable, Equatable, Sendable {
             thirtyDayCostUSD: sample.thirtyDayCostUSD,
             todayTokens: sample.todayTokens,
             maxUsagePercent: sample.maxUsagePercent,
-            topProviders: sample.topProviders,
+            // Appended so automatic and configured selections stay as before.
+            topProviders: sample.topProviders + [Self.simulatorGrok(now: now)],
             message: sample.message,
             isStale: sample.isStale)
     }
@@ -839,7 +887,7 @@ enum CodexBarWidgetSnapshotBuilder {
             isStale: latestSyncAt.map { now.timeIntervalSince($0) > Self.staleInterval } ?? false)
     }
 
-    private static func summary(
+    static func summary(
         for provider: ProviderUsageSnapshot,
         now: Date) -> CodexBarWidgetProviderSummary
     {
@@ -858,6 +906,7 @@ enum CodexBarWidgetSnapshotBuilder {
         let usagePercent = budgetLeads ? budgetPercent : windowPercent
         let resetsAt = budgetLeads ? provider.budget?.resetsAt : leadingWindow?.resetsAt
         let accountKey = provider.accountEmail ?? "_"
+        let weekly = WeeklyResetWindow.soonest(of: provider.allRateWindows, now: now)
         return CodexBarWidgetProviderSummary(
             id: "\(provider.providerID)|\(accountKey)",
             providerName: provider.providerName,
@@ -872,7 +921,9 @@ enum CodexBarWidgetSnapshotBuilder {
             isError: provider.isError,
             statusMessage: provider.statusMessage,
             lastUpdated: provider.lastUpdated,
-            quotaPace: CodexBarWidgetPaceSummary(provider: provider, now: now))
+            quotaPace: CodexBarWidgetPaceSummary(provider: provider, now: now),
+            weeklyResetsAt: weekly?.nextReset,
+            weeklyUsedPercent: weekly.flatMap { WeeklyResetWindow.currentUsedPercent(of: $0.window, now: now) })
     }
 
     private static func todayTotals(

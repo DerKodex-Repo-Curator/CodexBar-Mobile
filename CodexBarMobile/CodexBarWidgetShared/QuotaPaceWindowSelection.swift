@@ -47,10 +47,12 @@ enum QuotaPaceWindowSelection {
         self.candidates(for: provider).filter { $0.window.usageKnown && $0.window.usedPercent.isFinite }
     }
 
-    /// A weekly window: seven days long, or declared weekly without a length.
+    /// A weekly window, by the rule the app's weekly-reset order and the
+    /// widget overview use (`WeeklyResetWindow`, Research/073): a declared
+    /// period, else a length of about seven days (Grok's floored billing
+    /// period), else the Mac's "Weekly" label.
     static func isWeekly(_ window: SyncRateWindow) -> Bool {
-        if let minutes = window.windowMinutes { return minutes == 10080 }
-        return window.period == .weekly
+        WeeklyResetWindow.isWeekly(window)
     }
 
     /// Remaining percent while the window's observation is current: known
@@ -176,7 +178,7 @@ enum QuotaPaceWindowSelection {
         providerID: String,
         locale: Locale = .current) -> String
     {
-        if label == nil, windowMinutes == 10080 || (windowMinutes == nil && period == .weekly) {
+        if label == nil, WeeklyResetWindow.isWeekly(period: period, windowMinutes: windowMinutes, label: nil) {
             return MobileLocalizedString.value("Weekly", defaultValue: "Weekly", locale: locale)
         }
         return self.title(label: label, cardIndex: cardIndex, period: period, providerID: providerID, locale: locale)

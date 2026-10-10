@@ -946,9 +946,10 @@ private enum CodexBarWidgetMetricAccent {
 
 private extension CodexBarWidgetView {
     private var providerOverview: some View {
-        let providers = WidgetProviderSelection.resolve(
+        let providers = WidgetProviderSelection.overview(
             from: self.displayProviders,
             selected: self.entry.configuration.providers,
+            selection: self.entry.overviewSelection,
             family: self.family,
             now: self.entry.date)
         let columns = WidgetProviderSelection.columns(count: providers.count, family: self.family)
@@ -1002,6 +1003,10 @@ private extension CodexBarWidgetView {
         let accent = self.palette.isColorful && !provider.isError
             ? ProviderColorPalette.color(for: provider.providerID)
             : self.palette.providerAccent(index: index, isError: provider.isError)
+        let figures = WidgetProviderSelection.overviewFigures(
+            for: provider,
+            selection: self.entry.overviewSelection,
+            now: self.entry.date)
         return VStack(alignment: .leading, spacing: compact ? 4 : 8) {
             HStack(spacing: 5) {
                 if !narrow { self.providerMark(provider, accent: accent) }
@@ -1014,7 +1019,7 @@ private extension CodexBarWidgetView {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text(provider.isError
                     ? String(localized: "Unavailable")
-                    : self.overviewPercentText(provider.usagePercent))
+                    : self.overviewPercentText(figures.usagePercent))
                     .font(.system(size: narrow ? 16 : (compact ? 22 : 36), weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .foregroundStyle(self.palette.isColorful ? accent : self.palette.primary)
@@ -1022,7 +1027,7 @@ private extension CodexBarWidgetView {
                     .minimumScaleFactor(0.7)
                     .privacySensitive()
                     .widgetAccentable()
-                if !provider.isError, let reset = WidgetProviderResetText.days(provider.resetsAt, now: entry.date) {
+                if !provider.isError, let reset = WidgetProviderResetText.days(figures.resetsAt, now: entry.date) {
                     Text(reset)
                         .font(.system(size: narrow ? 9 : 11, weight: .medium))
                         .monospacedDigit()
@@ -1032,7 +1037,7 @@ private extension CodexBarWidgetView {
                         .accessibilityLabel(String(format: String(localized: "Resets in %@"), reset))
                 }
             }
-            self.progressLine(provider.isError ? nil : provider.usagePercent, height: 4, fill: accent)
+            self.progressLine(provider.isError ? nil : figures.usagePercent, height: 4, fill: accent)
             if !compact {
                 Text(provider.isError ? String(localized: "Sync Error") : String(localized: "used"))
                     .font(.caption2)

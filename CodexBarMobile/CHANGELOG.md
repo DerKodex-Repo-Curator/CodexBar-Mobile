@@ -2,6 +2,18 @@
 
 All notable changes to the CodexBar iOS companion app will be documented in this file.
 
+## [2.7.0 (240)] — Soonest weekly reset in the CodexBar widget
+
+### Added
+- CodexBar widget overview "Provider Selection" (Research 073): Choose Manually (default; the provider slots, or automatic selection when none is set, unchanged) or By Weekly Reset (Soonest First), which shows 2, 3 or 4 providers (new "Number of Providers", default 2) in every size, whatever order the app's Usage cards use. The order is the app's "Weekly Reset (Soonest First)" rule through the shared `WeeklyResetOrdering`: the next weekly reset ascending (past resets roll forward by whole weeks), providers without one after them by name, then snapshot order; one entry per provider (the account the overview shows). In this mode a tile shows the weekly window it sorts by (used percent while current, and its reset) instead of the most-used window. Widget summaries gain optional `weeklyResetsAt` / `weeklyUsedPercent`, computed in the widget from the snapshots it already fetches (no new network or account access). Both widget generations: SiriKit `SelectStatusWidget` gains `providerSelection` (enum `StatusWidgetProviderSelection`, tag 8, child of `mode` == `overview`) and `providerCount` (enum `StatusWidgetProviderCount`, tag 9, child of `providerSelection` == `soonestWeeklyReset`); `StatusWidgetAppIntent` gains the same parameters with a nested `ParameterSummary` (slots under manual selection, count under By Weekly Reset). Both convert through `StatusWidgetConfigurationAdapter.overviewSelection` into `WidgetOverviewSelection`, carried on `CodexBarWidgetEntry` outside the legacy App Intent. Widgets placed before the update read `unknown` and keep manual selection. Edit-panel labels in all four languages.
+
+### Changed
+- SiriKit gives each parameter one parent and a hidden parameter does not hide its children (iOS 26.5 simulator), so the SiriKit provider slots keep their `mode` == `overview` relation and also show (ignored) with By Weekly Reset; after switching away from the overview with By Weekly Reset chosen, "Number of Providers" stays in the open panel until it is saved. The iOS 27 App Intents widget hides both as designed. Already-placed SiriKit widgets keep their stored schema and do not get the new parameters (add the widget again); already-placed App Intents widgets (iOS 27) show them with their configuration kept.
+- The simulator-only widget mock data gains a Grok-shaped provider and weekly resets for Codex and Claude.
+
+### Fixed
+- Weekly windows are recognized by one shared rule (`WeeklyResetWindow`, Research 073): a declared `period` decides (only `.weekly`); without one, a length that rounds to seven whole days (Grok's floored billing period is often 10079 minutes); without a length, the Mac's unlocalized "Weekly" label (Grok's untyped credits window). Grok now sorts by its weekly reset in "Weekly Reset (Soonest First)" instead of showing "No weekly reset". The Quota pace default window and its unlabeled "Weekly" name use the same rule. iOS-only; no Mac release or wire format change.
+
 ## [2.6.0 (239)] — App Intents widgets on iOS 27
 
 ### Added

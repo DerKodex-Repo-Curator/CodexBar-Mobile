@@ -32,3 +32,16 @@
 /* Build 233 status widgets keep their schema; keep these labels translated. */
 "CBStatusStatusWidgetModequotaPace" = "クォータ消費の推移";
 "CBStatuspaceProvider" = "プロバイダー";
+
+/* Overview provider selection (Research/073). */
+"CBStatusproviderSelection" = "プロバイダーの選び方";
+"CBStatusStatusWidgetProviderSelectionTitle" = "プロバイダーの選び方";
+"CBStatusStatusWidgetProviderSelectionunknown" = "不明";
+"CBStatusStatusWidgetProviderSelectionmanual" = "手動で選ぶ";
+"CBStatusStatusWidgetProviderSelectionsoonestWeeklyReset" = "週次リセット順（近い順）";
+"CBStatusproviderCount" = "プロバイダーの数";
+"CBStatusStatusWidgetProviderCountTitle" = "プロバイダーの数";
+"CBStatusStatusWidgetProviderCountunknown" = "不明";
+"CBStatusStatusWidgetProviderCounttwo" = "2";
+"CBStatusStatusWidgetProviderCountthree" = "3";
+"CBStatusStatusWidgetProviderCountfour" = "4";

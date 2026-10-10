@@ -4949,8 +4949,24 @@ private struct ReleaseNotesVersion: Identifiable {
 private enum MobileReleaseNotesCatalog {
     static let versions: [ReleaseNotesVersion] = [
         ReleaseNotesVersion(
-            version: "2.6.0",
+            version: "2.7.0",
             status: String(localized: "Latest"),
+            summary: String(localized: "CodexBar 2.7 can order the CodexBar widget by the next weekly reset."),
+            sections: [
+                .init(title: String(localized: "What's New"), items: [
+                    String(
+                        localized: "In the CodexBar widget's Overview, set Provider Selection to By Weekly Reset (Soonest First) to show the providers whose weekly limits reset soonest. Choose 2, 3, or 4 providers in any widget size."),
+                    String(
+                        localized: "The widget uses this order whichever order your Usage cards use, and shows each provider's weekly usage and reset time. Choose Manually works as before."),
+                    String(
+                        localized: "On iOS 27 or later, CodexBar widgets added with CodexBar 2.6 or later show the new option right away. Other CodexBar widgets need to be added again from the widget gallery to show it."),
+                    String(
+                        localized: "Grok's weekly limit is now recognized, so Weekly Reset (Soonest First) sorts Grok by its next reset instead of showing No weekly reset."),
+                ]),
+            ]),
+        ReleaseNotesVersion(
+            version: "2.6.0",
+            status: "",
             summary: String(localized: "CodexBar 2.6 brings new providers and clearer balances from your Mac."),
             sections: [
                 .init(title: String(localized: "What's New"), items: [
