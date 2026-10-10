@@ -156,14 +156,15 @@ enum UsageCardOrdering {
 
     /// Next weekly reset of a snapshot, or nil when it has no weekly window
     /// with a reset time (API-key providers, credit balances). The weekly
-    /// rule and the roll-forward of past resets live in `WeeklyResetWindow`
-    /// (Research/073), shared with the widget.
+    /// rule, the account-level window preference and the roll-forward of
+    /// past resets live in `WeeklyResetWindow` (Research/073), shared with
+    /// the widget.
     static func weeklyResetDate(for snapshot: ProviderUsageSnapshot, now: Date) -> Date? {
-        WeeklyResetWindow.nextReset(of: snapshot.allRateWindows, now: now)
+        WeeklyResetWindow.nextReset(for: snapshot, now: now)
     }
 
-    static func isWeekly(_ window: SyncRateWindow) -> Bool {
-        WeeklyResetWindow.isWeekly(window)
+    static func isWeekly(_ window: SyncRateWindow, observedAt: Date) -> Bool {
+        WeeklyResetWindow.isWeekly(window, observedAt: observedAt)
     }
 
     static func descriptor(for card: UsageCard, now: Date) -> UsageCardSortDescriptor {

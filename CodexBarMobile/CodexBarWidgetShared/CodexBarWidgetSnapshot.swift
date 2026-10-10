@@ -906,7 +906,7 @@ enum CodexBarWidgetSnapshotBuilder {
         let usagePercent = budgetLeads ? budgetPercent : windowPercent
         let resetsAt = budgetLeads ? provider.budget?.resetsAt : leadingWindow?.resetsAt
         let accountKey = provider.accountEmail ?? "_"
-        let weekly = WeeklyResetWindow.soonest(of: provider.allRateWindows, now: now)
+        let weekly = WeeklyResetWindow.soonest(for: provider, now: now)
         return CodexBarWidgetProviderSummary(
             id: "\(provider.providerID)|\(accountKey)",
             providerName: provider.providerName,

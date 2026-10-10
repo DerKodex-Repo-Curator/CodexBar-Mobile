@@ -103,13 +103,15 @@ enum WidgetProviderSelection {
         }
     }
 
-    /// The app's "Weekly Reset (Soonest First)" order (`WeeklyResetOrdering`)
-    /// over one entry per provider, cut to `count` (2 to 4). The entry kept
-    /// for a provider is the one the overview shows in every mode (its first
-    /// in `providers`), so its reset is the one that sorts it, like the app's
-    /// collapsed provider card. Past resets roll forward by whole weeks;
-    /// providers without a weekly reset follow by name; full ties keep the
-    /// snapshot order. Only the synced summaries are read.
+    /// The app's "Weekly Reset (Soonest First)" comparison
+    /// (`WeeklyResetOrdering`) over one entry per provider, cut to `count`
+    /// (2 to 4). The entry kept for a provider is the one the overview shows
+    /// in every mode (its first in `providers`, the most-used account), and
+    /// its reset sorts it; with one account per provider the order matches
+    /// the app's, with several it can differ (the app's collapsed card uses
+    /// its first account). Past resets roll forward by whole weeks; providers
+    /// without a weekly reset, and providers in error, follow by name; full
+    /// ties keep the snapshot order. Only the synced summaries are read.
     static func soonestWeeklyReset(
         from providers: [CodexBarWidgetProviderSummary],
         count: Int,
@@ -119,8 +121,11 @@ enum WidgetProviderSelection {
         let unique = providers.filter { seen.insert($0.providerID).inserted }
         let limit = WidgetOverviewSelection.clampedCount(count)
         let keyed = unique.enumerated().map { index, provider in
-            (index: index, provider: provider, key: WeeklyResetOrdering.Key(
-                resetAt: provider.weeklyResetsAt.map { WeeklyResetWindow.nextOccurrence(of: $0, after: now) },
+            // A provider in error has no current reset to show, so it never
+            // takes a slot ahead of a working one (the app still sorts it).
+            let reset = provider.isError ? nil : provider.weeklyResetsAt
+            return (index: index, provider: provider, key: WeeklyResetOrdering.Key(
+                resetAt: reset.map { WeeklyResetWindow.nextOccurrence(of: $0, after: now) },
                 name: provider.providerName))
         }
         return keyed

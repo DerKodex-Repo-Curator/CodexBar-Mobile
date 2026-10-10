@@ -13,7 +13,7 @@
 ## 2. Grok 在 Mac 上的形态（只读核对，不改 Mac）
 
 - `GrokCreditsProxyFetcher.windowMinutes`：`(end - start) / 60` 向下取整，`period` 不设置 → iOS 收到 `period == nil`，`windowMinutes` 常为 10079，也可能为 nil。
-- `SyncCoordinator`：Grok primary 的 label 是 `GrokProviderDescriptor.displayLabel(window:)`，即英文常量 `"Weekly"` / `"Monthly"`（时长或距重置的天数四舍五入：4–12 天为 Weekly，20–45 天为 Monthly；无时长且有重置时间时兜底为 Weekly，见 #2929）。Mac 同步的 label 都是未本地化的英文常量，iOS 只在显示时本地化（`ProviderWindowLabel` 把 `"Weekly"` 映射到 `v045_window_weekly`）。
+- `SyncCoordinator`：Grok primary 的 label 是 `GrokProviderDescriptor.displayLabel(window:)`，即英文常量 `"Weekly"` / `"Monthly"`（时长或距重置的天数四舍五入：4–12 天为 Weekly，20–45 天为 Monthly；无时长且有重置时间、又落在这两段之外时兜底为 Weekly，见 #2929）。Mac 的 gRPC 路径不设 `windowMinutes`，所以月度额度池在距重置不到 3.5 天、或 12.5–19.5 天时也会以 "Weekly" 同步过来（独立 review 发现）。Mac 同步的 label 都是未本地化的英文常量，iOS 只在显示时本地化（`ProviderWindowLabel` 把 `"Weekly"` 映射到 `v045_window_weekly`）。
 
 ## 3. 每周窗口规则（`CodexBarWidgetShared/WeeklyResetWindow.swift`）
 
@@ -21,10 +21,23 @@ App 与小组件扩展共用：
 
 1. 有 `period`：以它为准，只有 `.weekly` 算每周。
 2. 无 `period`、有 `windowMinutes`：四舍五入到整天等于 7 天（9360 ≤ 分钟 < 10800，即 6.5 天到不足 7.5 天）。依据：Grok 的长度来自账单周期起止向下取整（10079），夏令时会再差 60 分钟；按整天四舍五入是 Mac 命名 Grok 窗口用的同一取整方式（`GrokProviderDescriptor.primaryLabel`），只取“正好 7 天”而不取 Mac 的 4–12 天，避免把其他服务商的多日窗口算成每周。5 小时（300）、1 天（1440）、30 天（43200）都远在范围外。
-3. 两者都没有：Mac 的 label 去空白后不区分大小写等于 `"Weekly"`（Grok 无类型的额度窗口）。译文（如“每周”）不是 Mac 会发的 label，不算；`"Premium weekly"` 这类不算。
+3. 两者都没有：同时满足三条才算——Mac 的 label 去空白后不区分大小写等于 `"Weekly"`（Grok 无类型的额度窗口）；有 `resetsAt`；`resetsAt` 距快照观测时间（`ProviderUsageSnapshot.lastUpdated`，也就是 Mac 当时算 label 的时刻）不超过 7.5 天（一周加上第 2 条允许的半天）。这样排除了上面 12.5–19.5 天的月度池，以及没有重置时间的 "Weekly" 回退窗口（Windsurf flow actions）。译文（如“每周”）不是 Mac 会发的 label，不算；`"Premium weekly"` 这类不算。
 4. 有长度时长度优先于 label（与 Mac “Keep explicit durations authoritative” 一致）。
 
-下次重置：所有每周窗口的 `resetsAt`，已过去的按整周向后滚动，取最早（`nextReset`）；小组件还记下这个窗口（`soonest`）当前的已用百分比（重置已过则为 nil）。
+下次重置（`WeeklyResetWindow.soonest(for:now:)`，App 排序、小组件排序和小组件格子共用这一个函数）：在服务商的窗口里取有 `resetsAt` 的每周窗口；如果其中有**账号级**每周窗口（`QuotaPaceWindowSelection.isAccountWeeklyCandidate`：Claude 的 tertiary Sonnet/Opus 槽、`claude-weekly-scoped-*`、`claude-routines` 不算账号级，与 Mac 每周切换器一致），只在账号级里取；没有账号级时才退回所有每周窗口。已过去的重置按整周向后滚动，取最早；小组件还记下这个窗口当前的已用百分比（重置已过则为 nil）。这会让 App 的“每周重置”排序在少数情况下改变：Claude 的分模型周额度早于账号总周额度重置时，原来按分模型的时间排，现在按账号总周额度排。
+
+### 3.0 新规则对各服务商的影响
+
+| 服务商 / 形态 | 2.6.0 | 2.7.0 | 说明 |
+|---|---|---|---|
+| Grok（10079 分钟，或无时长 + "Weekly" 且 7.5 天内重置） | 无每周重置 | 每周 | 修复（本次 bug） |
+| Grok 月度池（无时长 + "Weekly"，12.5–19.5 天后重置） | 无每周重置 | 无每周重置 | review 后加的距离限制挡住 |
+| Aixy（插件预算窗口） | 无每周重置 | 每周 | 按 review 结论列为修复；Aixy 是插件 provider，Mac 源码里没有它的窗口构造，未逐项核对 |
+| Windsurf 周额度（secondary：无时长、label "Weekly"、有 `weeklyResetAtUnix`） | 无每周重置 | 每周 | 修复 |
+| Windsurf flow actions 回退（secondary：label "Weekly"，无时长、无重置） | 无每周重置 | 无每周重置 | `resetsAt` 条件挡住 |
+| Claude、Codex、z.ai、Antigravity 等（10080 分钟或 period） | 每周 | 每周 | 不变；Claude 只在分模型周额度早于账号周额度时排序变化（见上） |
+| 用 metadata 的 "Weekly" 作 secondary 标签、但不带时长和 period 的服务商 | 无每周重置 | 7.5 天内重置时为每周 | 一般是正确识别；数据形态少见 |
+| Cursor 一类按计费周期算时长的窗口 | 仅 ==10080 | 6.5–7.5 天的周期会算每周 | 潜在误判：不足一周或接近一周的计费周期 |
 
 ### 3.1 App 里其它“每周窗口”判定
 
@@ -55,7 +68,9 @@ App 与小组件扩展共用：
 
 ### 4.2 排序与显示（`WidgetProviderSelection`）
 
-- `soonestWeeklyReset(from:count:now:)`：每个服务商一条（取它在 `topProviders` 里的第一条，也就是概览在其他模式下显示的那个账号，和 App 折叠的服务商卡片一样用显示的那条排序）；用 App 同一个比较函数 `WeeklyResetOrdering.precedes`：有每周重置的按下次重置升序（过去的按整周滚动），没有的排后面按名称，完全相同时保持快照顺序；取前 N。
+- `soonestWeeklyReset(from:count:now:)`：每个服务商一条，取它在 `topProviders` 里的第一条，也就是概览在其他模式下显示的那个账号（用量最高的），按这个账号的每周重置排序；比较函数与 App 相同（`WeeklyResetOrdering.precedes`）：有每周重置的按下次重置升序（过去的按整周滚动），没有的排后面按名称，完全相同时保持快照顺序；取前 N。
+  - 单账号时与 App 的“每周重置”排序一致（单测）；多账号时可能不同：App 折叠的服务商卡片按它的第一个账号排序，小组件按它显示的账号排序（单测锁住现状）。
+  - 出错（`isError`）的服务商在这个小组件模式下视为没有每周重置，排到后面按名称，不会占掉正常服务商的格子；App 的排序不变（出错的卡片仍按它的每周重置排）。
 - 数据：`CodexBarWidgetProviderSummary` 新增可选 `weeklyResetsAt`、`weeklyUsedPercent`，由小组件在已取到的同步快照上计算（`CodexBarWidgetSnapshotBuilder.summary`），不新增联网或账号探测。旧数据解码为 nil。catalogue 只给编辑面板用，不需要重置时间，未改。
 - 显示：这个模式下格子显示用来排序的每周窗口（当前周期内的已用百分比和重置时间）；没有每周重置的服务商、以及手动模式，仍显示原来“用得最多的窗口”。否则会出现按每周排序、却显示 5 小时窗口重置时间的情况（实测发现：Claude 显示 0.6d 却排第三）。
 - 手动模式：`overview(…, selection: .manual)` 直接调用原来的 `resolve`，行为不变（含“全部未选择 = 自动”，小号 2 个、其他 4 个）。
@@ -66,7 +81,15 @@ App 与小组件扩展共用：
 
 - 手动模式、非概览类型：与 2.6.0 相同；
 - “按每周重置”模式下，SiriKit 面板仍显示服务商 1–4（被忽略）；
-- 选了“按每周重置”后再把类型切离概览，面板里“服务商数量”会留到保存为止；保存后再打开就不显示（SiriKit 不保存隐藏参数）。
+- 选了“按每周重置”后再把类型切离概览，面板里“服务商数量”会留到保存为止；保存后再打开就不显示。隐藏的值仍会保存：保存为“今日费用”后 timeline 仍是 `providerIDs=claude, selection=soonestWeeklyReset(3)`，切回概览时“按每周重置”和服务商 1 都还在（`ios265-r2/`）。
+
+**切走再切回概览（review 第 6 条）**：iOS 26.5 上实测三种情况，“服务商选择方式”都没有显示“未知”，所以没有改 Options 扩展或 unknown 的显示名：
+
+| 情况 | 切回概览后 | 证据 |
+|---|---|---|
+| 手动（服务商 1 = Claude）→ 今日费用 → 保存 → 概览 | Choose Manually，服务商 1 仍为 Claude | `ios265-r2/01-*`、`02-back-overview-set.png` |
+| 按每周（数量 3）→ 今日费用 → 保存 → 概览 | By Weekly Reset (Soonest First) | `ios265-r2/03-*`–`06-back-overview-set.png`、`log.txt` |
+| 新添加 → 直接改今日费用 → 保存 → 概览 | Choose Manually，服务商未选择 | `ios265-r2/07-*`、`08-fresh-back-overview-set.png` |
 
 iOS 27 的 App Intents 小组件按设计隐藏（嵌套 `When` 实测正常）。如果要在 iOS 26 上也完全隐藏，可选方案是把“按每周重置”做成“小组件类型”的一个新值（槽位与数量各挂在 `mode` 的不同值下），这会改变需求里的参数结构，留给后续决定。
 
@@ -75,13 +98,14 @@ iOS 27 的 App Intents 小组件按设计隐藏（嵌套 `When` 实测正常）�
 ### 5.1 单测（`CodexBarMobileTests/SoonestWeeklyResetTests.swift` 等）
 
 - 每周判定：Grok 10079 / 10080 / nil + "Weekly"；DST 少一小时；Claude、Codex；5 小时、1 天、30 天、"Monthly"、无信息；period 显式为 monthly / session / daily / lifetime / weekly；7 天四舍五入边界 9359/9360/10799/10800；label 去空白、译文与 "Premium weekly" 不算；有长度时 label 不覆盖。
-- 下次重置：多窗口取最早、只看每周窗口、过去滚动、无 resetsAt。
+- label 兜底：月度 Grok（无时长、"Weekly"、15 天后重置）不算；7.4 / 7.6 天边界；从观测时间而不是 now 量距离；剩余歧义（2 天后重置的月度池仍算，锁住现状）；Windsurf flow actions（"Weekly"、无时长、无重置）不算。
+- 下次重置：多窗口取最早、只看每周窗口、过去滚动、无 resetsAt；Claude 有账号周窗口时 Sonnet / `claude-weekly-scoped-*` / `claude-routines` 不参与（App 排序、小组件 summary 的时间和用量一致），只有分模型窗口时退回它们；非 Claude 的 tertiary 照常参与。
 - App：Grok 不再是 nil，并排在正确位置；额度消耗趋势默认窗口找到 Grok 的 `primary`，无 label 的 10079 分钟窗口标题为 “Weekly”。
 - 小组件数据：summary 带每周重置与当前用量（过期滚动后用量为 nil）；缺字段的旧 JSON 能解码；占位数据的每周重置与其 weekly lane 一致。
-- 排序：重置升序、无重置按名称、并列按名称再按快照顺序、过去滚动、数量 2/3/4 截断与 1→2、9→4、不足数量、空列表、同服务商多账号只取显示的那个；与 App “每周重置”排序逐项一致（同一组快照）；手动模式与原 `resolve` 完全相同；格子数字（手动 / 每周 / 滚动后 / 无每周）。
+- 排序：重置升序、无重置按名称、并列按名称再按快照顺序、过去滚动、数量 2/3/4 截断与 1→2、9→4、不足数量、空列表、同服务商多账号只取显示的那个；单账号时与 App “每周重置”排序逐项一致（同一组快照）；多账号时按显示的账号排序、与 App 不同（锁住现状）；出错的服务商排到后面、App 排序不变；手动模式与原 `resolve` 完全相同；格子数字（手动 / 每周 / 滚动后 / 无每周）。
 - 配置：SiriKit unknown → 手动、各数量映射、未知数量 → 默认；App Intents 与 SiriKit 所有组合结果一致；SiriKit 父参数关系、默认值 two、tag 不重复；`WidgetConfigurationAppIntentsTests` 的参数一致性（名称、类型、枚举 case、默认值对照 `.intentdefinition`）加入两个新参数，元数据防回归不变。
-- 全量 iOS 单测（`-only-testing:CodexBarMobileTests`，iOS 27.0 模拟器，en_US）：Swift Testing 1,073 项（65 个 suite）+ XCTest 60 项全部通过（`logs/test-full-final.log`、`xcresult/full-final.xcresult`）。
-- `Scripts/lint.sh audit-i18n` 通过；改动的 Swift 文件用 swiftformat 0.63.0 / swiftlint 0.65.1 只看改动行：除 App 内更新说明的长字符串行（与 2.6.0 各条相同的既有写法）外无告警。
+- 全量 iOS 单测（`-only-testing:CodexBarMobileTests`，iOS 27.0 模拟器，en_US）：Swift Testing 1,078 项（65 个 suite）+ XCTest 60 项全部通过（review 修复后：`logs/r2-test-full.log`、`xcresult/r2-full.xcresult`；首版 1,073 项：`logs/test-full-final.log`）。
+- `Scripts/lint.sh audit-i18n` 通过；改动的 Swift 文件用 swiftformat 0.63.0 / swiftlint 0.65.1 只看改动行：除 App 内更新说明的 4 行长字符串（与 2.6.0 及更早各条相同的既有写法，其中 1 行超过 250 字符，文件里已有十余行同类）外无告警。
 
 ### 5.2 SpringBoard 实测
 
@@ -105,6 +129,8 @@ iOS 27 的 App Intents 小组件按设计隐藏（嵌套 `When` 实测正常）�
 | 26.5 | 手动回归（服务商 1 = Claude） | `providerIDs=claude, selection=manual`，只显示 Claude | `ios265/16-*` |
 | 26.5 | 错误日志 | 覆盖安装后 `No intent in timeline`、`view collection was either nil`、`LNPerformActionErrorCodeActionNotFound` 均 0 次 | `ios265/log-errors-since-upgrade.txt` |
 | 26.5 | App 排序设置页 | 同 27.0 | `ios265/18-*` |
+| 26.5 | 切走类型再切回概览（review 第 6 条） | 不显示“未知”（见 4.3） | `ios265-r2/` |
+| 27.0 | review 修复后（240d）大号“按每周重置”4 个 | Grok 1.5d、Codex 2.9d、Claude 3.6d、OpenRouter；mock 数据不含分模型周窗口和出错且有周重置的服务商，主屏顺序与修复前相同 | `ios270-r2/03-home.png`、`log.txt` |
 
 说明：
 
@@ -116,7 +142,11 @@ iOS 27 的 App Intents 小组件按设计隐藏（嵌套 `When` 实测正常）�
 
 - SiriKit（iOS 26 及以下）：“按每周重置”模式下服务商槽位仍显示（被忽略）；切离概览时数量行会留到保存（4.3）。
 - 已放置的 SiriKit 小组件（所有系统）看不到新参数，要重新添加；iOS 27 上 2.6.0 起添加的 App Intents 小组件直接可用。
-- 一个服务商多个账号时，只按概览显示的那个账号排序，不取各账号里最早的。
+- 一个服务商多个账号时，小组件只按它显示的那个账号（用量最高的）排序，App 折叠卡片按第一个账号排序，两者顺序可能不同；也不取各账号里最早的。
+- Grok 月度额度池在最后 7.5 天内（Mac 用 "Weekly" 兜底、又没有时长）仍会被当成每周。根治要在 Mac 端给 Grok gRPC 路径解析周期类型并设置 `period`（follow-up，本次不改 Mac）。
+- 新规则在少见数据形态上的潜在误判见 3.0（Cursor 一类按计费周期算时长、长度落在 6.5–7.5 天的窗口）。
+- 过期的重置按固定 7×86400 秒向后滚动，跨夏令时会差 1 小时；滚动窗口（没有固定周期）和 Kimi 月度池阻断（`blockingQuota`）这类形态也属于边缘情况，代码未特别处理。
+- 小组件“按每周重置”模式把出错的服务商视为没有每周重置；App 的排序仍按它的每周重置。
 - 每周判定依赖 Mac 的数据形态；Mac 以后若给 Grok 设置 `period`，以 period 为准。
 - 真机未验证。
 

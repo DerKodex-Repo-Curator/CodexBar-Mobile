@@ -4957,9 +4957,9 @@ private enum MobileReleaseNotesCatalog {
                     String(
                         localized: "In the CodexBar widget's Overview, set Provider Selection to By Weekly Reset (Soonest First) to show the providers whose weekly limits reset soonest. Choose 2, 3, or 4 providers in any widget size."),
                     String(
-                        localized: "The widget uses this order whichever order your Usage cards use, and shows each provider's weekly usage and reset time. Choose Manually works as before."),
+                        localized: "The widget uses this order whichever order your Usage cards use, and shows the weekly usage and reset time for providers with a weekly limit. Choose Manually works as before."),
                     String(
-                        localized: "On iOS 27 or later, CodexBar widgets added with CodexBar 2.6 or later show the new option right away. Other CodexBar widgets need to be added again from the widget gallery to show it."),
+                        localized: "New-version CodexBar widgets added on iOS 27 with CodexBar 2.6 or later show the new option right away. Other CodexBar widgets, including those added on iOS 26 or earlier, need to be added again from the widget gallery to show it."),
                     String(
                         localized: "Grok's weekly limit is now recognized, so Weekly Reset (Soonest First) sorts Grok by its next reset instead of showing No weekly reset."),
                 ]),

@@ -129,10 +129,14 @@ struct UsageCardOrderingTests {
 
     @Test
     func `weekly reset detection uses period first and the 7 day window otherwise`() {
-        #expect(UsageCardOrdering.isWeekly(Self.window(period: .weekly, minutes: nil, resetIn: 1)))
-        #expect(!UsageCardOrdering.isWeekly(Self.window(period: .monthly, minutes: 10080, resetIn: 1)))
-        #expect(UsageCardOrdering.isWeekly(Self.window(minutes: 10080, resetIn: 1)))
-        #expect(!UsageCardOrdering.isWeekly(Self.window(minutes: 300, resetIn: 1)))
+        #expect(UsageCardOrdering.isWeekly(
+            Self.window(period: .weekly, minutes: nil, resetIn: 1),
+            observedAt: Self.now))
+        #expect(!UsageCardOrdering.isWeekly(
+            Self.window(period: .monthly, minutes: 10080, resetIn: 1),
+            observedAt: Self.now))
+        #expect(UsageCardOrdering.isWeekly(Self.window(minutes: 10080, resetIn: 1), observedAt: Self.now))
+        #expect(!UsageCardOrdering.isWeekly(Self.window(minutes: 300, resetIn: 1), observedAt: Self.now))
     }
 
     @Test

@@ -9,6 +9,10 @@ enum WeeklyResetWindow {
     static let weekMinutes = 7 * 24 * 60
     static let week: TimeInterval = 7 * 24 * 60 * 60
 
+    /// Longest time from the observation to the reset that the label
+    /// fallback accepts: a week plus the half day the length rule allows.
+    static let labelFallbackReach: TimeInterval = 7.5 * 24 * 60 * 60
+
     /// Whether a window is the provider's weekly window:
     ///
     /// 1. A declared `period` decides: only `.weekly` is weekly.
@@ -18,37 +22,80 @@ enum WeeklyResetWindow {
     ///    so it is often 10079 rather than 10080; rounding to whole days is
     ///    the Mac's own rule for naming a Grok window (`GrokProviderDescriptor
     ///    .primaryLabel`). 5-hour, daily and 30-day windows stay far outside.
-    /// 3. Without a length either, the Mac's label: Grok's untyped credits
-    ///    window arrives as "Weekly" (`GrokProviderDescriptor.displayLabel`).
-    ///    Mac labels are unlocalized English constants; iOS localizes them on
-    ///    display only.
-    static func isWeekly(_ window: SyncRateWindow) -> Bool {
-        self.isWeekly(period: window.period, windowMinutes: window.windowMinutes, label: window.label)
+    /// 3. Without a length either, the Mac's "Weekly" label, and only with a
+    ///    reset at most 7.5 days after `observedAt` (when the data was
+    ///    captured). Grok's untyped credits window arrives as "Weekly"
+    ///    (`GrokProviderDescriptor.displayLabel`), but the Mac also falls
+    ///    back to "Weekly" for a monthly pool whose reset is under 3.5 or
+    ///    12.5–19.5 days away, and labels a reset-less fallback window
+    ///    (Windsurf flow actions) "Weekly"; the reach and the reset rule
+    ///    those out. Mac labels are unlocalized English constants.
+    static func isWeekly(_ window: SyncRateWindow, observedAt: Date) -> Bool {
+        self.isWeekly(
+            period: window.period,
+            windowMinutes: window.windowMinutes,
+            label: window.label,
+            resetsAt: window.resetsAt,
+            observedAt: observedAt)
     }
 
-    static func isWeekly(period: SyncRateWindowPeriod?, windowMinutes: Int?, label: String?) -> Bool {
+    static func isWeekly(
+        period: SyncRateWindowPeriod?,
+        windowMinutes: Int?,
+        label: String?,
+        resetsAt: Date?,
+        observedAt: Date) -> Bool
+    {
         if let period { return period == .weekly }
-        if let windowMinutes {
-            return Int((Double(windowMinutes) / 1440).rounded(.toNearestOrAwayFromZero)) == 7
+        if let windowMinutes { return self.isWeekLength(minutes: windowMinutes) }
+        guard let label = label?.trimmingCharacters(in: .whitespacesAndNewlines),
+              label.caseInsensitiveCompare("Weekly") == .orderedSame,
+              let resetsAt
+        else { return false }
+        return resetsAt.timeIntervalSince(observedAt) <= self.labelFallbackReach
+    }
+
+    /// Whether a declared period or length (no label) says weekly, for
+    /// unlabeled windows such as the widget's window names.
+    static func isWeekly(period: SyncRateWindowPeriod?, windowMinutes: Int?) -> Bool {
+        if let period { return period == .weekly }
+        return windowMinutes.map(self.isWeekLength) ?? false
+    }
+
+    private static func isWeekLength(minutes: Int) -> Bool {
+        Int((Double(minutes) / 1440).rounded(.toNearestOrAwayFromZero)) == 7
+    }
+
+    /// The provider's next weekly reset, or nil without a weekly window that
+    /// has a reset time. A reset already in the past rolls forward by whole
+    /// weeks, so data that has not refreshed since its reset still sorts by
+    /// its next one.
+    static func nextReset(for provider: ProviderUsageSnapshot, now: Date) -> Date? {
+        self.soonest(for: provider, now: now)?.nextReset
+    }
+
+    /// The weekly window whose next reset comes first, with that reset. When
+    /// the provider has account-level weekly windows, only they count:
+    /// Claude's Sonnet/Opus slot, `claude-weekly-scoped-*` and
+    /// `claude-routines` limits are carve-outs that never stand for the
+    /// account (`QuotaPaceWindowSelection.isAccountWeeklyCandidate`, the Mac's
+    /// weekly switcher rule). Without one, every weekly window counts. The
+    /// app's card order, the widget order and the widget tile all use this.
+    static func soonest(
+        for provider: ProviderUsageSnapshot,
+        now: Date) -> (window: SyncRateWindow, nextReset: Date)?
+    {
+        let weekly = QuotaPaceWindowSelection.candidates(for: provider).filter { candidate in
+            candidate.window.resetsAt != nil && self.isWeekly(candidate.window, observedAt: provider.lastUpdated)
         }
-        guard let label = label?.trimmingCharacters(in: .whitespacesAndNewlines) else { return false }
-        return label.caseInsensitiveCompare("Weekly") == .orderedSame
-    }
-
-    /// The soonest next weekly reset among `windows`, or nil without a
-    /// weekly window that has a reset time. A reset already in the past
-    /// rolls forward by whole weeks, so data that has not refreshed since its
-    /// reset still sorts by its next one.
-    static func nextReset(of windows: [SyncRateWindow], now: Date) -> Date? {
-        self.soonest(of: windows, now: now)?.nextReset
-    }
-
-    /// The weekly window whose next reset comes first, with that reset.
-    static func soonest(of windows: [SyncRateWindow], now: Date) -> (window: SyncRateWindow, nextReset: Date)? {
-        windows
-            .filter(self.isWeekly)
-            .compactMap { window in
-                window.resetsAt.map { (window: window, nextReset: self.nextOccurrence(of: $0, after: now)) }
+        let account = weekly.filter {
+            QuotaPaceWindowSelection.isAccountWeeklyCandidate($0, providerID: provider.providerID)
+        }
+        return (account.isEmpty ? weekly : account)
+            .compactMap { candidate in
+                candidate.window.resetsAt.map {
+                    (window: candidate.window, nextReset: self.nextOccurrence(of: $0, after: now))
+                }
             }
             .min { $0.nextReset < $1.nextReset }
     }

@@ -78,63 +78,129 @@ struct SoonestWeeklyResetTests {
 
     // MARK: Weekly window rule
 
+    /// The rule for a window observed at `now`.
+    private static func weekly(_ window: SyncRateWindow, observedAt: Date = Self.now) -> Bool {
+        WeeklyResetWindow.isWeekly(window, observedAt: observedAt)
+    }
+
     @Test func `Grok's untyped weekly window counts as weekly`() {
-        #expect(WeeklyResetWindow.isWeekly(Self.grokWindow(minutes: 10079)))
-        #expect(WeeklyResetWindow.isWeekly(Self.grokWindow(minutes: 10080)))
-        #expect(WeeklyResetWindow.isWeekly(Self.grokWindow(minutes: nil)))
+        #expect(Self.weekly(Self.grokWindow(minutes: 10079)))
+        #expect(Self.weekly(Self.grokWindow(minutes: 10080)))
+        #expect(Self.weekly(Self.grokWindow(minutes: nil)))
         // A floored period one DST hour short is still a week.
-        #expect(WeeklyResetWindow.isWeekly(Self.window(minutes: 10020)))
+        #expect(Self.weekly(Self.window(minutes: 10020)))
     }
 
     @Test func `Claude and Codex weekly windows stay weekly`() {
-        #expect(WeeklyResetWindow.isWeekly(Self.window(id: "secondary", label: "Weekly", minutes: 10080)))
-        #expect(WeeklyResetWindow.isWeekly(Self.window(id: "secondary", minutes: 10080)))
-        #expect(WeeklyResetWindow.isWeekly(Self.window(period: .weekly, minutes: nil)))
+        #expect(Self.weekly(Self.window(id: "secondary", label: "Weekly", minutes: 10080)))
+        #expect(Self.weekly(Self.window(id: "secondary", minutes: 10080)))
+        #expect(Self.weekly(Self.window(period: .weekly, minutes: nil)))
     }
 
     @Test func `Session, daily and monthly windows are never weekly`() {
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(label: "Session", minutes: 300)))
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(minutes: 1440)))
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(minutes: 43200)))
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(label: "Monthly", minutes: nil)))
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(minutes: nil)))
+        #expect(!Self.weekly(Self.window(label: "Session", minutes: 300)))
+        #expect(!Self.weekly(Self.window(minutes: 1440)))
+        #expect(!Self.weekly(Self.window(minutes: 43200)))
+        #expect(!Self.weekly(Self.window(label: "Monthly", minutes: nil)))
+        #expect(!Self.weekly(Self.window(minutes: nil)))
         // A length outranks the label: Grok's Mac also keeps explicit durations authoritative.
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(label: "Weekly", minutes: 43200)))
+        #expect(!Self.weekly(Self.window(label: "Weekly", minutes: 43200)))
     }
 
     @Test func `A declared period decides whatever the length or label`() {
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(period: .monthly, minutes: 10080)))
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(label: "Weekly", period: .session, minutes: nil)))
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(period: .daily, minutes: 10079)))
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(period: .lifetime, minutes: nil)))
-        #expect(WeeklyResetWindow.isWeekly(Self.window(period: .weekly, minutes: 9000)))
+        #expect(!Self.weekly(Self.window(period: .monthly, minutes: 10080)))
+        #expect(!Self.weekly(Self.window(label: "Weekly", period: .session, minutes: nil)))
+        #expect(!Self.weekly(Self.window(period: .daily, minutes: 10079)))
+        #expect(!Self.weekly(Self.window(period: .lifetime, minutes: nil)))
+        #expect(Self.weekly(Self.window(period: .weekly, minutes: 9000)))
     }
 
     @Test func `The length must round to seven whole days`() {
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(minutes: 9359)))
-        #expect(WeeklyResetWindow.isWeekly(Self.window(minutes: 9360)))
-        #expect(WeeklyResetWindow.isWeekly(Self.window(minutes: 10799)))
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(minutes: 10800)))
+        #expect(!Self.weekly(Self.window(minutes: 9359)))
+        #expect(Self.weekly(Self.window(minutes: 9360)))
+        #expect(Self.weekly(Self.window(minutes: 10799)))
+        #expect(!Self.weekly(Self.window(minutes: 10800)))
     }
 
     @Test func `The label fallback reads the Mac's unlocalized English label`() {
-        #expect(WeeklyResetWindow.isWeekly(Self.window(label: " weekly ", minutes: nil)))
+        #expect(Self.weekly(Self.window(label: " weekly ", minutes: nil)))
         // Mac labels are never localized; a translated label is not a Mac label.
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(label: "每周", minutes: nil)))
-        #expect(!WeeklyResetWindow.isWeekly(Self.window(label: "Premium weekly", minutes: nil)))
+        #expect(!Self.weekly(Self.window(label: "每周", minutes: nil)))
+        #expect(!Self.weekly(Self.window(label: "Premium weekly", minutes: nil)))
     }
 
     @Test func `The next weekly reset is the soonest weekly window and past resets roll forward`() {
-        let windows = [
-            Self.window(label: "Session", minutes: 300, resetInHours: 1),
-            Self.window(label: "Weekly", minutes: 10080, resetInHours: 90),
-            Self.grokWindow(minutes: 10079, resetInHours: 40),
-        ]
-        #expect(WeeklyResetWindow.nextReset(of: windows, now: Self.now) == Self.now.addingTimeInterval(40 * 3600))
-        let stale = [Self.grokWindow(minutes: nil, resetInHours: -24)]
-        #expect(WeeklyResetWindow.nextReset(of: stale, now: Self.now) == Self.now.addingTimeInterval(6 * 86400))
-        #expect(WeeklyResetWindow.nextReset(of: [Self.window(minutes: 300)], now: Self.now) == nil)
-        #expect(WeeklyResetWindow.nextReset(of: [Self.window(minutes: 10080, resetInHours: nil)], now: Self.now) == nil)
+        let mixed = Self.provider("grok", windows: [
+            Self.window(id: "a", label: "Session", minutes: 300, resetInHours: 1),
+            Self.window(id: "b", label: "Weekly", minutes: 10080, resetInHours: 90),
+            Self.window(id: "c", label: "Weekly", minutes: 10079, resetInHours: 40),
+        ])
+        #expect(WeeklyResetWindow.nextReset(for: mixed, now: Self.now) == Self.now.addingTimeInterval(40 * 3600))
+        let stale = Self.provider("grok", windows: [Self.grokWindow(minutes: nil, resetInHours: -24)])
+        #expect(WeeklyResetWindow.nextReset(for: stale, now: Self.now) == Self.now.addingTimeInterval(6 * 86400))
+        let session = Self.provider("zai", windows: [Self.window(minutes: 300)])
+        #expect(WeeklyResetWindow.nextReset(for: session, now: Self.now) == nil)
+        let noReset = Self.provider("codex", windows: [Self.window(minutes: 10080, resetInHours: nil)])
+        #expect(WeeklyResetWindow.nextReset(for: noReset, now: Self.now) == nil)
+    }
+
+    @Test func `A monthly Grok pool labeled Weekly without a length is not weekly`() {
+        // The Mac's gRPC path sends no length and falls back to "Weekly" for
+        // a monthly pool 12.5 to 19.5 days (or under 3.5 days) from reset.
+        #expect(!Self.weekly(Self.grokWindow(minutes: nil, resetInHours: 15 * 24)))
+        let monthly = Self.provider("grok", windows: [Self.grokWindow(minutes: nil, resetInHours: 15 * 24)])
+        #expect(WeeklyResetWindow.nextReset(for: monthly, now: Self.now) == nil)
+        // The fallback reaches 7.5 days from the observation.
+        #expect(Self.weekly(Self.grokWindow(minutes: nil, resetInHours: 7.4 * 24)))
+        #expect(!Self.weekly(Self.grokWindow(minutes: nil, resetInHours: 7.6 * 24)))
+        // Measured from when the data was captured, not from now.
+        let reset = Self.grokWindow(minutes: nil, resetInHours: 5 * 24)
+        #expect(!Self.weekly(reset, observedAt: Self.now.addingTimeInterval(-5 * 86400)))
+        // Known remaining ambiguity: a monthly pool in its last 7.5 days.
+        #expect(Self.weekly(Self.grokWindow(minutes: nil, resetInHours: 2 * 24)))
+    }
+
+    @Test func `A Weekly-labeled fallback window without a reset is not weekly`() {
+        // Windsurf's flow-actions fallback: "Weekly", no length, no reset.
+        let flow = Self.window(id: "windsurf-flow", label: "Weekly", minutes: nil, resetInHours: nil)
+        #expect(!Self.weekly(flow))
+        let windsurf = Self.provider("windsurf", windows: [flow])
+        #expect(WeeklyResetWindow.nextReset(for: windsurf, now: Self.now) == nil)
+        #expect(UsageCardOrdering.weeklyResetDate(for: windsurf, now: Self.now) == nil)
+    }
+
+    @Test func `Account-level weekly windows outrank Claude's model and routine limits`() {
+        let claude = Self.provider("claude", windows: [
+            Self.window(id: "primary", label: "Session", minutes: 300, resetInHours: 2),
+            SyncRateWindow(
+                id: "secondary",
+                label: "Weekly",
+                usedPercent: 30,
+                windowMinutes: 10080,
+                resetsAt: Self.now.addingTimeInterval(100 * 3600),
+                resetDescription: nil),
+            Self.window(id: "tertiary", label: "Sonnet", minutes: 10080, resetInHours: 20),
+            Self.window(id: "claude-weekly-scoped-fable", label: "Fable only", minutes: 10080, resetInHours: 30),
+            Self.window(id: "claude-routines", label: "Routines", minutes: 10080, resetInHours: 25),
+        ])
+        let account = Self.now.addingTimeInterval(100 * 3600)
+        #expect(WeeklyResetWindow.nextReset(for: claude, now: Self.now) == account)
+        #expect(UsageCardOrdering.weeklyResetDate(for: claude, now: Self.now) == account)
+        let summary = CodexBarWidgetSnapshotBuilder.summary(for: claude, now: Self.now)
+        #expect(summary.weeklyResetsAt == account)
+        #expect(summary.weeklyUsedPercent == 30)
+        // Without an account-level weekly window, the carve-outs still count.
+        let sonnetOnly = Self.provider("claude", windows: [
+            Self.window(id: "tertiary", label: "Sonnet", minutes: 10080, resetInHours: 20),
+            Self.window(id: "claude-weekly-scoped-fable", label: "Fable only", minutes: 10080, resetInHours: 30),
+        ])
+        #expect(WeeklyResetWindow.nextReset(for: sonnetOnly, now: Self.now) == Self.now.addingTimeInterval(20 * 3600))
+        // Other providers' third slot is an ordinary window.
+        let other = Self.provider("minimax", windows: [
+            Self.window(id: "secondary", minutes: 10080, resetInHours: 100),
+            Self.window(id: "tertiary", minutes: 10080, resetInHours: 20),
+        ])
+        #expect(WeeklyResetWindow.nextReset(for: other, now: Self.now) == Self.now.addingTimeInterval(20 * 3600))
     }
 
     // MARK: App ordering (the reported bug)
@@ -336,7 +402,7 @@ struct SoonestWeeklyResetTests {
         #expect(order.map(\.id) == ["claude|a", "codex|work"])
     }
 
-    @Test func `The widget order matches the app's Weekly Reset order`() {
+    @Test func `With one account per provider the widget order matches the app's`() {
         let now = Self.now
         let snapshots = [
             Self.provider("claude", windows: [
@@ -374,6 +440,100 @@ struct SoonestWeeklyResetTests {
             from: widget.topProviders, count: 4, now: now).map(\.providerID)
         #expect(app == ["grok", "claude", "codex", "openrouter", "zai"])
         #expect(widgetOrder == Array(app.prefix(4)))
+    }
+
+    /// Locks the current behavior: with several accounts the widget sorts a
+    /// provider by the account it shows (the most used), the app's collapsed
+    /// card by its first account, so the two orders can differ.
+    @Test func `With several accounts the widget sorts by the account it shows`() {
+        let now = Self.now
+        func account(_ email: String, sessionUsed: Double, weeklyResetInHours hours: Double) -> ProviderUsageSnapshot {
+            ProviderUsageSnapshot(
+                providerID: "codex",
+                providerName: "Codex",
+                primary: nil,
+                secondary: nil,
+                accountEmail: email,
+                loginMethod: nil,
+                statusMessage: nil,
+                isError: false,
+                lastUpdated: now.addingTimeInterval(-60),
+                rateWindows: [
+                    SyncRateWindow(
+                        id: "primary",
+                        usedPercent: sessionUsed,
+                        windowMinutes: 300,
+                        resetsAt: now.addingTimeInterval(2 * 3600),
+                        resetDescription: nil),
+                    SyncRateWindow(
+                        id: "secondary",
+                        usedPercent: 10,
+                        windowMinutes: 10080,
+                        resetsAt: now.addingTimeInterval(hours * 3600),
+                        resetDescription: nil),
+                ])
+        }
+        let work = account("work@example.com", sessionUsed: 5, weeklyResetInHours: 150)
+        let side = account("side@example.com", sessionUsed: 95, weeklyResetInHours: 5)
+        let claude = Self.provider("claude", windows: [Self.window(id: "secondary", minutes: 10080, resetInHours: 50)])
+        let all = [work, side, claude]
+        var preferences = UsageCardPreferences()
+        preferences.usesDefaultSort = true
+        preferences.defaultSortRule = .weeklyReset
+        let cards = UsageCardBuilder.cards(groups: all.groupedByProvider(), preferences: UsageCardPreferences())
+        let app = UsageCardOrdering.arrangedCards(cards, preferences: preferences, now: now).others.map(\.providerID)
+        let synced = SyncedUsageSnapshot(
+            providers: all,
+            syncTimestamp: now,
+            deviceName: "Fictitious Mac",
+            deviceID: "d")
+        let widget = CodexBarWidgetSnapshotBuilder.makeSnapshot(from: [synced], now: now)
+        let shown = WidgetProviderSelection.soonestWeeklyReset(from: widget.topProviders, count: 4, now: now)
+        #expect(app == ["claude", "codex"])
+        #expect(shown.map(\.providerID) == ["codex", "claude"])
+        #expect(shown.first?.id == "codex|side@example.com")
+    }
+
+    @Test func `A provider in error never takes a soonest-reset slot ahead of a working one`() {
+        let now = Self.now
+        let grok = CodexBarWidgetProviderSummary(
+            id: "grok|a",
+            providerName: "Grok",
+            providerID: "grok",
+            loginMethod: nil,
+            usagePercent: 10,
+            todayCostUSD: nil,
+            thirtyDayCostUSD: nil,
+            tokensToday: nil,
+            isError: true,
+            statusMessage: "Sync Error",
+            lastUpdated: now,
+            weeklyResetsAt: now.addingTimeInterval(3 * 3600))
+        let providers = [
+            Self.summary("claude", weeklyResetInHours: 50),
+            Self.summary("codex", weeklyResetInHours: 60),
+            Self.summary("openrouter", name: "OpenRouter", weeklyResetInHours: nil),
+            grok,
+        ]
+        #expect(WidgetProviderSelection.soonestWeeklyReset(from: providers, count: 2, now: now)
+            .map(\.providerID) == ["claude", "codex"])
+        // In error it sorts like a provider without a weekly reset, by name.
+        #expect(WidgetProviderSelection.soonestWeeklyReset(from: providers, count: 4, now: now)
+            .map(\.providerID) == ["claude", "codex", "grok", "openrouter"])
+        // The app's order still uses its weekly reset.
+        var preferences = UsageCardPreferences()
+        preferences.usesDefaultSort = true
+        preferences.defaultSortRule = .weeklyReset
+        let app = UsageCardOrdering.arrange(
+            providers.map {
+                UsageCardSortDescriptor(
+                    key: $0.providerID,
+                    name: $0.providerName,
+                    secondaryName: "",
+                    weeklyResetAt: $0.weeklyResetsAt)
+            },
+            preferences: preferences).others
+        #expect(app.first == "grok")
     }
 
     @Test func `Manual selection keeps the existing overview`() {
