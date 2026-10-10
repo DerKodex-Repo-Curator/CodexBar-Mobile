@@ -195,6 +195,14 @@ struct SoonestWeeklyResetTests {
             Self.window(id: "claude-weekly-scoped-fable", label: "Fable only", minutes: 10080, resetInHours: 30),
         ])
         #expect(WeeklyResetWindow.nextReset(for: sonnetOnly, now: Self.now) == Self.now.addingTimeInterval(20 * 3600))
+        // An account window without a reset time still claims the account's
+        // place: the carve-out's reset never stands in for it.
+        let resetlessAccount = Self.provider("claude", windows: [
+            Self.window(id: "secondary", label: "Weekly", minutes: 10080, resetInHours: nil),
+            Self.window(id: "tertiary", label: "Sonnet", minutes: 10080, resetInHours: 20),
+        ])
+        #expect(WeeklyResetWindow.nextReset(for: resetlessAccount, now: Self.now) == nil)
+        #expect(UsageCardOrdering.weeklyResetDate(for: resetlessAccount, now: Self.now) == nil)
         // Other providers' third slot is an ordinary window.
         let other = Self.provider("minimax", windows: [
             Self.window(id: "secondary", minutes: 10080, resetInHours: 100),

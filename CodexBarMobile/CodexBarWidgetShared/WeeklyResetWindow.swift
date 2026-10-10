@@ -80,13 +80,16 @@ enum WeeklyResetWindow {
     /// `claude-routines` limits are carve-outs that never stand for the
     /// account (`QuotaPaceWindowSelection.isAccountWeeklyCandidate`, the Mac's
     /// weekly switcher rule). Without one, every weekly window counts. The
-    /// app's card order, the widget order and the widget tile all use this.
+    /// pool is chosen before reset-less windows drop out, so an account
+    /// window without a reset time never hands the account's place to a
+    /// carve-out. The app's card order, the widget order and the widget tile
+    /// all use this.
     static func soonest(
         for provider: ProviderUsageSnapshot,
         now: Date) -> (window: SyncRateWindow, nextReset: Date)?
     {
         let weekly = QuotaPaceWindowSelection.candidates(for: provider).filter { candidate in
-            candidate.window.resetsAt != nil && self.isWeekly(candidate.window, observedAt: provider.lastUpdated)
+            self.isWeekly(candidate.window, observedAt: provider.lastUpdated)
         }
         let account = weekly.filter {
             QuotaPaceWindowSelection.isAccountWeeklyCandidate($0, providerID: provider.providerID)
