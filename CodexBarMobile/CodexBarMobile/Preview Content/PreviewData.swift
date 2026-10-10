@@ -213,21 +213,29 @@ enum PreviewData {
                 modelMix: [("gpt-4.1", 0.58), ("gpt-4o", 0.42)])))
 
     /// Realistic Mac-synced black icon tint for Dark Mode contrast checks.
+    /// The window is Grok's weekly credits pool as the Mac syncs it
+    /// (Research/073): no period, the billing period floored to 10079
+    /// minutes, and the Mac's "Weekly" label.
     static let grokProvider = ProviderUsageSnapshot(
         providerID: "grok",
         providerName: "Grok",
-        primary: SyncRateWindow(
-            usedPercent: 22,
-            windowMinutes: 300,
-            resetsAt: Date().addingTimeInterval(3600 * 2),
-            resetDescription: nil),
+        primary: grokWeeklyWindow,
         secondary: nil,
         accountEmail: nil,
         loginMethod: "Premium",
         statusMessage: nil,
         isError: false,
         lastUpdated: Date().addingTimeInterval(-120),
+        rateWindows: [grokWeeklyWindow],
         providerIconTintHex: "#000000")
+
+    private static let grokWeeklyWindow = SyncRateWindow(
+        id: "primary",
+        label: "Weekly",
+        usedPercent: 0,
+        windowMinutes: 10079,
+        resetsAt: Date().addingTimeInterval(3600 * 24 * 3),
+        resetDescription: nil)
 
     // MARK: - iOS 1.7.0 / v0.26 preview providers
 

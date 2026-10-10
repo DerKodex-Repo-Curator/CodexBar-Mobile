@@ -15,7 +15,8 @@ struct CodexBarStatusTimelineProvider: IntentTimelineProvider {
         completion(CodexBarWidgetEntry(
             date: .now,
             configuration: StatusWidgetConfigurationAdapter.configuration(from: configuration),
-            snapshot: context.isPreview ? .placeholder() : .syncing()))
+            snapshot: context.isPreview ? .placeholder() : .syncing(),
+            overviewSelection: StatusWidgetConfigurationAdapter.overviewSelection(from: configuration)))
     }
 
     func getTimeline(
@@ -24,6 +25,7 @@ struct CodexBarStatusTimelineProvider: IntentTimelineProvider {
         completion: @escaping @Sendable (Timeline<CodexBarWidgetEntry>) -> Void)
     {
         let configuration = StatusWidgetConfigurationAdapter.configuration(from: intent)
+        let selection = StatusWidgetConfigurationAdapter.overviewSelection(from: intent)
         #if DEBUG
         let providerIDs = (configuration.providers ?? []).map(\.id).joined(separator: ",")
         Logger(subsystem: "com.o1xhack.codexbar.mobile.widgets", category: "status")
@@ -31,13 +33,16 @@ struct CodexBarStatusTimelineProvider: IntentTimelineProvider {
                 """
                 sirikit status timeline mode=\(configuration.mode.rawValue, privacy: .public), \
                 style=\(configuration.colorStyle.rawValue, privacy: .public), \
-                providerIDs=\(providerIDs, privacy: .public)
+                providerIDs=\(providerIDs, privacy: .public), \
+                selection=\(selection.logDescription, privacy: .public)
                 """)
         #endif
         // WidgetKit owns this one-shot callback request and provides no cancellation hook.
         // Convert INIntent before crossing isolation; fetches stay in the shared timeline path.
         Task {
-            await completion(CodexBarWidgetProvider.makeTimeline(configuration: configuration))
+            await completion(CodexBarWidgetProvider.makeTimeline(
+                configuration: configuration,
+                overviewSelection: selection))
         }
     }
 }
@@ -99,21 +104,24 @@ struct StatusAppIntentTimelineProvider: AppIntentTimelineProvider {
         CodexBarWidgetEntry(
             date: .now,
             configuration: StatusWidgetConfigurationAdapter.configuration(from: intent),
-            snapshot: context.isPreview ? .placeholder() : .syncing())
+            snapshot: context.isPreview ? .placeholder() : .syncing(),
+            overviewSelection: StatusWidgetConfigurationAdapter.overviewSelection(from: intent))
     }
 
     func timeline(for intent: StatusWidgetAppIntent, in _: Context) async -> Timeline<CodexBarWidgetEntry> {
         let configuration = StatusWidgetConfigurationAdapter.configuration(from: intent)
+        let selection = StatusWidgetConfigurationAdapter.overviewSelection(from: intent)
         #if DEBUG
         let providerIDs = (configuration.providers ?? []).map(\.id).joined(separator: ",")
         appIntentTimelineLogger.notice(
             """
             appintent status timeline mode=\(configuration.mode.rawValue, privacy: .public), \
             style=\(configuration.colorStyle.rawValue, privacy: .public), \
-            providerIDs=\(providerIDs, privacy: .public)
+            providerIDs=\(providerIDs, privacy: .public), \
+            selection=\(selection.logDescription, privacy: .public)
             """)
         #endif
-        return await CodexBarWidgetProvider.makeTimeline(configuration: configuration)
+        return await CodexBarWidgetProvider.makeTimeline(configuration: configuration, overviewSelection: selection)
     }
 }
 

@@ -32,3 +32,16 @@
 /* Build 233 status widgets keep their schema; keep these labels translated. */
 "CBStatusStatusWidgetModequotaPace" = "Quota pace";
 "CBStatuspaceProvider" = "Provider";
+
+/* Overview provider selection (Research/073). */
+"CBStatusproviderSelection" = "Provider Selection";
+"CBStatusStatusWidgetProviderSelectionTitle" = "Provider Selection";
+"CBStatusStatusWidgetProviderSelectionunknown" = "Unknown";
+"CBStatusStatusWidgetProviderSelectionmanual" = "Choose Manually";
+"CBStatusStatusWidgetProviderSelectionsoonestWeeklyReset" = "By Weekly Reset (Soonest First)";
+"CBStatusproviderCount" = "Number of Providers";
+"CBStatusStatusWidgetProviderCountTitle" = "Number of Providers";
+"CBStatusStatusWidgetProviderCountunknown" = "Unknown";
+"CBStatusStatusWidgetProviderCounttwo" = "2";
+"CBStatusStatusWidgetProviderCountthree" = "3";
+"CBStatusStatusWidgetProviderCountfour" = "4";

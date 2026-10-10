@@ -70,6 +70,54 @@ enum StatusWidgetColorStyleAppEnum: String, AppEnum {
     ]
 }
 
+/// SiriKit `StatusWidgetProviderSelection`: how the overview picks its
+/// providers (Research/073).
+@available(iOS 27.0, *)
+enum StatusWidgetProviderSelectionAppEnum: String, AppEnum {
+    case manual
+    case soonestWeeklyReset
+
+    static let typeDisplayRepresentation = TypeDisplayRepresentation(name: LocalizedStringResource(
+        "Provider Selection",
+        table: "WidgetConfiguration"))
+
+    static let caseDisplayRepresentations: [StatusWidgetProviderSelectionAppEnum: DisplayRepresentation] = [
+        .manual: DisplayRepresentation(title: LocalizedStringResource(
+            "Choose Manually",
+            table: "WidgetConfiguration")),
+        .soonestWeeklyReset: DisplayRepresentation(title: LocalizedStringResource(
+            "By Weekly Reset (Soonest First)",
+            table: "WidgetConfiguration")),
+    ]
+}
+
+/// SiriKit `StatusWidgetProviderCount`: how many providers the "By weekly
+/// reset" overview shows (Research/073).
+@available(iOS 27.0, *)
+enum StatusWidgetProviderCountAppEnum: String, AppEnum {
+    case two
+    case three
+    case four
+
+    static let typeDisplayRepresentation = TypeDisplayRepresentation(name: LocalizedStringResource(
+        "Number of Providers",
+        table: "WidgetConfiguration"))
+
+    static let caseDisplayRepresentations: [StatusWidgetProviderCountAppEnum: DisplayRepresentation] = [
+        .two: DisplayRepresentation(title: LocalizedStringResource("2", table: "WidgetConfiguration")),
+        .three: DisplayRepresentation(title: LocalizedStringResource("3", table: "WidgetConfiguration")),
+        .four: DisplayRepresentation(title: LocalizedStringResource("4", table: "WidgetConfiguration")),
+    ]
+
+    var count: Int {
+        switch self {
+        case .two: 2
+        case .three: 3
+        case .four: 4
+        }
+    }
+}
+
 /// SiriKit `TokenActivitySource`.
 @available(iOS 27.0, *)
 enum TokenActivitySourceAppEnum: String, AppEnum {
@@ -298,6 +346,14 @@ struct StatusWidgetAppIntent: WidgetConfigurationIntent {
     @Parameter(title: LocalizedStringResource("Color Style", table: "WidgetConfiguration"), default: .mono)
     var colorStyle: StatusWidgetColorStyleAppEnum
 
+    @Parameter(
+        title: LocalizedStringResource("Provider Selection", table: "WidgetConfiguration"),
+        default: .manual)
+    var providerSelection: StatusWidgetProviderSelectionAppEnum
+
+    @Parameter(title: LocalizedStringResource("Number of Providers", table: "WidgetConfiguration"), default: .two)
+    var providerCount: StatusWidgetProviderCountAppEnum
+
     @Parameter(title: LocalizedStringResource("Provider 1", table: "WidgetConfiguration"))
     var provider1: StatusWidgetProviderAppEntity?
 
@@ -310,17 +366,30 @@ struct StatusWidgetAppIntent: WidgetConfigurationIntent {
     @Parameter(title: LocalizedStringResource("Provider 4", table: "WidgetConfiguration"))
     var provider4: StatusWidgetProviderAppEntity?
 
-    /// The provider slots belong to the overview only, as their SiriKit
-    /// parent relation (`mode` EnumHasExactValue `overview`).
+    /// The provider selection belongs to the overview; the provider slots to
+    /// manual selection and the count to "By weekly reset" (Research/073).
+    /// SiriKit gives each parameter one parent and does not hide the
+    /// children of a hidden parameter, so there the slots stay under `mode`
+    /// and also show with "By weekly reset" (where they are ignored).
     static var parameterSummary: some ParameterSummary {
         When(\.$mode, .equalTo, StatusWidgetModeAppEnum.overview) {
-            Summary {
-                \.$mode
-                \.$colorStyle
-                \.$provider1
-                \.$provider2
-                \.$provider3
-                \.$provider4
+            When(\.$providerSelection, .equalTo, StatusWidgetProviderSelectionAppEnum.soonestWeeklyReset) {
+                Summary {
+                    \.$mode
+                    \.$colorStyle
+                    \.$providerSelection
+                    \.$providerCount
+                }
+            } otherwise: {
+                Summary {
+                    \.$mode
+                    \.$colorStyle
+                    \.$providerSelection
+                    \.$provider1
+                    \.$provider2
+                    \.$provider3
+                    \.$provider4
+                }
             }
         } otherwise: {
             Summary {
@@ -335,10 +404,14 @@ struct StatusWidgetAppIntent: WidgetConfigurationIntent {
     init(
         mode: StatusWidgetModeAppEnum,
         colorStyle: StatusWidgetColorStyleAppEnum = .mono,
+        providerSelection: StatusWidgetProviderSelectionAppEnum = .manual,
+        providerCount: StatusWidgetProviderCountAppEnum = .two,
         providers: [StatusWidgetProviderAppEntity?] = [])
     {
         self.mode = mode
         self.colorStyle = colorStyle
+        self.providerSelection = providerSelection
+        self.providerCount = providerCount
         let slots = providers + Array(repeating: nil, count: max(0, 4 - providers.count))
         self.provider1 = slots[0]
         self.provider2 = slots[1]

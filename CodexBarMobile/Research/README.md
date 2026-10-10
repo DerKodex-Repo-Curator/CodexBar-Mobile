@@ -17,6 +17,7 @@ This directory contains research documents for features being considered for Cod
 
 | # | Feature | Status | Blocker | File | Date |
 |---|---------|--------|---------|------|------|
+| 073 | 每周窗口统一判定（修 Grok 显示“No weekly reset”）+ CodexBar 小组件概览“按每周重置（最近的在前）”2/3/4 个（SiriKit 与 App Intents 共用 adapter） | `done` | iOS 2.7.0 (240) 本地提交；iOS 27.0 / 26.5 模拟器实测通过；SiriKit 槽位在该模式下仍显示（单父参数限制）；真机待验 | [073-soonest-weekly-reset-widget.md](073-soonest-weekly-reset-widget.md) | 2026-10-10 |
 | 072 | iOS 27 起改用 App Intents 小组件（新 kind，只用 `AppIntentConfiguration`；SiriKit 小组件全系统保留，iOS 27 起从图库隐藏；不走系统迁移，因为 iOS 26 会用迁移的 App Intent 编辑 SiriKit 小组件并使其失效） | `done` | PR #188，iOS 2.6.0 (239)；模拟器实测见第 6 节；已知验证缺口：真机待验 | [072-widget-appintents-migration.md](072-widget-appintents-migration.md) | 2026-10-09 |
 | 071 | 额度消耗趋势小组件：按服务商选择额度窗口（Claude 当前周期 / 每周 / 仅 Fable，Antigravity 多窗口；默认每周；SiriKit 动态选项 + 父参数联动） | `done` | PR #187 合并（`ff49aec70`），iOS 2.6.0 (238) 已上 TestFlight；全量单测与渲染矩阵通过；已添加的小组件需重新添加才看到新参数；真机待验 | [071-widget-window-picker.md](071-widget-window-picker.md) | 2026-10-08 |
 | 070 | v0.73.0 上游同步 + Mac 0.72.0.1 成本回归修复（Codex ledger 迁移、已发布 fork 缓存重建、Claude 空条目、推送重试、Langdock） | `in-progress` | PR #186 合并；Mac 0.73.0.1 已公开发布、appcast 恢复；iOS 2.6.0 (237/238) 已上 TestFlight；待真机验证、账本数据恢复与重新送审 | [070-v073-upstream-sync/00-overview.md](070-v073-upstream-sync/00-overview.md) | 2026-10-08 |

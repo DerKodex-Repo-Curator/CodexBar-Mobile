@@ -70,6 +70,8 @@ struct WidgetConfigurationAppIntentsTests {
     private static let enumCases: [String: [String]] = [
         "StatusWidgetModeAppEnum": StatusWidgetModeAppEnum.allCases.map(\.rawValue),
         "StatusWidgetColorStyleAppEnum": StatusWidgetColorStyleAppEnum.allCases.map(\.rawValue),
+        "StatusWidgetProviderSelectionAppEnum": StatusWidgetProviderSelectionAppEnum.allCases.map(\.rawValue),
+        "StatusWidgetProviderCountAppEnum": StatusWidgetProviderCountAppEnum.allCases.map(\.rawValue),
         "TokenActivitySourceAppEnum": TokenActivitySourceAppEnum.allCases.map(\.rawValue),
     ]
 
@@ -192,10 +194,17 @@ struct WidgetConfigurationAppIntentsTests {
         try Self.expectParity(
             (intent: "SelectStatusWidget", definition: "WidgetStatus"),
             appIntent: status,
-            enumDefaults: ["mode": status.mode.rawValue, "colorStyle": status.colorStyle.rawValue],
+            enumDefaults: [
+                "mode": status.mode.rawValue,
+                "colorStyle": status.colorStyle.rawValue,
+                "providerSelection": status.providerSelection.rawValue,
+                "providerCount": status.providerCount.rawValue,
+            ],
             enumTypes: [
                 "StatusWidgetMode": "StatusWidgetModeAppEnum",
                 "StatusWidgetColorStyle": "StatusWidgetColorStyleAppEnum",
+                "StatusWidgetProviderSelection": "StatusWidgetProviderSelectionAppEnum",
+                "StatusWidgetProviderCount": "StatusWidgetProviderCountAppEnum",
             ],
             entityTypes: ["StatusWidgetProvider": "StatusWidgetProviderAppEntity"])
     }

@@ -32,3 +32,16 @@
 /* Build 233 status widgets keep their schema; keep these labels translated. */
 "CBStatusStatusWidgetModequotaPace" = "額度消耗趨勢";
 "CBStatuspaceProvider" = "服務商";
+
+/* Overview provider selection (Research/073). */
+"CBStatusproviderSelection" = "服務商選擇方式";
+"CBStatusStatusWidgetProviderSelectionTitle" = "服務商選擇方式";
+"CBStatusStatusWidgetProviderSelectionunknown" = "未知";
+"CBStatusStatusWidgetProviderSelectionmanual" = "手動選擇";
+"CBStatusStatusWidgetProviderSelectionsoonestWeeklyReset" = "按每週重置（最近的在前）";
+"CBStatusproviderCount" = "服務商數量";
+"CBStatusStatusWidgetProviderCountTitle" = "服務商數量";
+"CBStatusStatusWidgetProviderCountunknown" = "未知";
+"CBStatusStatusWidgetProviderCounttwo" = "2";
+"CBStatusStatusWidgetProviderCountthree" = "3";
+"CBStatusStatusWidgetProviderCountfour" = "4";

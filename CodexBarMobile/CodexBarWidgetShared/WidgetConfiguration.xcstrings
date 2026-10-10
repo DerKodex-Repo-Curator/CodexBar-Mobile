@@ -1,6 +1,96 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "2" : {
+      "comment" : "Widget configuration (App Intents, iOS 27+); same wording as SiriKit CBStatusStatusWidgetProviderCounttwo.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2"
+          }
+        }
+      }
+    },
+    "3" : {
+      "comment" : "Widget configuration (App Intents, iOS 27+); same wording as SiriKit CBStatusStatusWidgetProviderCountthree.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3"
+          }
+        }
+      }
+    },
+    "4" : {
+      "comment" : "Widget configuration (App Intents, iOS 27+); same wording as SiriKit CBStatusStatusWidgetProviderCountfour.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4"
+          }
+        }
+      }
+    },
     "All" : {
       "comment" : "Widget configuration (App Intents, iOS 27+); same wording as SiriKit CBWall.",
       "extractionState" : "manual",
@@ -27,6 +117,66 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "すべて"
+          }
+        }
+      }
+    },
+    "By Weekly Reset (Soonest First)" : {
+      "comment" : "Widget configuration (App Intents, iOS 27+); same wording as SiriKit CBStatusStatusWidgetProviderSelectionsoonestWeeklyReset.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By Weekly Reset (Soonest First)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按每周重置（最近的在前）"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按每週重置（最近的在前）"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "週次リセット順（近い順）"
+          }
+        }
+      }
+    },
+    "Choose Manually" : {
+      "comment" : "Widget configuration (App Intents, iOS 27+); same wording as SiriKit CBStatusStatusWidgetProviderSelectionmanual.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose Manually"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手动选择"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手動選擇"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手動で選ぶ"
           }
         }
       }
@@ -301,6 +451,36 @@
         }
       }
     },
+    "Number of Providers" : {
+      "comment" : "Widget configuration (App Intents, iOS 27+); same wording as SiriKit CBStatusproviderCount.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Number of Providers"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务商数量"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服務商數量"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロバイダーの数"
+          }
+        }
+      }
+    },
     "Overview" : {
       "comment" : "Widget configuration (App Intents, iOS 27+); same wording as SiriKit CBStatusStatusWidgetModeoverview.",
       "extractionState" : "manual",
@@ -507,6 +687,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "プロバイダー詳細"
+          }
+        }
+      }
+    },
+    "Provider Selection" : {
+      "comment" : "Widget configuration (App Intents, iOS 27+); same wording as SiriKit CBStatusproviderSelection.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provider Selection"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务商选择方式"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服務商選擇方式"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロバイダーの選び方"
           }
         }
       }

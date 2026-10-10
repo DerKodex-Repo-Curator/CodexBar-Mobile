@@ -85,6 +85,10 @@ struct UsageCardSortDescriptor: Equatable, Sendable {
     let name: String
     let secondaryName: String
     let weeklyResetAt: Date?
+
+    var orderingKey: WeeklyResetOrdering.Key {
+        WeeklyResetOrdering.Key(resetAt: self.weeklyResetAt, name: self.name, secondaryName: self.secondaryName)
+    }
 }
 
 struct UsageCardArrangement: Equatable, Sendable {
@@ -135,74 +139,32 @@ enum UsageCardOrdering {
         rule: UsageDefaultSortRule,
         sourceIndex: [String: Int]) -> Bool
     {
-        switch rule {
+        let result: Bool? = switch rule {
         case .alphabeticalAscending:
-            if let result = self.compareNames(lhs, rhs, descending: false) { return result }
+            WeeklyResetOrdering.compareNames(lhs.orderingKey, rhs.orderingKey, descending: false)
         case .alphabeticalDescending:
-            if let result = self.compareNames(lhs, rhs, descending: true) { return result }
+            WeeklyResetOrdering.compareNames(lhs.orderingKey, rhs.orderingKey, descending: true)
         case .weeklyReset:
-            switch (lhs.weeklyResetAt, rhs.weeklyResetAt) {
-            case let (left?, right?) where left != right:
-                return left < right
-            case (.some, nil):
-                return true
-            case (nil, .some):
-                return false
-            default:
-                if let result = self.compareNames(lhs, rhs, descending: false) { return result }
-            }
+            // Shared with the CodexBar widget's "By weekly reset" overview
+            // (Research/073).
+            WeeklyResetOrdering.precedes(lhs.orderingKey, rhs.orderingKey)
         }
-        return sourceIndex[lhs.key, default: 0] < sourceIndex[rhs.key, default: 0]
-    }
-
-    /// Provider name first, then the account label (always ascending so the
-    /// accounts of one provider stay readable in both directions).
-    private static func compareNames(
-        _ lhs: UsageCardSortDescriptor,
-        _ rhs: UsageCardSortDescriptor,
-        descending: Bool) -> Bool?
-    {
-        let primary = Self.compare(lhs.name, rhs.name)
-        if primary != .orderedSame {
-            return descending ? primary == .orderedDescending : primary == .orderedAscending
-        }
-        let secondary = Self.compare(lhs.secondaryName, rhs.secondaryName)
-        if secondary != .orderedSame {
-            return secondary == .orderedAscending
-        }
-        return nil
-    }
-
-    private static func compare(_ lhs: String, _ rhs: String) -> ComparisonResult {
-        lhs.compare(rhs, options: [.caseInsensitive, .numeric, .diacriticInsensitive, .widthInsensitive])
+        return result ?? (sourceIndex[lhs.key, default: 0] < sourceIndex[rhs.key, default: 0])
     }
 
     // MARK: Weekly reset
 
     /// Next weekly reset of a snapshot, or nil when it has no weekly window
-    /// with a reset time (API-key providers, credit balances). A reset time
-    /// already in the past rolls forward by whole weeks, so a snapshot that
-    /// has not refreshed since its reset still sorts by its next one.
+    /// with a reset time (API-key providers, credit balances). The weekly
+    /// rule, the account-level window preference and the roll-forward of
+    /// past resets live in `WeeklyResetWindow` (Research/073), shared with
+    /// the widget.
     static func weeklyResetDate(for snapshot: ProviderUsageSnapshot, now: Date) -> Date? {
-        snapshot.allRateWindows
-            .filter(self.isWeekly)
-            .compactMap(\.resetsAt)
-            .map { Self.nextOccurrence(of: $0, after: now) }
-            .min()
+        WeeklyResetWindow.nextReset(for: snapshot, now: now)
     }
 
-    static func isWeekly(_ window: SyncRateWindow) -> Bool {
-        if let period = window.period {
-            return period == .weekly
-        }
-        return window.windowMinutes == 7 * 24 * 60
-    }
-
-    private static func nextOccurrence(of reset: Date, after now: Date) -> Date {
-        guard reset <= now else { return reset }
-        let week: TimeInterval = 7 * 24 * 60 * 60
-        let elapsedWeeks = floor(now.timeIntervalSince(reset) / week) + 1
-        return reset.addingTimeInterval(elapsedWeeks * week)
+    static func isWeekly(_ window: SyncRateWindow, observedAt: Date) -> Bool {
+        WeeklyResetWindow.isWeekly(window, observedAt: observedAt)
     }
 
     static func descriptor(for card: UsageCard, now: Date) -> UsageCardSortDescriptor {

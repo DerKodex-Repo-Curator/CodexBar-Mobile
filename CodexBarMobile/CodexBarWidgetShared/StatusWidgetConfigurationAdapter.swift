@@ -33,6 +33,33 @@ enum StatusWidgetConfigurationAdapter {
                 .map { (id: $0?.id, name: $0?.displayString) }))
     }
 
+    /// The overview's provider selection (Research/073). Widgets added
+    /// before the parameter existed read `unknown` and keep manual selection.
+    static func overviewSelection(from intent: SelectStatusWidgetIntent) -> WidgetOverviewSelection {
+        let count: Int? = switch intent.providerCount {
+        case .two: 2
+        case .three: 3
+        case .four: 4
+        default: nil
+        }
+        return self.overviewSelection(
+            soonestWeeklyReset: intent.providerSelection == .soonestWeeklyReset,
+            count: count)
+    }
+
+    @available(iOS 27.0, *)
+    static func overviewSelection(from intent: StatusWidgetAppIntent) -> WidgetOverviewSelection {
+        self.overviewSelection(
+            soonestWeeklyReset: intent.providerSelection == .soonestWeeklyReset,
+            count: intent.providerCount.count)
+    }
+
+    private static func overviewSelection(soonestWeeklyReset: Bool, count: Int?) -> WidgetOverviewSelection {
+        guard soonestWeeklyReset else { return .manual }
+        return .soonestWeeklyReset(count: WidgetOverviewSelection.clampedCount(
+            count ?? WidgetOverviewSelection.defaultCount))
+    }
+
     /// Quota pace is its own widget kind rather than a status widget mode:
     /// SiriKit keeps the configuration schema a widget was added with, so a
     /// new mode never reaches status widgets placed before the update.
