@@ -154,3 +154,14 @@ iOS 27 的 App Intents 小组件按设计隐藏（嵌套 `When` 实测正常）�
 
 - iOS 2.7.0 (240)，只改 iOS。Mac 的 `version.env`（`MOBILE_VERSION=2.6.0`）不动：`docs/versioning.md` 规定 `MOBILE_VERSION` 只在发 Mac release 时写当时已发的 iOS 版本；先例是 2.5.0 只发 iOS 时（`e0c9f9dde`）`MOBILE_VERSION` 保持 2.4.0，直到 Mac 0.72.0.1 发布（`9b15925e7`）才改，2.5.0 送审说明也写明 “iOS-only; the paired Mac version remains …”。
 - 未上传、未推送、未开 PR；提交见交付记录。
+
+## TestFlight（2026-10-10）
+
+- PR #189 两轮 Codex review：
+  - 第一轮 1 条 P2：应先确定用账号级每周窗口，再去掉没有重置时间的窗口。已在 `7ec86b915` 修复并补了单测。
+  - 第二轮 “Didn't find any major issues”。
+  - 门禁通过（unresolved=0），`--match-head-commit` 合并为 `02d6e5405`。
+- 合并前在最终 head 上跑完整 iOS 单测：Swift Testing 1,078 项、XCTest 60 项全部通过。合并后的源码（detached worktree `ios240-src`）完整 lint 和 i18n 审计通过。
+- 已上传 iOS 2.7.0 (240)：Xcode 27.0 正式版（27A266a），ASC build id `3827ee0f-0f94-4de1-b593-055e80910a74`，状态 `VALID`，内测 `IN_BETA_TESTING`。
+- 图标验收：归档里的 `AppIcon60x60@2x.png` 与 238、239 逐字节相同；Apple CDN 上的图标为 152×152，目视正确。
+- 还没做真机验证，也还没送审。2.6.0 (239) 仍在审核中。
