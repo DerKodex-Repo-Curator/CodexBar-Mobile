@@ -165,3 +165,9 @@ iOS 27 的 App Intents 小组件按设计隐藏（嵌套 `When` 实测正常）�
 - 已上传 iOS 2.7.0 (240)：Xcode 27.0 正式版（27A266a），ASC build id `3827ee0f-0f94-4de1-b593-055e80910a74`，状态 `VALID`，内测 `IN_BETA_TESTING`。
 - 图标验收：归档里的 `AppIcon60x60@2x.png` 与 238、239 逐字节相同；Apple CDN 上的图标为 152×152，目视正确。
 - 还没做真机验证，也还没送审。2.6.0 (239) 仍在审核中。
+
+## 送审（2026-10-11）
+
+- 2.6.0 已由用户发布（`READY_FOR_SALE`）。之后经用户同意，新建 App Store 版本 2.7.0（`cb858e1e-c65f-4679-9710-05d2493215db`，MANUAL），绑定 build 240（`3827ee0f`）。
+- 四语言 whatsNew 从 `AppStoreMetadata/2.7.0` 同步，逐条回读一致；审核备注从 `review_notes.txt` 同步；审核联系人、描述、关键词沿用上一版。
+- 审核提交 `3eb06729-8fbc-4b0a-a99e-a911e3fdd7af`，状态 `WAITING_FOR_REVIEW`。审核通过后需手动发布。
