@@ -90,7 +90,8 @@ struct ProviderUsageView: View {
                         tintColor: self.providerColor,
                         percentageAccessibilityIdentifier: "usage-card-percent-\(self.provider.providerID)-\(index)",
                         quotaWarningThresholds: warning.thresholds,
-                        quotaWarningsEnabled: warning.enabled)
+                        quotaWarningsEnabled: warning.enabled,
+                        isEstimated: self.provider.usageDataConfidence == "estimated")
                 }
                 if let amount = self.provider.providerAmount {
                     ProviderAmountCard(amount: amount, tintColor: self.providerColor)
@@ -447,17 +448,8 @@ struct ProviderUsageView: View {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
-        formatter.timeZone = self.subscriptionDateTimeZone
+        formatter.timeZone = SubscriptionDateTimeZone.timeZone(providerID: self.provider.providerID, date: date)
         return formatter.string(from: date)
-    }
-
-    private var subscriptionDateTimeZone: TimeZone {
-        if self.provider.providerID == "minimax",
-           let shanghai = TimeZone(identifier: "Asia/Shanghai")
-        {
-            return shanghai
-        }
-        return .current
     }
 
     private static func formatUSD(_ value: Double) -> String { CostFormatting.usd(value) }

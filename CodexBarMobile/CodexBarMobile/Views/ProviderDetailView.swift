@@ -575,7 +575,8 @@ struct ProviderDetailView: View {
                         tintColor: self.providerColor,
                         percentageAccessibilityIdentifier: "provider-detail-percent-\(self.provider.providerID)-\(index)",
                         quotaWarningThresholds: warning.thresholds,
-                        quotaWarningsEnabled: warning.enabled)
+                        quotaWarningsEnabled: warning.enabled,
+                        isEstimated: self.provider.usageDataConfidence == "estimated")
                 }
             }
         }

@@ -1,0 +1,8 @@
+• Mac の Aerostack、Cosmic AI、Tavily、Exa、Linkup、TinyApi、Sail Research、Sofya、X API を、それぞれ専用の色で表示できます。Aerostack、Cosmic AI、Tavily は使用上限の通知を送れます。
+• X API のカードにクレジット残高が表示されます。残高がマイナスの場合も表示されます。
+• Qwen Cloud のチームプランは「5時間」ではなく「チーム」と表示され、詳細でクレジットとシートを確認できます。
+• Claude のプランの更新日または終了日が、Mac と同じ日付で表示されます。
+• Mac が推定しかできない使用量（OpenCode Go など）は、カードで先頭に ~ が付きます。
+• Ollama のクレジット、JetBrains AI の追加購入したクレジット、xAI のリアルタイム残高の推定、Qwen Cloud のチームプランなど、より多くのプロバイダの詳細が翻訳されました。
+• Mac の Claude Code で再度サインインしたとき、その Mac でアクセスを回復する方法が表示されます。
+• これらのプロバイダと詳細を表示するには、Mac の CodexBar を 0.74.1.1 以降にアップデートしてください。

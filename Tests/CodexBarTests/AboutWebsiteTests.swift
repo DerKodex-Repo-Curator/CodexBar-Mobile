@@ -7,11 +7,8 @@ import Testing
 struct AboutWebsiteTests {
     @Test
     func `website link matches the published project domain`() throws {
-        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
-            .deletingLastPathComponent().deletingLastPathComponent()
-        let domain = try String(contentsOf: root.appendingPathComponent("docs/CNAME"), encoding: .utf8)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        #expect(try Self.websiteURL() == "https://\(domain)")
+        // Fork: About links to the CodexBar Mobile site; docs/CNAME is the upstream codexbar.app site.
+        #expect(try Self.websiteURL() == "https://codexbarios.o1xhack.com")
     }
 
     @Test
