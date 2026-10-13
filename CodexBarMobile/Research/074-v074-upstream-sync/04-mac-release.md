@@ -26,7 +26,7 @@ TMPDIR=$S/release-tmp CODEXBAR_RELEASE_STAGE_BASE=$S/release-stage \
 ## 版本与资产
 
 - `0.74.1.1` / `167.1` / Mobile `2.8.0`；包内 `CFBundleVersion = 167.1.2.8.0`（= Sparkle `sparkle:version`），`CFBundleShortVersionString = 0.74.1.1`。
-- 构建源码：分支 `upstream-sync/v0.74.1-mobile.2.8.0` 的 `ea96a4f20885da06ee704c532d76e5b7b1661e49`（包内 `CodexGitCommit=ea96a4f20`）。之后的提交只改文档，不涉及 `release.sh` 的 `ARTIFACT_INPUTS`。
+- 构建源码：分支 `upstream-sync/v0.74.1-mobile.2.8.0` 的 `ea96a4f20885da06ee704c532d76e5b7b1661e49`（包内 `CodexGitCommit=ea96a4f20`）。之后的提交只改文档和测试；`25f16e5f2` 的源码改动已被 `4f4a83b19` 完整撤销，`git diff --stat ea96a4f20 HEAD -- <ARTIFACT_INPUTS>` 为空。根 CHANGELOG 有一句措辞在 Draft 之后修正过，Draft 正文需在 tag 提升（`gh release edit`）时一并同步。
 - Draft：https://github.com/o1xhack/CodexBar-Mobile/releases/tag/untagged-0c63a3892183d3ac95f7（`isDraft=true`，标题 `CodexBar 0.74.1.1 Mobile 2.8.0`，tag 名 `v0.74.1.1-mobile.2.8.0` 尚未创建，target 占位为 `mobile-dev`）。说明正文是根 CHANGELOG 的 fork 0.74.1.1 段，末尾注明候选构建所用的本地 commit。
 - `CodexBar-0.74.1.1-mobile.2.8.0.zip`：86,146,754 bytes，SHA256 `7c50273596aae5672061060bd1a88e66ae67a8fcd5e07b9d042392c86e8f28a9`。
 - `CodexBar-0.74.1.1-mobile.2.8.0.dSYM.zip`：69,491,790 bytes，SHA256 `d250d5589413fa8f6263d608137dee42d9a714a3abb1003d31bb176dc96f4a3c`。

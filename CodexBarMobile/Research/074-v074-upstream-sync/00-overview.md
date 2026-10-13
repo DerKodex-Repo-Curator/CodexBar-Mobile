@@ -57,7 +57,10 @@ Date: 2026-10-12
   | `082e96bcc` | iOS 2.8.0 (241) |
   | `c90a62c74` | version.env / 根 CHANGELOG |
   | `2d3b1851e`、`477cae6ff`、`62311603c` | review 与全量测试中的修复 |
-  | `c8d8b06c3`、`ea96a4f20`，以及本文档的收尾提交 | Research 074、CloudKit 审计 |
+  | `c8d8b06c3`、`ea96a4f20`、`20f44a5a7` | Research 074、CloudKit 审计 |
+  | `25f16e5f2` → 撤销 `4f4a83b19` | 误判后改成“重建 0.73.0.1 缓存”，真实日志验证后撤销（净改动为零） |
+  | `1fec5c6ca`、`91b591816` | 0.73.0.1 前驱的补充测试、真实日志成本验证记录 |
+  | 本次收尾提交 | 第 3 轮 review 的措辞修正 |
 
 - **Mac**：已同步到上游 v0.74.1（包含 v0.74.0）。`0.74.1.1 / 167.1 / Mobile 2.8.0`（Sparkle `167.1.2.8.0`）已签名、公证、staple，并生成 **Draft**：https://github.com/o1xhack/CodexBar-Mobile/releases/tag/untagged-0c63a3892183d3ac95f7 （没有 tag，详见 04）。
 - **iOS**：2.8.0 (241)，全部 target 同步；CHANGELOG、应用内说明（2.8.0 Latest，2.7.0 不再标 Latest）、AppStoreMetadata/2.8.0 四语言。没有上传 TestFlight。
@@ -67,11 +70,12 @@ Date: 2026-10-12
   - 多账号/多设备 filter 通过；
   - iOS 完整单测 TEST SUCCEEDED（Swift Testing 1085 项 + XCTest）；
   - iOS Release 设备构建 BUILD SUCCEEDED；
-  - 四语言审计通过。
+  - 四语言审计通过；
+  - 真实日志成本验证：沿用 0.73.0.1 缓存升级后，与全新扫描、0.73.0.1 基线逐天一致，App 路径逐次刷新没有中间低值。
   - 详见 03。
 - **同步兼容 gate**：16 个组合都已列出，均为 substituted（冻结 wire：64 次读取、32 次新旧合并，全部 PASS），没有 fail。
 - **CloudKit**：`NO_DEPLOY`（已写入 `docs/cloudkit-deploy-audit.md`）。
-- **Review**：独立 review agent 两轮。第 1 轮有 1 个阻断、1 个应修和若干小问题，全部已修并复测；第 2 轮没有阻断或应修问题，剩下的小问题也已处理。最终阻断问题为 0。
+- **Review**：独立 review agent 三轮，另有一次成本路径专项审计。第 1 轮有 1 个阻断、1 个应修和若干小问题，全部已修并复测；第 2 轮没有阻断或应修问题；第 3 轮（`477cae6ff..HEAD`）没有阻断问题，1 个应修（根 CHANGELOG 措辞）和 3 个文档小问题都已修正。最终阻断问题为 0。
 - **issue**：#190、#191 保持 open。按发布清单，正式 release 公开后再回复并关闭。
 - **未覆盖风险**：
   - 没有实体 2 Mac × 2 iPhone、Production CloudKit 收敛与 APNs 时序的验证；

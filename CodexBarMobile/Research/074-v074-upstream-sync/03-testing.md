@@ -124,7 +124,7 @@ Status: `done`
 `0d41437dcd95c17e` 加入三张前驱参数表：
 - `CostUsageRequestLedgerMigrationTests`：迁移后保留定价历史和 checkpoint；
 - `CostUsageCoverageCompatibilityTests`：保留实际的 previous report；
-- `CostUsagePerformanceGateTests`：沿用时零次会话头解析。
+- `CostUsagePerformanceGateTests`：沿用时零次会话头解析（fixture 行已经是当前 parser revision；真实的 0.73.0.1 store 被沿用后，仍会按扫描额度做 parser revision 迁移，重新读取日志）。
 
 连同 `CostUsageStoreTests` 共 118 项通过；swiftformat、swiftlint 检查通过。
 
