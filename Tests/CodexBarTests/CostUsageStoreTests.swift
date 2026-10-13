@@ -955,6 +955,7 @@ extension CostUsageStoreTests {
 
 extension CostUsageStoreTests {
     @Test(arguments: [
+        "0d41437dcd95c17e", // Published 0.73.0.1 with the ledger pricing fix.
         "379b799bb4b91683", // Current main before on-demand tool inspection.
         "7ce21041b7a36242", // Prior tool inspection build before upstream process cleanup.
         "0d8f9504f8e63d0f", // Current main before on-demand tool inspection.
@@ -1012,6 +1013,7 @@ extension CostUsageStoreTests {
         let fixture = try StoreFixture()
         defer { fixture.remove() }
         #expect(CostUsageStore.compatiblePredecessorParserHashes == [
+            "0d41437dcd95c17e",
             "379b799bb4b91683",
             "7ce21041b7a36242",
             "0d8f9504f8e63d0f",
@@ -1347,7 +1349,6 @@ extension CostUsageStoreTests {
         "6fbe90ca603fb1e4", // Published 0.68.0.1.
         "11b5eaedd0f337a7", // Published 0.70.0.1.
         "c3e4a66c1b7f0a59", // Published 0.72.0.1.
-        "0d41437dcd95c17e", // Published 0.73.0.1.
     ])
     func `published fork stores before the ledger pricing fix rebuild instead of adopting`(
         previousParserHash: String) async throws
@@ -1356,9 +1357,7 @@ extension CostUsageStoreTests {
         defer { fixture.remove() }
         // Keep these pinned to the generated hashes of the shipped fork releases. Pre-ledger stores lose request
         // pricing when reparsed into request-ledger rows, and 0.72.0.1 stores already carry that loss and
-        // drifted token_count duplicates, so every one of them is rebuilt from the session logs. Adopting a
-        // 0.73.0.1 store under the v0.74 parser-revision migration under-prices fork-priced models (measured on
-        // real logs: GPT-6 Luna at $0, about 6% of 74 days' cost missing), so it is rebuilt as well.
+        // drifted token_count duplicates, so every one of them is rebuilt from the session logs.
         #expect(!CostUsageStore.compatiblePredecessorParserHashes.contains(previousParserHash))
         #expect(CodexParserHash.value != previousParserHash)
         let previousSchemaVersion = CostUsageStore.combinedSchemaVersion(

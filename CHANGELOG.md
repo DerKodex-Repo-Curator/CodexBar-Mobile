@@ -13,7 +13,7 @@
 ### Changed
 
 - Sync upstream v0.74.0 and v0.74.1 in one fork release, retaining the complete upstream provider, Codex account, Usage & Spend, menu bar, widget, localization, packaging, and Linux changes listed below.
-- Codex cost caches written by 0.73.0.1 are rebuilt from local session logs once after updating, like caches from earlier fork releases, so every day keeps the same prices as a fresh scan; no manual cache clear is needed.
+- Codex cost caches written by 0.73.0.1 are kept and upgraded in place like upstream 0.73.0 caches, so updating does not rescan Codex session logs.
 - Preserve fork CloudKit Production publishing, mobile payloads, download entrypoints, About links, and the fast PR / post-merge CI policy.
 
 ### Fixed
