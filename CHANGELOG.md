@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.74.1.1 — 2026-10-12
+
+### Highlights
+
+- New providers: X API, Tavily, Linkup, TinyApi, Exa, Cosmic AI, Aerostack, Sail Research, and Sofya; Qwen Cloud shows Team Token Plan credits, Ollama API keys read the monthly allowance and credit balance, and JetBrains AI shows top-up credits.
+- Codex: saved accounts show their own usage and refresh one at a time in Settings, and the Cost menu shows saved conversation titles.
+- Claude: shows when the plan renews or expires, gives clear Refresh guidance after Claude Code signs in again, and keeps Plan Usage history across token rotations.
+- Menu bar: optionally follow the frontmost Codex, Claude, Cursor, or Antigravity app, color icons by provider, mark estimated percentages with "~", and no blank Settings window at launch.
+- The iPhone companion (Mobile 2.8) receives the new providers, the X API balance, Qwen Cloud team plans, Claude renewal dates, and estimated-usage markers.
+
+### Changed
+
+- Sync upstream v0.74.0 and v0.74.1 in one fork release, retaining the complete upstream provider, Codex account, Usage & Spend, menu bar, widget, localization, packaging, and Linux changes listed below.
+- Codex cost caches written by 0.73.0.1 are kept and upgraded in place like upstream 0.73.0 caches, so updating does not rescan Codex session logs.
+- Preserve fork CloudKit Production publishing, mobile payloads, download entrypoints, About links, and the fast PR / post-merge CI policy.
+
+### Fixed
+
+- Mobile snapshots publish the X API credit balance (including negative balances), keep Qwen Cloud's Team and Monthly window labels, and send date-only Claude renewal and expiry dates at midday UTC so iPhones show the same day as the Mac.
+- A Settings refresh of one Codex account updates that account without counting as a complete iPhone publication.
+
 ## 0.74.1 — 2026-10-11
 
 ### Added
