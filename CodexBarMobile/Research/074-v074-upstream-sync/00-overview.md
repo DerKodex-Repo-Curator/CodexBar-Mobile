@@ -1,6 +1,6 @@
 # v0.74.0–v0.74.1 单版本上游同步 + iOS 2.8.0
 
-Status: `in-progress`
+Status: `done`（Mac Draft 已生成；未推送、未合并、未公开发布）
 Date: 2026-10-12
 
 ## 范围与依据
@@ -43,4 +43,40 @@ Date: 2026-10-12
 
 ## 授权边界
 
-本 Goal 不包括 live release、TestFlight 上传、tag 发布、merge 与 push；遇到发布凭证、CloudKit schema deploy 或无法判断的 iOS scope 时暂停询问。
+本 Goal 不包括 live release、TestFlight 上传、tag 发布、merge 与 push；遇到发布凭证、CloudKit schema deploy 或无法判断的 iOS scope 时暂停询问。2026-10-13 用户确认可以用本机凭证生成 Mac Draft。
+
+## 最终交付状态（2026-10-13）
+
+- **分支**：所有工作都在 `upstream-sync/v0.74.1-mobile.2.8.0`（worktree `CodexBar-upstream-v074`）完成，没有动 mobile-dev。本地 commit（未推送）：
+
+  | Commit | 内容 |
+  |---|---|
+  | `cd7431995` | merge 上游 v0.74.1 + 冲突解决 + 编译修复 |
+  | `b23b79928` | README 移植上游事实 + guard hash |
+  | `300064fac` | Mac→iOS 桥接、QuotaProviderList、mock、strings 去重 |
+  | `082e96bcc` | iOS 2.8.0 (241) |
+  | `c90a62c74` | version.env / 根 CHANGELOG |
+  | `2d3b1851e`、`477cae6ff`、`62311603c` | review 与全量测试中的修复 |
+  | `c8d8b06c3`、`ea96a4f20`，以及本文档的收尾提交 | Research 074、CloudKit 审计 |
+
+- **Mac**：已同步到上游 v0.74.1（包含 v0.74.0）。`0.74.1.1 / 167.1 / Mobile 2.8.0`（Sparkle `167.1.2.8.0`）已签名、公证、staple，并生成 **Draft**：https://github.com/o1xhack/CodexBar-Mobile/releases/tag/untagged-0c63a3892183d3ac95f7 （没有 tag，详见 04）。
+- **iOS**：2.8.0 (241)，全部 target 同步；CHANGELOG、应用内说明（2.8.0 Latest，2.7.0 不再标 Latest）、AppStoreMetadata/2.8.0 四语言。没有上传 TestFlight。
+- **测试**：
+  - Mac `Scripts/test.sh` 两个分片共 153/153 组、1707 项首轮通过；
+  - `lint.sh lint` 0 违规；
+  - 多账号/多设备 filter 通过；
+  - iOS 完整单测 TEST SUCCEEDED（Swift Testing 1085 项 + XCTest）；
+  - iOS Release 设备构建 BUILD SUCCEEDED；
+  - 四语言审计通过。
+  - 详见 03。
+- **同步兼容 gate**：16 个组合都已列出，均为 substituted（冻结 wire：64 次读取、32 次新旧合并，全部 PASS），没有 fail。
+- **CloudKit**：`NO_DEPLOY`（已写入 `docs/cloudkit-deploy-audit.md`）。
+- **Review**：独立 review agent 两轮。第 1 轮有 1 个阻断、1 个应修和若干小问题，全部已修并复测；第 2 轮没有阻断或应修问题，剩下的小问题也已处理。最终阻断问题为 0。
+- **issue**：#190、#191 保持 open。按发布清单，正式 release 公开后再回复并关闭。
+- **未覆盖风险**：
+  - 没有实体 2 Mac × 2 iPhone、Production CloudKit 收敛与 APNs 时序的验证；
+  - 新 provider 没有真实账号数据；
+  - 旧 iPhone 上的新 provider 显示为通用卡片（没有颜色、英文、无推送）；
+  - 旧 iPhone 在 UTC+12 及更东的时区，Claude 只有日期的续费日会晚一天；
+  - iOS widget 的百分比不加 `~`；
+  - iOS 的 Accounts widget 没有做（后续候选）。

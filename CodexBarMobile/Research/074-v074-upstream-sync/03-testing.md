@@ -35,6 +35,7 @@ Status: `done`
 | 定向重跑 | `V074ProviderPresentationTests`、`ProviderColorPaletteTests`、`QuotaProviderListTests` | 103 项通过 | ios-focused1.log |
 | 完整单元测试（第三次） | 与 Mac 分片 1 并发运行 | 只有 `CWLPerformanceTests` 的 “Background history refresh at scale leaves the main actor responsive” 失败；单独重跑通过，属于并发负载造成的抖动 | ios-unit3.log、ios-perf1.log |
 | 完整单元测试（最终，单独运行） | `xcodebuild test -only-testing:CodexBarMobileTests` | **TEST SUCCEEDED**：Swift Testing 1085 项 / 66 个 suite 全部通过，XCTest 全部通过（含 `WidgetSnapshotBuilderTests`） | ios-unit4.log、ios-unit4.xcresult |
+| Release 设备构建 | `xcodebuild build -destination generic/platform=iOS -configuration Release CODE_SIGNING_ALLOWED=NO` | BUILD SUCCEEDED | ios-release-build.log |
 | 四语言 | `bash Scripts/lint.sh audit-i18n` | 三个 xcstrings 全部 translated；source-vs-catalog 408 个 key 齐全 | — |
 
 ## 同步兼容 gate（2 Mac × 2 iPhone）
