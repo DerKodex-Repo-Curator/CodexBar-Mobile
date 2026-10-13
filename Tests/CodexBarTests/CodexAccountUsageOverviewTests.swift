@@ -189,6 +189,24 @@ extension CodexAccountScopedRefreshTests {
         }
     }
 
+    /// Fork: a complete all-account pass still counts as a full snapshot publication when rows for
+    /// accounts beyond the fetch limit are retained, while a requested subset never does.
+    @Test
+    func `full publication counts fetched accounts when rows beyond the menu limit are retained`() async throws {
+        try await self.withSelectedAccountRetentionFixture(sameEmail: true, count: 8) { store, _, accounts in
+            let recorder = OverviewFetchRecorder()
+            self.installOverviewProvider(on: store, accounts: accounts, recorder: recorder)
+            await store.refreshCodexAccountsForSettings(Set(accounts.map(\.id)))
+            await store.widgetSnapshotPersistTask?.value
+            #expect(store.codexAccountSnapshots.count == 8)
+
+            #expect(await store.refreshCodexVisibleAccountsForSnapshotPublication())
+            #expect(store.codexAccountSnapshots.count == 8)
+            #expect(await !store.refreshCodexVisibleAccountsForSnapshotPublication(
+                requestedAccountIDs: [accounts[1].id]))
+        }
+    }
+
     private func installOverviewProvider(
         on store: UsageStore,
         accounts: [CodexVisibleAccount],

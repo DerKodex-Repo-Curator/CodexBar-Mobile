@@ -45,7 +45,8 @@ struct ClaudeSubscriptionPresentationTests {
         let date = try #require(ISO8601DateFormatter().date(from: "2026-11-05T00:00:00Z"))
         let expiry = self.snapshot.withSubscriptionMetadata(expiresAt: date, renewsAt: nil, expiresAtIsDateOnly: true)
         let formatter = DateFormatter()
-        formatter.locale = .current
+        // Fork: subscription dates follow the app language like the surrounding note text.
+        formatter.locale = codexBarLocalizedLocale()
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.setLocalizedDateFormatFromTemplate("MMM d, yyyy")
         #expect(try self.model(expiry).usageNotes == ["Plan expires: \(formatter.string(from: date))"])

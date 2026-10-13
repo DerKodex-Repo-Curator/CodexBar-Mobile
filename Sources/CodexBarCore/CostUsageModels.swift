@@ -1,5 +1,3 @@
-// Fork producer-time-zone and pricing-provenance fields push this shared model past the length limit.
-// swiftlint:disable file_length
 import Foundation
 
 package struct CostUsageTokenActivityCache: Sendable, Equatable {

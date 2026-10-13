@@ -208,8 +208,8 @@ extension UsageStore {
             requestedAccountIDs: requestedAccountIDs)
     }
 
-    /// Returns true only when a complete all-account pass published every visible account. A requested
-    /// subset (Settings per-account refresh) updates its rows but never counts as a full publication.
+    // Returns true only when a complete all-account pass published every fetched account. A requested
+    // subset (Settings per-account refresh) updates its rows but never counts as a full publication.
     // The restore/refresh/rollback sequence is intentionally kept contiguous so
     // every early exit can be audited against the original-account restoration.
     // swiftlint:disable:next function_body_length
@@ -380,10 +380,11 @@ extension UsageStore {
         } else {
             self.reconcileCodexAccountStateForUsageOwner(self.freshCodexAccountScopedRefreshGuard())
         }
-        return requestedAccountIDs == nil && allFetchesSucceeded && currentSnapshots.count == accounts.count &&
-            currentSnapshots.allSatisfy {
-                $0.snapshot != nil && $0.error == nil
-            }
+        // Upstream retains rows for visible accounts beyond this pass (more than the fetch limit, or
+        // earlier per-account refreshes), so completeness checks each fetched account, not the row count.
+        return requestedAccountIDs == nil && allFetchesSucceeded && accounts.allSatisfy { account in
+            currentSnapshots.contains { $0.id == account.id && $0.snapshot != nil && $0.error == nil }
+        }
     }
 
     func codexVisibleSelectionStillMatches(

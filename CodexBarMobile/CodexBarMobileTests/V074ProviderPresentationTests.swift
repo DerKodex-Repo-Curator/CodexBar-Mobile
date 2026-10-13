@@ -48,6 +48,7 @@ struct V074ProviderPresentationTests {
             == "已用 120 / 500 额度")
         #expect(ProviderDetailLocalization.localizedValue(
             "120 / 500 credits used", providerID: "qwencloud", locale: Locale(identifier: "ja")) == "120 / 500 クレジット使用済み")
+        #expect(ProviderDetailLocalization.localizedValue("Team", providerID: "qwencloud", locale: zh) == "团队")
         #expect(ProviderDetailLocalization.localizedValue("$7.25", providerID: "linkup", locale: zh) == "$7.25")
         #expect(ProviderDetailLocalization.localizedValue("Something new", providerID: "sofya", locale: zh) == "Something new")
     }

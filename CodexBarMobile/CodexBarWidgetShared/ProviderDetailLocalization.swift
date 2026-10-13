@@ -253,9 +253,10 @@ enum ProviderDetailLocalization {
     }
 
     /// Upstream v0.74 plugin values: fixed allowance states and "<number> credits" amounts.
-    /// Qwen Cloud Team reports "<used> / <total> credits used". Numbers keep the Mac's formatting.
+    /// Qwen Cloud Team reports "<used> / <total> credits used", and "Team" as the reset text of a
+    /// cycle without a reported reset time. Numbers keep the Mac's formatting.
     static func localizedV074Value(_ value: String, locale: Locale = .current) -> String {
-        if ["Unlimited", "Not reported", "Unavailable"].contains(value) {
+        if ["Unlimited", "Not reported", "Unavailable", "Team"].contains(value) {
             return MobileLocalizedString.value(value, defaultValue: value, locale: locale)
         }
         let usedSuffix = " credits used"

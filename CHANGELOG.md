@@ -19,7 +19,7 @@
 ### Fixed
 
 - Mobile snapshots publish the X API credit balance (including negative balances), keep Qwen Cloud's Team and Monthly window labels, and send date-only Claude renewal and expiry dates at midday UTC so iPhones show the same day as the Mac.
-- A Settings refresh of one Codex account updates that account without counting as a complete iPhone publication.
+- A Settings refresh of one Codex account updates that account without counting as a complete Mac fleet sync publication, and a full refresh still counts as complete when more than six Codex accounts are saved.
 
 ## 0.74.1 — 2026-10-11
 

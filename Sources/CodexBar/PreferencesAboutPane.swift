@@ -148,7 +148,8 @@ struct AboutPane: View {
                     .foregroundStyle(.secondary)
             }
 
-            Text("Based on CodexBar by Peter Steinberger. © 2026 Yuxiao Wang. MIT License.")
+            // Fork attribution line stays in English like the license text.
+            Text(verbatim: "Based on CodexBar by Peter Steinberger. © 2026 Yuxiao Wang. MIT License.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .padding(.top, 4)
