@@ -589,10 +589,16 @@ extension SettingsStore {
             resetTimesShowAbsolute: userDefaults.object(forKey: "resetTimesShowAbsolute") as? Bool ?? false,
             providerChangelogLinksEnabled: userDefaults.object(
                 forKey: "providerChangelogLinksEnabled") as? Bool ?? false,
+            highlightMenuCardsOnHover: Self.loadBoolDefault(
+                "highlightMenuCardsOnHover",
+                fallback: true,
+                from: userDefaults),
             menuBarShowsBrandIconWithPercent: userDefaults.object(
                 forKey: "menuBarShowsBrandIconWithPercent") as? Bool ?? false,
             menuBarHidesCritters: userDefaults.object(forKey: "menuBarHidesCritters") as? Bool ?? false,
             menuBarColorPace: userDefaults.bool(forKey: "menuBarColorPace"),
+            menuBarPaceReservePositive: userDefaults.bool(forKey: "menuBarPaceReservePositive"),
+            menuBarColorByProvider: userDefaults.bool(forKey: "menuBarColorByProvider"),
             menuBarHighContrastOnInactiveDisplays: userDefaults.object(
                 forKey: "menuBarHighContrastOnInactiveDisplays") as? Bool ?? false,
             menuBarDisplayModeRaw: userDefaults.string(forKey: "menuBarDisplayMode")
@@ -636,6 +642,7 @@ extension SettingsStore {
             confettiOnSessionLimitResetsEnabled: confettiOnReset.session,
             confettiOnWeeklyLimitResetsEnabled: confettiOnReset.weekly,
             menuBarShowsHighestUsage: userDefaults.object(forKey: "menuBarShowsHighestUsage") as? Bool ?? false,
+            unifiedIconSourceRaw: userDefaults.string(forKey: "unifiedIconSource"),
             claudeOAuthKeychainPromptModeRaw: userDefaults.string(forKey: "claudeOAuthKeychainPromptMode"),
             claudeOAuthKeychainReadStrategyRaw: claudeOAuthKeychainReadStrategyRaw,
             // Explicit consent for reading Claude Code's Keychain item (#2634). Default OFF; never enabled silently.

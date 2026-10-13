@@ -104,7 +104,11 @@ public enum AccountIdentityComputer {
              // until a cross-Mac account identifier is proven.
              .museai, .lithosai, .workbuddy,
              // Upstream v0.73.0 new provider; single-account card on iOS.
-             .langdock:
+             .langdock,
+             // Upstream v0.74.0 API-key / console-session providers expose no
+             // cross-Mac account identifier used by the mobile merger.
+             .xapi, .tavily, .linkup, .tinyapi, .exa, .cosmic, .aerostack,
+             .sailresearch, .sofya:
             // Non-Tier-A providers: no stable account model required by
             // iOS today. Return nil → iOS falls back to per-device legacy
             // bucket. If a future provider needs cross-Mac merging, add
