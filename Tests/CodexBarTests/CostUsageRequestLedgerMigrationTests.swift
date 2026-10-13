@@ -4,7 +4,10 @@ import Testing
 
 @Suite(.serialized)
 struct CostUsageRequestLedgerMigrationTests {
-    @Test(arguments: ["379b799bb4b91683", "7ce21041b7a36242", "0d8f9504f8e63d0f", "7ff985e81e281a11"])
+    // Fork: the published 0.73.0.1 store (0d41437dcd95c17e) migrates like upstream 0.73.0.
+    @Test(arguments: [
+        "379b799bb4b91683", "7ce21041b7a36242", "0d8f9504f8e63d0f", "7ff985e81e281a11", "0d41437dcd95c17e",
+    ])
     func `tool inspection upgrade retains saved pricing history and checkpoints`(parserHash: String) async throws {
         let env = try CostUsageTestEnvironment()
         defer { env.cleanup() }

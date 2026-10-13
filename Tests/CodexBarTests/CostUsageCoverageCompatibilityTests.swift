@@ -31,6 +31,7 @@ struct CostUsageCoverageCompatibilityTests {
         "89c0662767e633ea",
         "e1088fb29c221187",
         "7ff985e81e281a11",
+        "0d41437dcd95c17e", // Fork: published 0.73.0.1.
         "c6c46a376ba16304",
         "55f640e6bb0ccba4",
         "98de5f52231e524e",
