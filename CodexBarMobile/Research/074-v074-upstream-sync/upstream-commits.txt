@@ -1,0 +1,193 @@
+7c08c0ae7 2026-10-11 docs: update appcast for 0.74.1
+79831b475 2026-10-11 chore(release): prepare 0.74.1
+03c7c4104 2026-10-11 feat(cost): show conversation titles in Cost menu (#4434)
+43b2054c0 2026-10-11 Detect Firefox Developer Edition default profiles
+fe523246d 2026-10-10 refactor(menu): group selection handling with menu tracking
+9ce78ec03 2026-10-10 chore(repo): remove committed proof artifacts (#4425)
+b65a5eb3d 2026-10-10 fix(claude): hide the prepaid menu bar balance with optional credits
+6cd1b24bc 2026-10-10 fix(menu): preserve keyboard selection with hover opt-out
+cc786f08a 2026-10-10 fix(providers): preserve unknown plans and mark estimated quota (#4423)
+82af1863b 2026-10-10 refactor(claude): remove dead code and duplication from OAuth credentials (#4420)
+24d5d7059 2026-10-10 feat(xai): show live remaining credit from the invoice preview (#4419)
+84b1652bb 2026-10-10 Omit Codex request ledger from status and activity read views (#4421)
+4e1d2c87d 2026-10-10 fix(claude): show prepaid usage credits in menu bar Balance layouts
+e3554e471 2026-10-10 fix(replicate): verify official glyph and refresh serve icons
+0b1b74ea8 2026-10-10 fix(menu-bar): defer placeholder Settings window dismissal until presentation finishes (#4415)
+4d7c82eee 2026-10-10 refactor(spend): remove superseded dashboard code paths (#4417)
+e9ed0849b 2026-10-10 test(spend): verify visible cache and sample coverage
+7099789c7 2026-10-10 docs: trim CI efficiency guidance to repository rules
+4e6a964ff 2026-10-11 Add option to disable menu card hover highlight
+864db64a7 2026-10-10 Show cache reuse and sample coverage in session performance
+488842e12 2026-10-10 fix(replicate): use the official Replicate glyph for the provider icon
+6e118bdb5 2026-10-10 chore: start 0.74.1 development
+c2f22ccf8 2026-10-09 docs: update appcast for 0.74.0
+68ee4fc45 2026-10-09 chore(release): prepare 0.74.0
+2b58ada62 2026-10-09 feat(widgets): add a multi-account quota overview (#4400)
+44702dc72 2026-10-09 fix(claude): show Refresh guidance after external login (#4402)
+1ea3f1af7 2026-10-10 Document CI efficiency expectations for agents
+08f42ab06 2026-10-09 feat(ollama): read API key credit balances (#4401)
+efb600a2c 2026-10-10 Fix macOS SDK metadata in packaged app builds
+238985d21 2026-10-09 fix(menu): settle Overview overflow before wheel routing
+0b0652ad1 2026-10-09 fix(cursor): complete Linux agent login fallback
+6def3621b 2026-10-09 fix: preserve native wheel input in overflowing Overview menus
+b58d3b985 2026-10-09 Read cursor-agent's login on Linux
+b91a4efd4 2026-10-09 fix: unwrap artifact comparison buffer on glibc and prove CLI writes
+22372da3b 2026-10-09 feat(menu-bar): add a pace sign preference (#4394)
+fff36b31f 2026-10-09 fix: reuse unchanged Claude history artifact blocks
+29e735798 2026-10-09 Require dashboard cache fixtures in tests
+28d165f9a 2026-10-09 Isolate dashboard cache in menu tests
+8103f13b6 2026-10-09 docs: clarify direct test timeout recovery
+acddb8265 2026-10-09 Classify Safari profile access denial
+1cb13dc14 2026-10-09 fix(codex): preserve refreshes during history completion checks
+60d850811 2026-10-09 Defer hourly day indexing until navigation reads
+f5d00aff8 2026-10-09 Fix selected browser refresh compatibility
+d82f195bd 2026-10-09 fix(claude): say which Claude versions and renderer overflow the PTY
+0ca134822 2026-10-09 fix(claude): keep the taller 2.1.294 /usage panel on the PTY screen
+3c02274fd 2026-10-09 Support Chrome and Safari profiles for Langdock
+81438267f 2026-10-09 feat(providers): add Cosmic AI, Aerostack, Sail Research and Sofya plugins (#4384)
+36278a21e 2026-10-09 ci: invalidate cached builds when package symlinks change
+8b2db6e09 2026-10-09 ci: run complete macOS inventory on two direct workers
+bc2b3dad6 2026-10-09 ci: cover all package target paths in cache invalidation
+2f3448205 2026-10-09 ci: clean cached products when build inputs change
+2e37d0633 2026-10-09 ci: reuse verified SwiftPM builds across checkouts
+e8c51e374 2026-10-09 ci: verify cached SwiftPM input timestamps
+fca039015 2026-10-08 feat(providers): add Tavily, Exa, Linkup and TinyApi plugins (#4382)
+0ec5cbc06 2026-10-08 fix(pi): skip unreadable process contexts and use the official Pi mark (#4378)
+818f15017 2026-10-09 Avoid overlapping changelog insertion
+0dfac40f8 2026-10-09 Document synthetic hourly navigation performance
+b90560bf5 2026-10-09 Reuse hourly navigation dates per spend group
+22e2f3694 2026-10-08 fix(spend): retain explicit failures for all tool kinds
+79ff77412 2026-10-08 fix(spend): preserve tool errors in bounded previews
+e34e52798 2026-10-08 test(linux): verify repeated serve RPC refreshes return pipes
+767aa2b0d 2026-10-08 fix(codex): bind managed credential reads to validated homes
+6e79304e7 2026-10-08 style(rpc): use labeled trailing closures for shared readers
+a4b7354eb 2026-10-08 fix(linux): refresh process cleanup validation inputs
+79a43f741 2026-10-08 fix(codex): retain shared managed homes through cleanup
+78c5834c0 2026-10-08 fix(linux): release exited children at the remaining Process launch sites
+5f0a69859 2026-10-08 docs: add changelog entry for the Linux procfs read leak
+71cf05049 2026-10-08 fix(linux): read procfs children without Foundation to stop a per-read leak
+407b528d8 2026-10-08 fix(linux): limit heap maintenance to serve
+3fb15efc0 2026-10-08 fix(linux): release RPC resources and share pipe readers
+6eb6384e2 2026-10-08 fix(codex): verify rotated account refresh error ownership
+227236a87 2026-10-08 docs: clarify the Starbridge integration listing
+f3f01800e 2026-10-08 ci: protect build inputs in shared docs-only gate
+d124b6c89 2026-10-08 Fix Homebrew updates for homebrew/cask installs
+cb41b4424 2026-10-08 docs: add changelog entry for Linux serve memory retention
+2dc8acb96 2026-10-08 fix(linux): return freed heap memory while serve is idle
+691b79f50 2026-10-08 fix(linux): cap glibc malloc arenas to keep serve memory flat
+13ac539fa 2026-10-09 Fix stale Codex catch-up activity during sleep
+c65af8e93 2026-10-09 fix(jetbrains): localize top-up credits detail labels
+bec732e5c 2026-10-09 Record packaged tool activity stability and regression evidence
+c28d5ef09 2026-10-09 ci: skip Linux CLI builds for docs-only changes
+dc57a221c 2026-10-09 feat(jetbrains): show top-up credits
+fc00a9ae8 2026-10-09 Preserve expanded tool results across activity refreshes
+5b2dead38 2026-10-09 Use explicit localized keys for tool activity labels
+4d9939572 2026-10-08 Bound tool activity resources and prevent stale detail presentation
+468de0ac3 2026-10-08 Document native interaction and store upgrade evidence
+e57cea042 2026-10-08 Preserve spend history when enabling native tool inspection
+d9587b7e8 2026-10-08 Document tool activity with synthetic UI examples
+1220e5a42 2026-10-08 Document native Codex tool record ownership boundary
+eb2450483 2026-10-08 Refresh tool details when logs are replaced and complete Italian copy
+ad33924ca 2026-10-08 Add native session tool activity details
+b09566aa1 2026-10-08 README: add Starbridge to integrations
+162ad6c80 2026-10-08 fix(ollama): parse current credit wallet page
+8b9f5d8bf 2026-10-08 docs: add changelog entry for the Linux RPC pipe leak
+c116d9286 2026-10-08 fix(linux): release exited child processes so RPC pipes close
+3bea5c56a 2026-10-08 Fix hidden Codex account refresh errors after auth rotation
+fc015948c 2026-10-08 Record validation after main synchronization
+1698a3a18 2026-10-08 fix(codex): preserve promotion identity precedence
+e6a9be2df 2026-10-08 Use live system reset references in widgets
+0c2f3f087 2026-10-08 Correct installed reset evidence after pixel inspection
+0eeaecc6c 2026-10-08 Fix live widget text in the WidgetKit host
+abe69fe0e 2026-10-08 docs(linux): use the public integration guide link
+eec1b89b6 2026-10-08 Reuse the packaged widget source for live date formatting
+8242ed969 2026-10-08 fix(codex): bind managed credentials to native login identity
+02d586c2a 2026-10-08 fix(notion): recover a configured workspace when getSpaces exceeds the plugin response cap (#4343)
+215fdef58 2026-10-08 Keep widget dates live without seconds and align quota headlines
+6ac5851ca 2026-10-08 Add native disabled update preference evidence
+acfcec808 2026-10-08 feat(codex): add managed fresh credential resolver
+ee3101c4a 2026-10-07 test: use a runnable cache trust fixture
+a8c9c81e1 2026-10-07 docs(i18n): link immutable Arabic localization proof
+a1ec6ac13 2026-10-07 fix(codex): preserve scoped settings refresh and web usage
+733e59ce4 2026-10-07 test(omarchy): distinguish usage polling from cost refreshes
+6524e1fdb 2026-10-07 test(menubar): align the Warp blink gatekeeper anchor
+1e2b5b254 2026-10-08 Add full settings activity runtime diagnostics
+04556b366 2026-10-07 docs: avoid an overlapping changelog insertion
+9a0766fd7 2026-10-08 Document native Homebrew notification validation
+5d6cdd8bb 2026-10-08 Record structured performance layout and fresh regression
+8b8b35bd2 2026-10-08 Recognize shared performance units in Italian catalog
+70937cc62 2026-10-08 Organize session performance metrics and model comparison
+844b0e19b 2026-10-07 perf(cost): share identical turn-ID strings in cached Codex rows (#4334)
+9fae8c8e4 2026-10-07 feat(qwen): support Qwen Cloud Team Token Plan seat subscriptions (#4338)
+b7d52a7fa 2026-10-08 test(codex): add native proof for shared managed-home retention
+5e9bbaa38 2026-10-08 fix(codex): guard managed home deletion when another record references the path
+c3c6ce061 2026-10-07 fix(menu): hide the Dock icon on macOS 27 and pick the most constrained OpenCode Go quota (#4335)
+8a7b0ff2b 2026-10-07 feat(x): add X API prepaid credits provider (#4339)
+1ab8f6884 2026-10-07 feat(notion): import session cookies from Microsoft Edge profiles (#4337)
+656878f50 2026-10-07 fix(claude): keep OAuth plan-usage history across refresh-token rotation (#4336)
+36bf01ace 2026-10-07 fix(claude): preserve enterprise spend and CLI failures (#4332)
+13f5faaa1 2026-10-07 docs(codex): clarify auth recovery and local cost coverage (#4331)
+765869ff6 2026-10-07 Fix commented Codex base URL overrides
+1e9c06b47 2026-10-07 Document synthetic spend chart scope proof
+70b194db1 2026-10-07 Fix spend chart selection and compact active source legends
+b28134d76 2026-10-07 Document native performance window verification
+d95267ffa 2026-10-07 Reduce activity heatmap update costs
+4bbf76e10 2026-10-07 Notify Homebrew users about available updates
+d66ac3e9c 2026-10-07 Fix selected-day scope for session performance
+bcba22d2d 2026-10-07 Clarify benchmark reproduction environment
+66d66f24c 2026-10-07 Reverify Claude billing authority before publication
+45b1a62c8 2026-10-07 feat(spend): add detailed native Codex turn metrics
+b051b7e67 2026-10-07 feat(cli): add local managed account discovery API
+ffd11f0b8 2026-10-07 Support OAuth and manual-cookie subscription enrichment
+f2e8da636 2026-10-07 Update website link in About pane
+03a51bdcf 2026-10-07 chore: start 0.73.1 development
+8d85eb59d 2026-10-07 Add Claude subscription renewal and expiration dates
+bb6418099 2026-10-06 Add tests and documentation for provider color mode
+cad61e88c 2026-10-06 Add color by provider toggle and localizations
+fd7fab6ce 2026-10-06 Add color by provider menu bar layout rendering and contrast policy
+2f232d6fa 2026-10-06 Add color by provider setting and preference persistence
+fcf836de9 2026-10-06 Fix completion-day session performance visibility
+751fc229d 2026-10-06 Fix account overview test lint violations
+c03ae0986 2026-10-06 fix(settings): preserve header dashboard refresh during multi-account refresh
+a6f79c373 2026-10-06 Record reversed release benchmark comparison
+ce9270877 2026-10-06 Validate release overhead and preserve upstream cache migration
+65bb8eb43 2026-10-06 Show all saved Codex accounts in provider settings
+a0a8c2a73 2026-10-06 Preserve sibling Codex account snapshots on refresh
+22fdcb88e 2026-10-06 Show Codex turn performance in spend sessions
+2c39c4d1c 2026-10-06 Record Indonesian countdown regression evidence
+57112fdc1 2026-10-06 Preserve Indonesian day units in provider countdowns
+a3e36bb87 2026-10-06 Record anonymized localization hardening acceptance evidence
+8b01d8bcd 2026-10-06 Preserve concrete chart hosting types while applying localization
+ead6099d5 2026-10-06 Keep localization regression fixtures independent of host preferences
+551e9dd0a 2026-10-06 Allow prose-free percent composition formats in Italian catalog tests
+6b2d0eccd 2026-10-06 Align widget localization expectations with locale-aware formatting
+9a3e816d3 2026-10-06 Harden localization formats and align native locale behavior
+982f815a3 2026-10-05 Handle lowercased widget localization bundles
+4906ee42b 2026-10-05 docs(changelog): add Kiro monthly pace
+3b7cffafb 2026-10-05 feat(kiro): follow the global pace display mode in the menu bar
+ae1e140e3 2026-10-05 feat(kiro): show the recorded quota burndown in Plan Usage
+fbbbff0b0 2026-10-05 feat(kiro): add monthly pace and usage history for credits
+d2baaa1d5 2026-10-05 refactor(kiro): show the credits line below the usage bar
+474a22f0e 2026-10-03 Record native WidgetKit language lookup and completed regression run
+55f67495b 2026-10-03 Record isolated startup state and fresh app proof
+abc1bee04 2026-10-03 Skip credential migration and source discovery in isolated settings
+5163cf790 2026-10-03 Isolate localization proof from installed app state
+5684527a2 2026-10-03 Add actual app and macOS notification evidence
+3515b3914 2026-10-03 Preserve translation semantics and add isolated runtime proof
+8adfa8b33 2026-10-03 Localize remaining menu labels and add native language proofs
+43de80b56 2026-10-03 Complete app and widget translations in all supported languages
+472fab7c4 2026-10-03 Localize credential expiry settings and notifications
+15520cc68 2026-09-26 Keep serve account collection below the file limit
+e4cc6b82b 2026-09-25 Make Linux Quick View opt-in
+807083509 2026-09-25 Split unrelated test and lint fixes from focus PR
+7b297f26f 2026-09-25 Stop frontmost app monitoring outside merged icon mode
+4b11f05a8 2026-09-24 Improve Linux quick view to match macOS menu
+d28131531 2026-09-25 Map Antigravity desktop app to frontmost provider
+61ba6664d 2026-09-24 Update test expectations
+4e29944ee 2026-09-24 Add frontmost app source option for merged menu bar icon
+418c81525 2026-09-23 Avoid redundant Claude account fetches with claude-swap
+8a2263bfb 2026-09-23 Warn when dashboard account inventory is incomplete
+f9607d971 2026-09-22 fix(omarchy): show Codex's per-model limits as well as Claude's
+94f032a48 2026-09-22 fix(omarchy): show Claude's per-model cap even when it matches the week
+d56adeae3 2026-09-22 Serve existing accounts with private dashboard defaults
+a2a651220 2026-09-22 feat(omarchy): offer session, weekly and pace in the bar as preferences
