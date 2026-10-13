@@ -111,7 +111,8 @@ struct QuotaWarningNotificationLogicTests {
                 currentRemaining: 45,
                 windowDisplayLabel: "Organization · Lifetime · Shared · Hard")
 
-            #expect(event.localizedWindowDisplayLabel == "组织 · 终身 · 共享 · 硬性")
+            // Upstream v0.74 catalogs translate "Organization" as 组织机构 (the fork copy was dropped).
+            #expect(event.localizedWindowDisplayLabel == "组织机构 · 终身 · 共享 · 硬性")
         }
     }
 

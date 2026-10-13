@@ -204,6 +204,9 @@ extension CodexAccountScopedRefreshTests {
             #expect(store.codexAccountSnapshots.count == 8)
             #expect(await !store.refreshCodexVisibleAccountsForSnapshotPublication(
                 requestedAccountIDs: [accounts[1].id]))
+            // A requested subset that includes the followed account reaches the final check too.
+            #expect(await !store.refreshCodexVisibleAccountsForSnapshotPublication(
+                requestedAccountIDs: [accounts[0].id]))
         }
     }
 
