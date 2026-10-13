@@ -1,6 +1,6 @@
 # 测试
 
-Status: `in-progress`
+Status: `done`
 
 日志目录：`/Volumes/StudioSSD/Developer/BuildScratch/CodexBar/upstream-v074/`（下文只写文件名）。
 
@@ -13,7 +13,17 @@ Status: `in-progress`
 | 定向：provider / mock / sync | `swift test --filter 'ProviderArchitectureGatekeeper\|QuotaProviderList\|MockProvider\|AccountIdentityComputer\|SyncCoordinator'` | 266 项通过（更新计数和 gatekeeper 指纹之后） | t-focused2.log |
 | 新桥接 | `swift test --filter SyncV074BridgeTests` | 4 项通过：X API 负余额、日期锚点、Claude 完整推送路径、Qwen Team/Monthly 标签 | — |
 | 全量（第一次） | `Scripts/test.sh` | 第 12 组失败后停止：上游新增的 `AboutWebsiteTests` 要求 About 网站等于 `docs/CNAME`（codexbar.app），而 fork 保留自己的网站。测试改为固定 fork 网站后，单独重跑 2 项通过 | mac-full1.log |
-| 全量（第二次） | `Scripts/test.sh` | 待填 | mac-full2.log |
+| 全量（第二次） | `Scripts/test.sh` | 第 34 组失败后停止：上游测试 `ClaudeSubscriptionPresentationTests` 用 `Locale.current` 计算期望日期，fork 的日期跟随 app 语言。测试改用 `codexBarLocalizedLocale()` 后 3 项通过 | mac-full2.log |
+| 并行全量（作废） | `swift test --parallel` | 这套测试有大量计时类用例，并行负载下大面积超时，结果不作为证据，最终以 `Scripts/test.sh` 为准 | mac-parallel1.log |
+| lint | `bash Scripts/lint.sh lint` | 第一次：2 个 swiftlint 违规（孤立 doc comment、多余的 `file_length` disable）；review 另外发现上游收紧的 `check-app-locales.mjs` 会失败。修复后退出码 0：0 个违规、App locales OK（22 个目录，2501 个英文 key）、Codex parser hash 是最新的（`68cbd75ed0e591d9`）、parser 版本审计 OK、fork README guard 通过、i18n 全部 translated | lint1.log、lint2.log |
+| 全量分片 0 | `CODEXBAR_TEST_SHARD_INDEX=0 CODEXBAR_TEST_SHARD_COUNT=2 Scripts/test.sh` | **77/77 组首轮通过**（851 项） | mac-full3-s0.log |
+| 全量分片 1（第一次） | 同上，index 1 | 第 34 组失败：`compatible predecessor parser hash adopts without rebuilding` 精确比对前驱集合，缺少新登记的 `0d41437dcd95c17e`。补上后 `CostUsageStoreTests` 77 项通过 | mac-full3-s1.log |
+| 全量分片 1（第二次） | 同上 | 第 60 组失败：fork 自己的 Aixy 测试期望 zh-Hans "Organization" = "组织"；删除重复 key 后保留的是上游译文“组织机构”。测试改为上游译文后 16 项通过 | mac-full4-s1.log |
+| 全量分片 1（最终） | 同上 | **76/76 组首轮通过**（856 项） | mac-full5-s1.log |
+| 多账号 / 多设备 | `swift test --filter 'AccountIdentity\|MultiAccount\|DualZoneReader'` | 137 + 11 项通过 | t-multiaccount.log |
+| Codex 多账号刷新 | `swift test --filter CodexAccountScopedRefreshTests` | 167 项通过（包括新增的超过 6 个账号完整发布回归测试） | — |
+
+两个分片合计 153/153 组、1707 项选择，全部在同一份源码上首轮通过（分片 0 跑完之后只改过测试文件，涉及的 suite 都单独重跑过）。
 
 ## iOS
 
@@ -23,6 +33,8 @@ Status: `in-progress`
 | 完整单元测试（第一次） | `xcodebuild test -only-testing:CodexBarMobileTests`（模拟器 CodexBar iOS 27 iPhone 18 Pro） | 编译通过，模拟器启动失败（`Invalid connectionUUID`，环境问题） | ios-unit1.log |
 | 完整单元测试（第二次） | 启动模拟器后 `test-without-building` | Swift Testing 1085 项，其中 3 处失败，都在新的窗口标签测试：`ProviderWindowLabel` 的 switch `default` 固定返回 "Extra usage"，新 key 会被显示成“额外用量”。补上显式分支后修复。XCTest 部分全部通过（含 `WidgetSnapshotBuilderTests`） | ios-unit2.log |
 | 定向重跑 | `V074ProviderPresentationTests`、`ProviderColorPaletteTests`、`QuotaProviderListTests` | 103 项通过 | ios-focused1.log |
+| 完整单元测试（第三次） | 与 Mac 分片 1 并发运行 | 只有 `CWLPerformanceTests` 的 “Background history refresh at scale leaves the main actor responsive” 失败；单独重跑通过，属于并发负载造成的抖动 | ios-unit3.log、ios-perf1.log |
+| 完整单元测试（最终，单独运行） | `xcodebuild test -only-testing:CodexBarMobileTests` | **TEST SUCCEEDED**：Swift Testing 1085 项 / 66 个 suite 全部通过，XCTest 全部通过（含 `WidgetSnapshotBuilderTests`） | ios-unit4.log、ios-unit4.xcresult |
 | 四语言 | `bash Scripts/lint.sh audit-i18n` | 三个 xcstrings 全部 translated；source-vs-catalog 408 个 key 齐全 | — |
 
 ## 同步兼容 gate（2 Mac × 2 iPhone）
