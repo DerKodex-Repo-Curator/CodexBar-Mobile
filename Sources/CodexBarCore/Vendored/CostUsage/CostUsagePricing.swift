@@ -508,7 +508,7 @@ enum CostUsagePricing {
     /// Version 20: v0.73.0 request-ledger pricing recovery and drifted-mirror pairing; published fork
     /// stores rebuild instead of adopting rows corrupted by the 0.72 request-ledger migration.
     /// Version 21: v0.74.0-v0.74.1 merged Codex turn-performance timing, cached-input coverage, and shared
-    /// turn identifiers; published 0.73.0.1 stores adopt like upstream 0.73.0 stores.
+    /// turn identifiers; published 0.73.0.1 stores rebuild (adopting them under-priced fork-priced models).
     static let parserLogicVersion = 21
 
     /// Stable string fingerprint of the pricing tables + parser logic.
