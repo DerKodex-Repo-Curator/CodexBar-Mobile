@@ -1502,12 +1502,9 @@
 "Continue in background" = "Kontynuuj w tle";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "5 godzin";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "Klucz API został zweryfikowany. Ollama nie udostępnia limitów Cloud przez API.";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar poprosi pęk kluczy macOS o klucz API Kimi K2, aby pobrać użycie. Kliknij OK, aby kontynuować.";
 "CrossModel API spend trend" = "Trend wydatków API CrossModel";
-"Plan expires: %@" = "Plan wygasa: %@";
-"Renews: %@" = "Odnawia się: %@";
 "Settings" = "Ustawienia";
 "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai." = "Przechowywane w ~/.codexbar/config.json. Wygeneruj jeden na kimi-k2.ai.";
 "cost_header_estimated" = "Koszt (szacowany)";
@@ -1546,7 +1543,7 @@
 "mobile_sync_status_syncing" = "Synchronizowanie…";
 "mobile_sync_status_syncing_elapsed_format" = "Synchronizacja — %@ · %d s";
 "mobile_sync_status_syncing_phase_format" = "Synchronizacja — %@";
-"mobile_toggle_mock_subtitle" = "Przy każdej synchronizacji wysyła 106 stabilnych migawek testowych obejmujących 96 identyfikatorów dostawców, w tym wiele kont, sub2api, Wayfinder i scenariusze zastępcze dla nieznanych dostawców. Testowe adresy e-mail używają domeny TLD `.test`, dzięki czemu iPhone wyświetla oznaczenie MOCK. Wyłączenie pozwala CloudKit usunąć testowe rekordy w ciągu około jednego cyklu synchronizacji. Domyślnie wyłączone.";
+"mobile_toggle_mock_subtitle" = "Przy każdej synchronizacji wysyła 115 stabilnych migawek testowych obejmujących 105 identyfikatorów dostawców, w tym wiele kont, sub2api, Wayfinder i scenariusze zastępcze dla nieznanych dostawców. Testowe adresy e-mail używają domeny TLD `.test`, dzięki czemu iPhone wyświetla oznaczenie MOCK. Wyłączenie pozwala CloudKit usunąć testowe rekordy w ciągu około jednego cyklu synchronizacji. Domyślnie wyłączone.";
 "mobile_toggle_mock_title" = "Wstrzyknij dane testowe dostawców";
 "mobile_toggle_push_subtitle" = "Gdy limit sesji zostanie wyczerpany lub przywrócony, wyślij widoczny alert push do aplikacji iOS companion przez iCloud. To niezależne od lokalnych powiadomień Maca — możesz wyciszyć Maca i nadal odbierać alerty na iPhonie.";
 "mobile_toggle_push_title" = "Powiadomienia push do iOS";
@@ -1728,7 +1725,6 @@
 "antigravity_no_priced_token_history" = "Brak wycenionej historii tokenów Antigravity.";
 
 /* Aixy quota warning labels */
-"Organization" = "Organizacja";
 "Project" = "Projekt";
 "User" = "Użytkownik";
 "Key" = "Klucz";

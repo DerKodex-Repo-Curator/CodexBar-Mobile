@@ -1498,12 +1498,9 @@
 "Continue in background" = "Продовжити у фоновому режимі";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "5 годин";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "Ключ API перевірено. Ollama не розкриває обмеження квот Cloud через API.";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar запитає у macOS Keychain ваш ключ API Kimi K2, щоб він міг отримати дані про використання. Натисніть OK, щоб продовжити.";
 "CrossModel API spend trend" = "Тенденція витрат CrossModel API";
-"Plan expires: %@" = "План завершується: %@";
-"Renews: %@" = "Поновлення: %@";
 "Settings" = "Налаштування";
 "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai." = "Зберігається в ~/.codexbar/config.json. Згенеруйте його на kimi-k2.ai.";
 "cost_header_estimated" = "Вартість (орієнтовна)";
@@ -1564,7 +1561,7 @@
 "icloud_sync_phase_idle" = "Idle";
 "mobile_section_dev_test" = "DEV — iOS Push Test";
 "icloud_sync_phase_provider_upload" = "Provider upload";
-"mobile_toggle_mock_subtitle" = "Під час кожної синхронізації надсилає 106 стабільних тестових знімків для 96 ідентифікаторів постачальників, зокрема для кількох облікових записів, sub2api, Wayfinder і резервного варіанта для невідомих постачальників. Тестові адреси використовують домен верхнього рівня `.test`, тому iPhone показує позначку MOCK. Після вимкнення CloudKit видалить тестові записи приблизно за один цикл синхронізації. Типово вимкнено.";
+"mobile_toggle_mock_subtitle" = "Під час кожної синхронізації надсилає 115 стабільних тестових знімків для 105 ідентифікаторів постачальників, зокрема для кількох облікових записів, sub2api, Wayfinder і резервного варіанта для невідомих постачальників. Тестові адреси використовують домен верхнього рівня `.test`, тому iPhone показує позначку MOCK. Після вимкнення CloudKit видалить тестові записи приблизно за один цикл синхронізації. Типово вимкнено.";
 "mobile_dev_depleted" = "Depleted";
 "mobile_toggle_sync_subtitle" = "Pushes usage data to iCloud so the iOS companion app can display it.";
 "mobile_toggle_push_subtitle" = "When a session quota is depleted or restored, send a visible alert push to the iOS companion app via iCloud. This is independent of Mac local notifications — you can keep Mac quiet but still get alerts on your iPhone.";
@@ -1725,7 +1722,6 @@
 "antigravity_no_priced_token_history" = "Немає оціненої історії токенів Antigravity.";
 
 /* Aixy quota warning labels */
-"Organization" = "Організація";
 "Project" = "Проєкт";
 "User" = "Користувач";
 "Key" = "Ключ";

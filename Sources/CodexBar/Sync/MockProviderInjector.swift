@@ -16,8 +16,8 @@ import Foundation
 ///
 /// **Mix design**: the eight rich fixtures include six snapshots for
 /// `codex`, `claude`, and `perplexity`, plus two `_mock_*` unknown-ID
-/// snapshots. The full catalog now has 106 snapshots: 101 using current
-/// provider IDs (91 distinct), three legacy-ID compatibility fixtures,
+/// snapshots. The full catalog now has 115 snapshots: 110 using current
+/// provider IDs (100 distinct), three legacy-ID compatibility fixtures,
 /// and two unknown-ID fixtures. This exercises both first-class account
 /// rendering and the fallback path when a future Mac sends a provider
 /// the iOS app does not yet know about. All values and accounts remain
@@ -241,6 +241,9 @@ enum MockProviderInjector {
         "xkiro", "raycast", "aixy", "museai", "lithosai", "workbuddy",
         // Upstream v0.73.0.
         "langdock",
+        // Provider-specific by design: upstream v0.74.0 bundled-plugin providers borrowed by mocks.
+        "aerostack", "cosmic", "tavily", "exa", "linkup", "tinyapi",
+        "sailresearch", "sofya", "xapi",
     ]
 
     /// Synthetic providerIDs unique to mocks. Always prefixed `_mock_`.
@@ -1842,6 +1845,102 @@ enum MockProviderInjector {
                 resetsInSeconds: 4 * 86400,
                 resetDescription: ""),
             thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        // Provider-specific by design: iOS 2.8.0 mock samples for the upstream v0.74.0 providers.
+        // Aerostack, Cosmic AI and Tavily report percentage windows without resets; the others
+        // are balance/spend detail cards.
+        .init(
+            providerID: "aerostack", providerName: "Aerostack",
+            accountLocal: "builder", loginMethod: "Pro",
+            primaryUsage: 38, primaryLabel: "Monthly AI tokens",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "",
+            secondary: nil,
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        .init(
+            providerID: "cosmic", providerName: "Cosmic AI",
+            accountLocal: "project", loginMethod: "Project token",
+            primaryUsage: 21, primaryLabel: "Input tokens",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "",
+            secondary: .init(
+                label: "Output tokens", usedPercent: 47,
+                windowMinutes: 43200,
+                resetsInSeconds: 0,
+                resetDescription: ""),
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        // Provider-specific by design: upstream v0.74.0 Tavily account-plan and API-key credit windows.
+        .init(
+            providerID: "tavily", providerName: "Tavily",
+            accountLocal: "researcher", loginMethod: "Researcher",
+            primaryUsage: 56, primaryLabel: "Plan credits",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "",
+            secondary: .init(
+                label: "API key", usedPercent: 12,
+                windowMinutes: 43200,
+                resetsInSeconds: 0,
+                resetDescription: ""),
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        // Provider-specific by design: upstream v0.74.0 detail-only balance/spend samples for Exa, Linkup, TinyApi,
+        // Sail Research and Sofya.
+        .init(
+            providerID: "exa", providerName: "Exa",
+            accountLocal: "team", loginMethod: "Service key",
+            primaryUsage: nil, primaryLabel: "Usage",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "",
+            secondary: nil,
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        .init(
+            providerID: "linkup", providerName: "Linkup",
+            accountLocal: "api", loginMethod: "API",
+            primaryUsage: nil, primaryLabel: "Usage",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "",
+            secondary: nil,
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        .init(
+            providerID: "tinyapi", providerName: "TinyApi",
+            accountLocal: "session", loginMethod: "Browser session",
+            primaryUsage: nil, primaryLabel: "Usage",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "",
+            secondary: nil,
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        .init(
+            providerID: "sailresearch", providerName: "Sail Research",
+            accountLocal: "org", loginMethod: "API key",
+            primaryUsage: nil, primaryLabel: "Usage",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "",
+            secondary: nil,
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        .init(
+            providerID: "sofya", providerName: "Sofya",
+            accountLocal: "free", loginMethod: "Free tier",
+            primaryUsage: nil, primaryLabel: "Usage",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "",
+            secondary: nil,
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        // Provider-specific by design: upstream v0.74.0 X API prepaid credits with a negative balance.
+        .init(
+            providerID: "xapi", providerName: "X API",
+            accountLocal: "console", loginMethod: "Browser session",
+            primaryUsage: nil, primaryLabel: "Usage",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "",
+            secondary: nil,
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
         // Phase G — multi-account second-tab mocks. Each entry below
         // produces a SECOND ProviderUsageSnapshot for an already-
         // present providerID (same provider, different accountLocal
@@ -2172,6 +2271,51 @@ enum MockProviderInjector {
                 isEstimated: false,
                 observedAt: now)
             return extras
+        // Provider-specific by design: upstream v0.74.0 detail-only providers mirror their plugin sections.
+        case "exa":
+            return V026MockExtras(details: [SyncProviderDetailSection(
+                title: "API key this month (UTC)",
+                rows: [.init(label: "Spend", value: "$12.40", usageValue: 12.4)])])
+        case "linkup":
+            return V026MockExtras(details: [SyncProviderDetailSection(
+                title: "Account balance",
+                rows: [.init(label: "Credit balance", value: "$7.25", usageValue: 7.25)])])
+        case "tinyapi":
+            return V026MockExtras(details: [SyncProviderDetailSection(
+                title: "Credits",
+                rows: [.init(label: "Available credits", value: "1,250 credits", usageValue: 1250)])])
+        case "sailresearch":
+            return V026MockExtras(details: [SyncProviderDetailSection(
+                title: "Organization billing",
+                rows: [
+                    .init(label: "Credit balance", value: "$64.10", usageValue: 64.1),
+                    .init(label: "Last 30 days spend", value: "$18.90", usageValue: 18.9),
+                ])])
+        case "sofya":
+            return V026MockExtras(details: [SyncProviderDetailSection(
+                title: "Account credits",
+                rows: [
+                    .init(label: "Available credits", value: "900 credits", usageValue: 900),
+                    .init(label: "Plan credits", value: "500 credits"),
+                    .init(label: "Purchased credits", value: "400 credits"),
+                ])])
+        // Provider-specific by design: X API reports a prepaid + free credit balance that can go negative.
+        case "xapi":
+            var extras = V026MockExtras(details: [SyncProviderDetailSection(
+                title: "Credits",
+                rows: [
+                    .init(label: "Balance", value: "-$1.20", usageValue: -1.2),
+                    .init(label: "Purchased credits", value: "$5.00"),
+                    .init(label: "Free credits", value: "$0.00"),
+                ])])
+            extras.providerAmount = SyncProviderAmount(
+                kind: "balance",
+                amount: -1.2,
+                currencyCode: "USD",
+                period: "Prepaid credits",
+                isEstimated: false,
+                observedAt: now)
+            return extras
         default:
             return nil
         }
@@ -2288,7 +2432,9 @@ enum MockProviderInjector {
                 label: profile.primaryLabel,
                 usedPercent: usage,
                 windowMinutes: profile.primaryWindowMinutes,
-                resetsAt: now.addingTimeInterval(profile.primaryResetsInSeconds),
+                // A non-positive offset models a provider that reports no reset (upstream v0.74 allowances).
+                resetsAt: profile.primaryResetsInSeconds > 0
+                    ? now.addingTimeInterval(profile.primaryResetsInSeconds) : nil,
                 resetDescription: profile.primaryResetDescription)
             primary = window
             rateWindows.append(window)
@@ -2301,7 +2447,8 @@ enum MockProviderInjector {
                 label: secondaryProfile.label,
                 usedPercent: secondaryProfile.usedPercent,
                 windowMinutes: secondaryProfile.windowMinutes,
-                resetsAt: now.addingTimeInterval(secondaryProfile.resetsInSeconds),
+                resetsAt: secondaryProfile.resetsInSeconds > 0
+                    ? now.addingTimeInterval(secondaryProfile.resetsInSeconds) : nil,
                 resetDescription: secondaryProfile.resetDescription)
             secondary = window
             rateWindows.append(window)

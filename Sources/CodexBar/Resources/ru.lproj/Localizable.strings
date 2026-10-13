@@ -1500,7 +1500,6 @@
 "Continue in background" = "Продолжить в фоновом режиме";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "5 часов";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "API-ключ проверен. Ollama не раскрывает лимиты квот Cloud через API.";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar запросит у macOS Keychain API-ключ Kimi K2, чтобы получить данные об использовании. Нажмите OK, чтобы продолжить.";
 "CrossModel API spend trend" = "Тренд расходов CrossModel API";
@@ -1545,7 +1544,6 @@
 "mobile_section_mock_data" = "Debug · Mock Provider Data";
 "icloud_sync_phase_legacy_upload" = "Snapshot upload";
 "mobile_toggle_mock_title" = "Inject mock provider data";
-"Plan expires: %@" = "Plan expires: %@";
 "mobile_sync_status_no_sync" = "No sync yet";
 "icloud_diagnostics_running" = "Running read-only iCloud checks…";
 "mobile_toggle_push_title" = "Push notifications to iOS";
@@ -1565,14 +1563,13 @@
 "icloud_sync_phase_idle" = "Idle";
 "mobile_section_dev_test" = "DEV — iOS Push Test";
 "icloud_sync_phase_provider_upload" = "Provider upload";
-"mobile_toggle_mock_subtitle" = "При каждой синхронизации отправляет 106 стабильных тестовых снимков для 96 идентификаторов провайдеров, включая несколько учётных записей, sub2api, Wayfinder и резервный вариант для неизвестных провайдеров. Тестовые адреса используют домен верхнего уровня `.test`, поэтому iPhone показывает значок MOCK. После отключения CloudKit удалит тестовые записи примерно за один цикл синхронизации. По умолчанию отключено.";
+"mobile_toggle_mock_subtitle" = "При каждой синхронизации отправляет 115 стабильных тестовых снимков для 105 идентификаторов провайдеров, включая несколько учётных записей, sub2api, Wayfinder и резервный вариант для неизвестных провайдеров. Тестовые адреса используют домен верхнего уровня `.test`, поэтому iPhone показывает значок MOCK. После отключения CloudKit удалит тестовые записи примерно за один цикл синхронизации. По умолчанию отключено.";
 "mobile_dev_depleted" = "Depleted";
 "mobile_toggle_sync_subtitle" = "Pushes usage data to iCloud so the iOS companion app can display it.";
 "mobile_toggle_push_subtitle" = "When a session quota is depleted or restored, send a visible alert push to the iOS companion app via iCloud. This is independent of Mac local notifications — you can keep Mac quiet but still get alerts on your iPhone.";
 "icloud_sync_phase_reconciling" = "Reconciling";
 "mobile_section_icloud_sync" = "iCloud Sync";
 "icloud_diagnostics_run" = "Run Read-Only Check";
-"Renews: %@" = "Renews: %@";
 "Cumulative" = "Накопительно";
 "Token activity" = "Активность токенов";
 "Earlier activity" = "Ранние записи";
@@ -1726,7 +1723,6 @@
 "antigravity_no_priced_token_history" = "Нет оценённой истории токенов Antigravity.";
 
 /* Aixy quota warning labels */
-"Organization" = "Организация";
 "Project" = "Проект";
 "User" = "Пользователь";
 "Key" = "Ключ";

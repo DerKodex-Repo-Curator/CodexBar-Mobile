@@ -1498,12 +1498,9 @@
 "Continue in background" = "Continuar en segundo plano";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "5 horas";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "Chave de API verificada. Ollama non expón os límites da cota de Cloud mediante a API.";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar pediralle ao Chaveiro de macOS a túa chave de API de Kimi K2 para obter o uso. Preme Aceptar para continuar.";
 "CrossModel API spend trend" = "Tendencia de gasto da API de CrossModel";
-"Plan expires: %@" = "O plan caduca: %@";
-"Renews: %@" = "Renóvase: %@";
 "Settings" = "Axustes";
 "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai." = "Gardado en ~/.codexbar/config.json. Xera un en kimi-k2.ai.";
 "cost_header_estimated" = "Custo (estimado)";
@@ -1542,7 +1539,7 @@
 "mobile_sync_status_syncing" = "Sincronizando…";
 "mobile_sync_status_syncing_elapsed_format" = "Sincronizando — %@ · %d s";
 "mobile_sync_status_syncing_phase_format" = "Sincronizando — %@";
-"mobile_toggle_mock_subtitle" = "Envía 106 instantáneas simuladas estables de 96 identificadores de provedor en cada sincronización, incluídos casos de varias contas, sub2api, Wayfinder e reserva para provedores descoñecidos. Os correos simulados usan o TLD `.test`, polo que o iPhone mostra unha insignia MOCK. Ao desactivalo, CloudKit elimina os rexistros simulados en aproximadamente un ciclo de sincronización. Desactivado por defecto.";
+"mobile_toggle_mock_subtitle" = "Envía 115 instantáneas simuladas estables de 105 identificadores de provedor en cada sincronización, incluídos casos de varias contas, sub2api, Wayfinder e reserva para provedores descoñecidos. Os correos simulados usan o TLD `.test`, polo que o iPhone mostra unha insignia MOCK. Ao desactivalo, CloudKit elimina os rexistros simulados en aproximadamente un ciclo de sincronización. Desactivado por defecto.";
 "mobile_toggle_mock_title" = "Inxectar datos de provedores simulados";
 "mobile_toggle_push_subtitle" = "Cando unha cota de sesión se esgote ou se restaure, envía unha alerta visible á app complementaria de iOS mediante iCloud. Isto é independente das notificacións locais do Mac: podes manter o Mac en silencio e seguir recibindo avisos no iPhone.";
 "mobile_toggle_push_title" = "Enviar notificacións push a iOS";
@@ -1724,7 +1721,6 @@
 "antigravity_no_priced_token_history" = "Non hai historial de tokens de Antigravity con prezo dispoñible.";
 
 /* Aixy quota warning labels */
-"Organization" = "Organización";
 "Project" = "Proxecto";
 "User" = "Usuario";
 "Key" = "Chave";

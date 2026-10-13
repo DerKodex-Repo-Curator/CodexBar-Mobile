@@ -982,8 +982,12 @@ final class SyncCoordinator {
             lastUpdated: snapshot?.updatedAt ?? Date(),
             costSummary: costSummary,
             budget: budget,
-            subscriptionExpiresAt: snapshot?.subscriptionExpiresAt,
-            subscriptionRenewsAt: snapshot?.subscriptionRenewsAt,
+            subscriptionExpiresAt: Self.syncSubscriptionDate(
+                snapshot?.subscriptionExpiresAt,
+                isDateOnly: snapshot?.subscriptionExpiresAtIsDateOnly == true),
+            subscriptionRenewsAt: Self.syncSubscriptionDate(
+                snapshot?.subscriptionRenewsAt,
+                isDateOnly: snapshot?.subscriptionRenewsAtIsDateOnly == true),
             rateWindows: rateWindows,
             accountIdentities: accountIdentities,
             usageDataConfidence: Self.mapUsageDataConfidence(snapshot: snapshot),
@@ -1131,6 +1135,11 @@ final class SyncCoordinator {
                 GrokProviderDescriptor.displayLabel(window: p) ?? metadata?.sessionLabel
             } else if provider == .ollama {
                 OllamaProviderDescriptor.primaryLabel(window: p) ?? metadata?.sessionLabel
+            } else if provider == .qwencloud, let metadata, let snapshot {
+                // Provider-specific by design: Qwen Cloud's Team Token Plan and 30-day windows carry
+                // their Mac menu labels ("Team" / "Monthly") instead of the 5-hour session label.
+                ProviderDescriptorRegistry.descriptor(for: .qwencloud).presentation
+                    .rateWindowLabels(metadata: metadata, snapshot: snapshot).primary
             } else {
                 metadata?.sessionLabel
             }
@@ -1316,8 +1325,12 @@ final class SyncCoordinator {
             costSummary: resolvedCostSummary,
             costSummaryCleared: clearSharedCostOwnership && resolvedCostSummary == nil ? true : nil,
             budget: budgetSnap,
-            subscriptionExpiresAt: snapshot?.subscriptionExpiresAt,
-            subscriptionRenewsAt: snapshot?.subscriptionRenewsAt,
+            subscriptionExpiresAt: Self.syncSubscriptionDate(
+                snapshot?.subscriptionExpiresAt,
+                isDateOnly: snapshot?.subscriptionExpiresAtIsDateOnly == true),
+            subscriptionRenewsAt: Self.syncSubscriptionDate(
+                snapshot?.subscriptionRenewsAt,
+                isDateOnly: snapshot?.subscriptionRenewsAtIsDateOnly == true),
             rateWindows: rateWindows,
             utilizationHistory: sharedUtilizationHistory,
             perplexityCredits: perplexityCredits,
@@ -1387,6 +1400,22 @@ final class SyncCoordinator {
         return values
     }
 
+    /// Date-only billing dates (Claude renewals/expirations) arrive as UTC midnight. Publish them at
+    /// 12:00 UTC so readers that format in their local time zone keep the same calendar day from
+    /// UTC-11 to UTC+11; newer iPhones format this anchor in UTC everywhere.
+    static func syncSubscriptionDate(_ date: Date?, isDateOnly: Bool) -> Date? {
+        guard let date, isDateOnly else { return date }
+        var calendar = Calendar(identifier: .gregorian)
+        guard let utc = TimeZone(secondsFromGMT: 0) else { return date }
+        calendar.timeZone = utc
+        let day = calendar.dateComponents([.year, .month, .day], from: date)
+        return calendar.date(from: DateComponents(
+            year: day.year,
+            month: day.month,
+            day: day.day,
+            hour: 12)) ?? date
+    }
+
     static func additionalWindowLabel(windowMinutes: Int?) -> String {
         switch windowMinutes {
         case 1440: "Daily"
@@ -1450,6 +1479,12 @@ final class SyncCoordinator {
             guard let balance = providerCost.balance else { return nil }
             kind = "balance"
             amount = balance
+        case .xapi:
+            // Provider-specific by design: X API prepaid + free developer credits; the balance can be negative.
+            guard let balance = providerCost.balance else { return nil }
+            kind = "balance"
+            amount = balance
+            period = providerCost.period ?? "Prepaid credits"
         case .xai:
             kind = "balance"
             amount = providerCost.balance ?? providerCost.used

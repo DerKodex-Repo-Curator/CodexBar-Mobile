@@ -1499,7 +1499,6 @@
 "Continue in background" = "バックグラウンドで続行";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "5時間";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "API キーを確認しました。OllamaはAPI経由でCloudクォータ上限を公開していません。";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar は使用量を取得するために、macOS キーチェーンに Kimi K2 の API キーへのアクセスを求めます。続けるには OK をクリックしてください。";
 "CrossModel API spend trend" = "CrossModel API の支出推移";
@@ -1553,7 +1552,6 @@
 "mobile_mock_cost_note" = "Mocks add ~$85 to your 30-day cost dashboard while active. Toggle off to restore real numbers.";
 "mobile_section_mock_data" = "Debug · Mock Provider Data";
 "mobile_toggle_mock_title" = "Inject mock provider data";
-"Plan expires: %@" = "Plan expires: %@";
 "mobile_sync_status_no_sync" = "No sync yet";
 "mobile_toggle_push_title" = "Push notifications to iOS";
 "mobile_dev_warning" = "Warning";
@@ -1566,12 +1564,11 @@
 "mobile_dev_restored" = "Restored";
 "mobile_sync_status_last_attempt_format" = "Last attempt: %@";
 "mobile_section_dev_test" = "DEV — iOS Push Test";
-"mobile_toggle_mock_subtitle" = "同期のたびに、96 個の provider ID をカバーする 106 個の安定したモックスナップショットを送信します。複数アカウント、sub2api、Wayfinder、不明な provider のフォールバックを含みます。モックのメールアドレスは `.test` TLD を使用するため、iPhone には MOCK バッジが表示されます。オフにすると、CloudKit は約 1 回の同期サイクルでモックレコードを削除します。デフォルトはオフです。";
+"mobile_toggle_mock_subtitle" = "同期のたびに、105 個の provider ID をカバーする 115 個の安定したモックスナップショットを送信します。複数アカウント、sub2api、Wayfinder、不明な provider のフォールバックを含みます。モックのメールアドレスは `.test` TLD を使用するため、iPhone には MOCK バッジが表示されます。オフにすると、CloudKit は約 1 回の同期サイクルでモックレコードを削除します。デフォルトはオフです。";
 "mobile_dev_depleted" = "Depleted";
 "mobile_toggle_sync_subtitle" = "Pushes usage data to iCloud so the iOS companion app can display it.";
 "mobile_toggle_push_subtitle" = "When a session quota is depleted or restored, send a visible alert push to the iOS companion app via iCloud. This is independent of Mac local notifications — you can keep Mac quiet but still get alerts on your iPhone.";
 "mobile_section_icloud_sync" = "iCloud Sync";
-"Renews: %@" = "Renews: %@";
 "Cumulative" = "累計";
 "Token activity" = "トークンアクティビティ";
 "Earlier activity" = "以前の記録";
@@ -1725,7 +1722,6 @@
 "antigravity_no_priced_token_history" = "価格付きの Antigravity トークン履歴がありません。";
 
 /* Aixy quota warning labels */
-"Organization" = "組織";
 "Project" = "プロジェクト";
 "User" = "ユーザー";
 "Key" = "キー";

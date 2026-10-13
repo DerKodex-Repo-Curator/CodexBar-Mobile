@@ -1502,12 +1502,9 @@
 "Continue in background" = "ทำต่อในเบื้องหลัง";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "5 ชั่วโมง";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "API คีย์ที่ตรวจสอบแล้ว Ollama ไม่เปิดเผยขีดจํากัดโควต้าระบบคลาวด์ผ่าน API";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar จะขอ macOS Keychain สําหรับคีย์ API Kimi K2 ของคุณเพื่อให้สามารถดึงการใช้งานได้ คลิก ตกลง เพื่อดําเนินการต่อ";
 "CrossModel API spend trend" = "แนวโน้มค่าใช้จ่ายของ CrossModel API";
-"Plan expires: %@" = "แผนหมดอายุ: %@";
-"Renews: %@" = "ต่ออายุ: %@";
 "Settings" = "การตั้งค่า";
 "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai." = "เก็บไว้ใน ~/.codexbar/config.json. สร้างที่ kimi-k2.ai";
 "cost_header_estimated" = "ต้นทุน (โดยประมาณ)";
@@ -1546,7 +1543,7 @@
 "mobile_sync_status_syncing" = "กำลังซิงค์…";
 "mobile_sync_status_syncing_elapsed_format" = "กำลังซิงค์ — %@ · %d วินาที";
 "mobile_sync_status_syncing_phase_format" = "กำลังซิงค์ — %@…";
-"mobile_toggle_mock_subtitle" = "ส่งสแนปช็อตจำลองที่คงที่ 106 รายการ ครอบคลุม ID ผู้ให้บริการ 96 รายการทุกครั้งที่ซิงค์ รวมถึงกรณีหลายบัญชี, sub2api, Wayfinder และการสำรองสำหรับผู้ให้บริการที่ไม่รู้จัก อีเมลจำลองใช้ TLD `.test` ดังนั้น iPhone จะแสดงป้าย MOCK เมื่อปิดตัวเลือกนี้ CloudKit จะลบระเบียนจำลองภายในประมาณหนึ่งรอบการซิงค์ ปิดอยู่โดยค่าเริ่มต้น";
+"mobile_toggle_mock_subtitle" = "ส่งสแนปช็อตจำลองที่คงที่ 115 รายการ ครอบคลุม ID ผู้ให้บริการ 105 รายการทุกครั้งที่ซิงค์ รวมถึงกรณีหลายบัญชี, sub2api, Wayfinder และการสำรองสำหรับผู้ให้บริการที่ไม่รู้จัก อีเมลจำลองใช้ TLD `.test` ดังนั้น iPhone จะแสดงป้าย MOCK เมื่อปิดตัวเลือกนี้ CloudKit จะลบระเบียนจำลองภายในประมาณหนึ่งรอบการซิงค์ ปิดอยู่โดยค่าเริ่มต้น";
 "mobile_toggle_mock_title" = "ฉีดข้อมูลผู้ให้บริการจำลอง";
 "mobile_toggle_push_subtitle" = "เมื่อโควตาเซสชันหมดหรือกลับมาใช้งานได้ ให้ส่งการแจ้งเตือนแบบ push ที่มองเห็นได้ไปยังแอป iOS ผ่าน iCloud สิ่งนี้แยกจากการแจ้งเตือนในเครื่องของ Mac — คุณสามารถปิดเสียง Mac แต่ยังรับการแจ้งเตือนบน iPhone ได้";
 "mobile_toggle_push_title" = "การแจ้งเตือน Push ไปยัง iOS";
@@ -1729,7 +1726,6 @@
 "antigravity_no_priced_token_history" = "ไม่มีประวัติโทเคน Antigravity ที่คิดราคาไว้";
 
 /* Aixy quota warning labels */
-"Organization" = "องค์กร";
 "Project" = "โครงการ";
 "User" = "ผู้ใช้";
 "Key" = "คีย์";

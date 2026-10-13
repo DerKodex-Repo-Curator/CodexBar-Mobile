@@ -1468,12 +1468,9 @@
 "Continue in background" = "백그라운드에서 계속";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "5시간";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "API 키가 확인되었습니다. Ollama는 API를 통해 클라우드 할당량 한도를 제공하지 않습니다.";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar가 사용량을 가져올 수 있도록 macOS 키체인에 Kimi K2 API 키를 요청합니다. 계속하려면 확인을 클릭하세요.";
 "CrossModel API spend trend" = "CrossModel API 지출 추이";
-"Plan expires: %@" = "플랜 만료: %@";
-"Renews: %@" = "갱신: %@";
 "Settings" = "설정";
 "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai." = "~/.codexbar/config.json에 저장됩니다. kimi-k2.ai에서 생성하세요.";
 "cost_header_estimated" = "비용(추정)";
@@ -1534,7 +1531,7 @@
 "icloud_sync_phase_idle" = "Idle";
 "mobile_section_dev_test" = "DEV — iOS Push Test";
 "icloud_sync_phase_provider_upload" = "Provider upload";
-"mobile_toggle_mock_subtitle" = "동기화할 때마다 96개 제공자 ID에 걸친 106개의 안정적인 모의 스냅샷을 전송합니다. 다중 계정, sub2api, Wayfinder 및 알 수 없는 제공자 대체 사례가 포함됩니다. 모의 이메일은 `.test` TLD를 사용하므로 iPhone에 MOCK 배지가 표시됩니다. 이 옵션을 끄면 약 한 번의 동기화 주기 안에 CloudKit이 모의 레코드를 제거합니다. 기본값은 꺼짐입니다.";
+"mobile_toggle_mock_subtitle" = "동기화할 때마다 105개 제공자 ID에 걸친 115개의 안정적인 모의 스냅샷을 전송합니다. 다중 계정, sub2api, Wayfinder 및 알 수 없는 제공자 대체 사례가 포함됩니다. 모의 이메일은 `.test` TLD를 사용하므로 iPhone에 MOCK 배지가 표시됩니다. 이 옵션을 끄면 약 한 번의 동기화 주기 안에 CloudKit이 모의 레코드를 제거합니다. 기본값은 꺼짐입니다.";
 "mobile_dev_depleted" = "Depleted";
 "mobile_toggle_sync_subtitle" = "Pushes usage data to iCloud so the iOS companion app can display it.";
 "mobile_toggle_push_subtitle" = "When a session quota is depleted or restored, send a visible alert push to the iOS companion app via iCloud. This is independent of Mac local notifications — you can keep Mac quiet but still get alerts on your iPhone.";
@@ -1694,7 +1691,6 @@
 "antigravity_no_priced_token_history" = "가격이 매겨진 Antigravity 토큰 기록이 없습니다.";
 
 /* Aixy quota warning labels */
-"Organization" = "조직";
 "Project" = "프로젝트";
 "User" = "사용자";
 "Key" = "키";

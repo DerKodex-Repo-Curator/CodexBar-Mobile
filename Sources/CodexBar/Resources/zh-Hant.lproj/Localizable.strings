@@ -1529,12 +1529,9 @@
 "Continue in background" = "在背景繼續";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "5 小時";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "API 金鑰已驗證。Ollama 不會透過 API 提供 Cloud 配額限制。";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar 將向 macOS 鑰匙圈要求你的 Kimi K2 API 金鑰，以取得使用量。按一下「確定」繼續。";
 "CrossModel API spend trend" = "CrossModel API 支出趨勢";
-"Plan expires: %@" = "方案到期：%@";
-"Renews: %@" = "續訂：%@";
 "Settings" = "設定";
 "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai." = "儲存在 ~/.codexbar/config.json 中。可在 kimi-k2.ai 產生。";
 "cost_header_estimated" = "費用（估算）";
@@ -1597,7 +1594,7 @@
 "mobile_dev_restored" = "Restored";
 "mobile_sync_status_last_attempt_format" = "Last attempt: %@";
 "mobile_section_dev_test" = "DEV — iOS Push Test";
-"mobile_toggle_mock_subtitle" = "每次同步會推送 106 個穩定的模擬快照，涵蓋 96 個 provider ID，包括多帳號、sub2api、Wayfinder 和未知 provider 的備援情境。模擬信箱使用 `.test` TLD，因此 iPhone 會顯示 MOCK 徽章。關閉後，CloudKit 會在大約一個同步週期內移除模擬記錄。預設關閉。";
+"mobile_toggle_mock_subtitle" = "每次同步會推送 115 個穩定的模擬快照，涵蓋 105 個 provider ID，包括多帳號、sub2api、Wayfinder 和未知 provider 的備援情境。模擬信箱使用 `.test` TLD，因此 iPhone 會顯示 MOCK 徽章。關閉後，CloudKit 會在大約一個同步週期內移除模擬記錄。預設關閉。";
 "mobile_dev_depleted" = "Depleted";
 "mobile_toggle_sync_subtitle" = "Pushes usage data to iCloud so the iOS companion app can display it.";
 "mobile_toggle_push_subtitle" = "When a session quota is depleted or restored, send a visible alert push to the iOS companion app via iCloud. This is independent of Mac local notifications — you can keep Mac quiet but still get alerts on your iPhone.";
@@ -1756,7 +1753,6 @@
 "antigravity_no_priced_token_history" = "沒有可計價的 Antigravity 權杖歷史記錄。";
 
 /* Aixy quota warning labels */
-"Organization" = "組織";
 "Project" = "專案";
 "User" = "使用者";
 "Key" = "金鑰";

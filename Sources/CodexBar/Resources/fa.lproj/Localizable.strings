@@ -1502,12 +1502,9 @@
 "Continue in background" = "ادامه در پس‌زمینه";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "۵ ساعت";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "API کلید تأیید شد. Ollama محدودیت های سهمیه ابری را از طریق API آشکار نمی کند.";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar از macOS Keychain کلید API K2 Kimi می خواهید تا بتواند استفاده را دریافت کند. برای ادامه روی OK کلیک کنید.";
 "CrossModel API spend trend" = "روند هزینه‌ی CrossModel API";
-"Plan expires: %@" = "طرح منقضی می‌شود: %@";
-"Renews: %@" = "تمدید می‌شود: %@";
 "Settings" = "محیط ها";
 "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai." = "ذخیره شده در ~/.codexbar/config.json. یکی را در kimi-k2.ai تولید کنید.";
 "cost_header_estimated" = "هزینه (تخمینی)";
@@ -1546,7 +1543,7 @@
 "mobile_sync_status_syncing" = "در حال همگام‌سازی…";
 "mobile_sync_status_syncing_elapsed_format" = "در حال همگام‌سازی — %@ · %d ثانیه";
 "mobile_sync_status_syncing_phase_format" = "در حال همگام‌سازی — %@…";
-"mobile_toggle_mock_subtitle" = "در هر همگام‌سازی، ۱۰۶ اسنپ‌شات آزمایشی پایدار را برای ۹۶ شناسهٔ ارائه‌دهنده ارسال می‌کند؛ از جمله حالت‌های چندحسابی، sub2api، Wayfinder و بازگشت برای ارائه‌دهندهٔ ناشناخته. ایمیل‌های آزمایشی از دامنهٔ سطح‌بالای `.test` استفاده می‌کنند تا iPhone نشان MOCK را نمایش دهد. با خاموش کردن این گزینه، CloudKit رکوردهای آزمایشی را تقریباً در یک چرخهٔ همگام‌سازی حذف می‌کند. به‌طور پیش‌فرض خاموش است.";
+"mobile_toggle_mock_subtitle" = "در هر همگام‌سازی، ۱۱۵ اسنپ‌شات آزمایشی پایدار را برای ۱۰۵ شناسهٔ ارائه‌دهنده ارسال می‌کند؛ از جمله حالت‌های چندحسابی، sub2api، Wayfinder و بازگشت برای ارائه‌دهندهٔ ناشناخته. ایمیل‌های آزمایشی از دامنهٔ سطح‌بالای `.test` استفاده می‌کنند تا iPhone نشان MOCK را نمایش دهد. با خاموش کردن این گزینه، CloudKit رکوردهای آزمایشی را تقریباً در یک چرخهٔ همگام‌سازی حذف می‌کند. به‌طور پیش‌فرض خاموش است.";
 "mobile_toggle_mock_title" = "تزریق داده مزود شبیه‌سازی‌شده";
 "mobile_toggle_push_subtitle" = "وقتی سهمیه جلسه تمام یا بازیابی می‌شود، یک هشدار push قابل مشاهده از طریق iCloud به برنامه همراه iOS ارسال کن. این مستقل از اعلان‌های محلی Mac است — می‌توانید Mac را بی‌صدا نگه دارید و همچنان روی iPhone هشدار بگیرید.";
 "mobile_toggle_push_title" = "اعلان‌های Push به iOS";
@@ -1729,7 +1726,6 @@
 "antigravity_no_priced_token_history" = "تاریخچهٔ قیمت‌گذاری‌شدهٔ توکن Antigravity موجود نیست.";
 
 /* Aixy quota warning labels */
-"Organization" = "سازمان";
 "Project" = "پروژه";
 "User" = "کاربر";
 "Key" = "کلید";

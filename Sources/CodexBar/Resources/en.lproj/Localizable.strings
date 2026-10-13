@@ -1532,12 +1532,9 @@
 "%dd ago" = "%dd ago";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "5-hour";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "API key verified. Ollama does not expose Cloud quota limits through the API.";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue.";
 "CrossModel API spend trend" = "CrossModel API spend trend";
-"Plan expires: %@" = "Plan expires: %@";
-"Renews: %@" = "Renews: %@";
 "Settings" = "Settings";
 "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai." = "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai.";
 "cost_header_estimated" = "Cost (estimated)";
@@ -1576,7 +1573,7 @@
 "mobile_sync_status_syncing" = "Syncing…";
 "mobile_sync_status_syncing_elapsed_format" = "Syncing — %@ · %ds";
 "mobile_sync_status_syncing_phase_format" = "Syncing — %@…";
-"mobile_toggle_mock_subtitle" = "Pushes 106 stable mock snapshots across 96 provider IDs on every sync, including multi-account, sub2api, Wayfinder, and unknown-provider fallback cases. Mock emails use the `.test` TLD so iPhone shows a MOCK badge. Turning this off lets CloudKit remove the mock records within about one sync cycle. Off by default.";
+"mobile_toggle_mock_subtitle" = "Pushes 115 stable mock snapshots across 105 provider IDs on every sync, including multi-account, sub2api, Wayfinder, and unknown-provider fallback cases. Mock emails use the `.test` TLD so iPhone shows a MOCK badge. Turning this off lets CloudKit remove the mock records within about one sync cycle. Off by default.";
 "mobile_toggle_mock_title" = "Inject mock provider data";
 "mobile_toggle_push_subtitle" = "When a session quota is depleted or restored, send a visible alert push to the iOS companion app via iCloud. This is independent of Mac local notifications — you can keep Mac quiet but still get alerts on your iPhone.";
 "mobile_toggle_push_title" = "Push notifications to iOS";
@@ -1729,7 +1726,6 @@
 "antigravity_no_priced_token_history" = "No priced Antigravity token history is available.";
 
 /* Aixy quota warning labels */
-"Organization" = "Organization";
 "Project" = "Project";
 "User" = "User";
 "Key" = "Key";

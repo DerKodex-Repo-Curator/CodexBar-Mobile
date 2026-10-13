@@ -1654,12 +1654,9 @@
 "antigravity_no_priced_token_history" = "Fiyatlandırılmış Antigravity token geçmişi yok.";
 
 /* Fork additions retained across upstream merge. */
-"5-hour" = "5 saat";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "API anahtarı doğrulandı. Ollama, Cloud kota limitlerini API üzerinden göstermez.";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar, kullanımı getirmek için macOS Anahtarlığı'ndan Kimi K2 API anahtarınızı isteyecek. Devam etmek için Tamam'a tıklayın.";
 "CrossModel API spend trend" = "CrossModel API harcama eğilimi";
-"Plan expires: %@" = "Plan sona erer: %@";
-"Renews: %@" = "Yenilenir: %@";
 "Settings" = "Ayarlar";
 "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai." = "~/.codexbar/config.json dosyasında depolandı. kimi-k2.ai adresinden bir tane oluşturun.";
 "cost_header_estimated" = "Maliyet (tahmini)";
@@ -1698,7 +1695,7 @@
 "mobile_sync_status_syncing" = "Eşitleniyor…";
 "mobile_sync_status_syncing_elapsed_format" = "Eşzamanlanıyor — %@ · %d sn";
 "mobile_sync_status_syncing_phase_format" = "Eşzamanlanıyor — %@";
-"mobile_toggle_mock_subtitle" = "Her eşzamanlamada 96 sağlayıcı kimliğini kapsayan 106 kararlı sahte anlık görüntü gönderir; çoklu hesap, sub2api, Wayfinder ve bilinmeyen sağlayıcı geri dönüş durumları buna dahildir. Sahte e-postalar `.test` üst düzey alan adını kullandığından iPhone MOCK rozeti gösterir. Bu seçenek kapatıldığında CloudKit sahte kayıtları yaklaşık bir eşzamanlama döngüsünde kaldırır. Varsayılan olarak kapalıdır.";
+"mobile_toggle_mock_subtitle" = "Her eşzamanlamada 105 sağlayıcı kimliğini kapsayan 115 kararlı sahte anlık görüntü gönderir; çoklu hesap, sub2api, Wayfinder ve bilinmeyen sağlayıcı geri dönüş durumları buna dahildir. Sahte e-postalar `.test` üst düzey alan adını kullandığından iPhone MOCK rozeti gösterir. Bu seçenek kapatıldığında CloudKit sahte kayıtları yaklaşık bir eşzamanlama döngüsünde kaldırır. Varsayılan olarak kapalıdır.";
 "mobile_toggle_mock_title" = "Mock sağlayıcı verisi ekle";
 "mobile_toggle_push_subtitle" = "Bir oturum kotası tükendiğinde veya geri yüklendiğinde, iCloud üzerinden iOS yardımcı uygulamasına görünür bir uyarı push bildirimi gönder. Bu, Mac yerel bildirimlerinden bağımsızdır — Mac'i sessiz tutup iPhone'da uyarı almaya devam edebilirsiniz.";
 "mobile_toggle_push_title" = "iOS'a push bildirimleri";
@@ -1729,7 +1726,6 @@
 "∞ Unlimited" = "∞ Sınırsız";
 
 /* Aixy quota warning labels */
-"Organization" = "Kuruluş";
 "Project" = "Proje";
 "User" = "Kullanıcı";
 "Key" = "Anahtar";

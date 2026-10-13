@@ -1655,12 +1655,9 @@
 "antigravity_no_priced_token_history" = "No hi ha historial de tokens d'Antigravity amb preu disponible.";
 
 /* Fork additions retained across upstream merge. */
-"5-hour" = "5 hores";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "Clau d'API verificada. Ollama no exposa els límits de quota de Cloud a través de l'API.";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar demanarà a Clauer de macOS la clau API de Kimi K2 per obtenir l'ús. Premeu D'acord per continuar.";
 "CrossModel API spend trend" = "Tendència de despesa de l'API de CrossModel";
-"Plan expires: %@" = "El pla caduca: %@";
-"Renews: %@" = "Es renova: %@";
 "Settings" = "Configuració";
 "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai." = "Desat a ~/.codexbar/config.json. Genera'n una a kimi-k2.ai.";
 "cost_header_estimated" = "Cost (estimat)";
@@ -1699,7 +1696,7 @@
 "mobile_sync_status_syncing" = "Syncing…";
 "mobile_sync_status_syncing_elapsed_format" = "Syncing — %@ · %ds";
 "mobile_sync_status_syncing_phase_format" = "Syncing — %@…";
-"mobile_toggle_mock_subtitle" = "Envia 106 instantànies simulades estables de 96 identificadors de proveïdor a cada sincronització, inclosos els casos de diversos comptes, sub2api, Wayfinder i reserva per a proveïdors desconeguts. Els correus simulats fan servir el TLD `.test`, de manera que l’iPhone mostra una insígnia MOCK. Si ho desactives, CloudKit eliminarà els registres simulats en aproximadament un cicle de sincronització. Desactivat per defecte.";
+"mobile_toggle_mock_subtitle" = "Envia 115 instantànies simulades estables de 105 identificadors de proveïdor a cada sincronització, inclosos els casos de diversos comptes, sub2api, Wayfinder i reserva per a proveïdors desconeguts. Els correus simulats fan servir el TLD `.test`, de manera que l’iPhone mostra una insígnia MOCK. Si ho desactives, CloudKit eliminarà els registres simulats en aproximadament un cicle de sincronització. Desactivat per defecte.";
 "mobile_toggle_mock_title" = "Inject mock provider data";
 "mobile_toggle_push_subtitle" = "When a session quota is depleted or restored, send a visible alert push to the iOS companion app via iCloud. This is independent of Mac local notifications — you can keep Mac quiet but still get alerts on your iPhone.";
 "mobile_toggle_push_title" = "Push notifications to iOS";
@@ -1730,7 +1727,6 @@
 "∞ Unlimited" = "∞ Il·limitat";
 
 /* Aixy quota warning labels */
-"Organization" = "Organització";
 "Project" = "Projecte";
 "User" = "Usuari";
 "Key" = "Clau";

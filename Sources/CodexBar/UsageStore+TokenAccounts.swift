@@ -382,8 +382,8 @@ extension UsageStore {
         }
         return requestedAccountIDs == nil && allFetchesSucceeded && currentSnapshots.count == accounts.count &&
             currentSnapshots.allSatisfy {
-            $0.snapshot != nil && $0.error == nil
-        }
+                $0.snapshot != nil && $0.error == nil
+            }
     }
 
     func codexVisibleSelectionStillMatches(

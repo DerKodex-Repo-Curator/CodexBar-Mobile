@@ -1504,7 +1504,6 @@
 "Continue in background" = "转为后台运行";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "5 小时";
 "tab_mobile" = "移动";
 "mobile_section_icloud_sync" = "iCloud 同步";
 "mobile_toggle_sync_title" = "同步用量到 iCloud";
@@ -1514,7 +1513,7 @@
 "mobile_toggle_push_subtitle" = "当 session 配额耗尽或恢复时，通过 iCloud 向 iOS 伴侣 app 发送可见的提醒推送。这与 Mac 本地通知独立 —— 可以让 Mac 保持安静的同时让 iPhone 收到提醒。";
 "mobile_section_mock_data" = "调试 · Mock provider 数据";
 "mobile_toggle_mock_title" = "注入 mock provider 数据";
-"mobile_toggle_mock_subtitle" = "每次同步会推送 106 个稳定的模拟快照，覆盖 96 个 provider ID，包括多账号、sub2api、Wayfinder 和未知 provider 回退场景。模拟邮箱使用 `.test` TLD，因此 iPhone 会显示 MOCK 徽章。关闭后，CloudKit 会在大约一个同步周期内移除模拟记录。默认关闭。";
+"mobile_toggle_mock_subtitle" = "每次同步会推送 115 个稳定的模拟快照，覆盖 105 个 provider ID，包括多账号、sub2api、Wayfinder 和未知 provider 回退场景。模拟邮箱使用 `.test` TLD，因此 iPhone 会显示 MOCK 徽章。关闭后，CloudKit 会在大约一个同步周期内移除模拟记录。默认关闭。";
 "mobile_mock_reference_header" = "参考 — 最常测试的 8 个 mock（35 个简单 mock 省略）：";
 "mobile_mock_cost_note" = "Mock 数据启用时会在 30 天费用面板上增加约 $85。关闭后恢复真实数字。";
 "mobile_section_dev_test" = "DEV — iOS 推送测试";
@@ -1542,8 +1541,6 @@
 "mobile_sync_status_last_attempt_format" = "上次尝试：%@";
 "mobile_sync_status_no_sync" = "尚未同步";
 "mobile_button_sync_now" = "立即同步";
-"Renews: %@" = "续订：%@";
-"Plan expires: %@" = "方案到期：%@";
 "∞ Unlimited" = "∞ 无限";
 "Settings" = "设置";
 "hide_critters_subtitle" = "显示不带表情和装饰的简洁进度条。";
@@ -1740,7 +1737,6 @@
 "antigravity_no_priced_token_history" = "没有可计价的 Antigravity 令牌历史记录。";
 
 /* Aixy quota warning labels */
-"Organization" = "组织";
 "Project" = "项目";
 "User" = "用户";
 "Key" = "密钥";

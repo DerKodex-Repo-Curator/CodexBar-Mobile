@@ -1502,12 +1502,9 @@
 "Continue in background" = "المتابعة في الخلفية";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "5 ساعات";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "تم التحقق من API المفتاح. Ollama لا يكشف حدود حصص السحابة عبر API.";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar سيطلب macOS Keychain مفتاح API K2 Kimi الخاص بك حتى يتمكن من جلب الاستخدام. انقر موافقا للمتابعة.";
 "CrossModel API spend trend" = "اتجاه إنفاق CrossModel API";
-"Plan expires: %@" = "تنتهي الخطة: %@";
-"Renews: %@" = "يتجدد: %@";
 "Settings" = "الإعدادات";
 "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai." = "مخزن في ~/.codexbar/config.json. تولد واحدا عند kimi-k2.ai.";
 "cost_header_estimated" = "التكلفة (تقديرية)";
@@ -1546,7 +1543,7 @@
 "mobile_sync_status_syncing" = "جار المزامنة…";
 "mobile_sync_status_syncing_elapsed_format" = "جارٍ المزامنة — %@ · %d ث";
 "mobile_sync_status_syncing_phase_format" = "جارٍ المزامنة — %@…";
-"mobile_toggle_mock_subtitle" = "يدفع 106 لقطة وهمية ثابتة تغطي 96 معرّف مزوّد عند كل مزامنة، بما في ذلك حالات الحسابات المتعددة وsub2api وWayfinder والرجوع الاحتياطي للمزوّدات غير المعروفة. تستخدم رسائل البريد الوهمية نطاق المستوى الأعلى `.test`، لذلك يعرض iPhone شارة MOCK. يتيح إيقاف هذا الخيار لـ CloudKit إزالة السجلات الوهمية خلال دورة مزامنة واحدة تقريبًا. متوقف افتراضيًا.";
+"mobile_toggle_mock_subtitle" = "يدفع 115 لقطة وهمية ثابتة تغطي 105 معرّف مزوّد عند كل مزامنة، بما في ذلك حالات الحسابات المتعددة وsub2api وWayfinder والرجوع الاحتياطي للمزوّدات غير المعروفة. تستخدم رسائل البريد الوهمية نطاق المستوى الأعلى `.test`، لذلك يعرض iPhone شارة MOCK. يتيح إيقاف هذا الخيار لـ CloudKit إزالة السجلات الوهمية خلال دورة مزامنة واحدة تقريبًا. متوقف افتراضيًا.";
 "mobile_toggle_mock_title" = "حقن بيانات مزود وهمية";
 "mobile_toggle_push_subtitle" = "عند نفاد حصة الجلسة أو استعادتها، أرسل تنبيه دفع مرئيا إلى تطبيق iOS المرافق عبر iCloud. هذا مستقل عن إشعارات Mac المحلية — يمكنك إبقاء Mac صامتا مع الاستمرار في تلقي التنبيهات على iPhone.";
 "mobile_toggle_push_title" = "إشعارات الدفع إلى iOS";
@@ -1729,7 +1726,6 @@
 "antigravity_no_priced_token_history" = "لا يتوفر سجل رموز Antigravity مُسعّر.";
 
 /* Aixy quota warning labels */
-"Organization" = "مؤسسة";
 "Project" = "مشروع";
 "User" = "مستخدم";
 "Key" = "مفتاح";

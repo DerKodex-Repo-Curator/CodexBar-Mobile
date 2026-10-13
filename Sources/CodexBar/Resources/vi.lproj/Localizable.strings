@@ -1499,12 +1499,9 @@
 "Continue in background" = "Tiếp tục trong nền";
 
 /* CodexBar Mobile fork compatibility strings. */
-"5-hour" = "5 giờ";
 "API key verified. Ollama does not expose Cloud quota limits through the API." = "API đã được xác minh. Ollama không đưa ra các giới hạn Hạn mức của Đám mây thông qua API .";
 "CodexBar will ask macOS Keychain for your Kimi K2 API key so it can fetch usage. Click OK to continue." = "CodexBar sẽ yêu cầu macOS Keychain cung cấp khóa Kimi K2 API của bạn để nó có thể tìm nạp Mức sử dụng . Nhấn OK để tiếp tục.";
 "CrossModel API spend trend" = "Xu hướng chi tiêu API CrossModel";
-"Plan expires: %@" = "Gói hết hạn: %@";
-"Renews: %@" = "Gia hạn: %@";
 "Settings" = "Cài đặt";
 "Stored in ~/.codexbar/config.json. Generate one at kimi-k2.ai." = "Được lưu trữ trong ~/.codexbar/config.json. Tạo một cái tại kimi-k2.ai.";
 "cost_header_estimated" = "Chi phí (ước tính)";
@@ -1565,7 +1562,7 @@
 "icloud_sync_phase_idle" = "Idle";
 "mobile_section_dev_test" = "DEV — iOS Push Test";
 "icloud_sync_phase_provider_upload" = "Provider upload";
-"mobile_toggle_mock_subtitle" = "Mỗi lần đồng bộ sẽ đẩy 106 ảnh chụp giả lập ổn định cho 96 ID nhà cung cấp, bao gồm các trường hợp nhiều tài khoản, sub2api, Wayfinder và dự phòng cho nhà cung cấp không xác định. Email giả lập dùng TLD `.test` nên iPhone hiển thị huy hiệu MOCK. Khi tắt, CloudKit sẽ xóa các bản ghi giả lập trong khoảng một chu kỳ đồng bộ. Mặc định tắt.";
+"mobile_toggle_mock_subtitle" = "Mỗi lần đồng bộ sẽ đẩy 115 ảnh chụp giả lập ổn định cho 105 ID nhà cung cấp, bao gồm các trường hợp nhiều tài khoản, sub2api, Wayfinder và dự phòng cho nhà cung cấp không xác định. Email giả lập dùng TLD `.test` nên iPhone hiển thị huy hiệu MOCK. Khi tắt, CloudKit sẽ xóa các bản ghi giả lập trong khoảng một chu kỳ đồng bộ. Mặc định tắt.";
 "mobile_dev_depleted" = "Depleted";
 "mobile_toggle_sync_subtitle" = "Pushes usage data to iCloud so the iOS companion app can display it.";
 "mobile_toggle_push_subtitle" = "When a session quota is depleted or restored, send a visible alert push to the iOS companion app via iCloud. This is independent of Mac local notifications — you can keep Mac quiet but still get alerts on your iPhone.";
@@ -1726,7 +1723,6 @@
 "antigravity_no_priced_token_history" = "Không có lịch sử token Antigravity được định giá.";
 
 /* Aixy quota warning labels */
-"Organization" = "Tổ chức";
 "Project" = "Dự án";
 "User" = "Người dùng";
 "Key" = "Khóa";
