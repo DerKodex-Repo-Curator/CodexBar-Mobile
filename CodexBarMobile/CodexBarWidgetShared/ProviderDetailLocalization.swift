@@ -211,7 +211,7 @@ enum ProviderDetailLocalization {
             return MobileLocalizedString.value("langdock_value_no_included_limits", defaultValue: value, locale: locale)
         case "museai":
             return self.localizedAmountLeft(value, locale: locale) ?? value
-        case "aerostack", "cosmic", "qwencloud", "sofya", "tavily", "tinyapi":
+        case "aerostack", "cosmic", "qwencloud", "sailresearch", "sofya", "tavily", "tinyapi":
             return self.localizedV074Value(value, locale: locale)
         case "kiro":
             break

@@ -43,6 +43,12 @@ struct V074ProviderPresentationTests {
         let zh = Locale(identifier: "zh-Hans")
         #expect(ProviderDetailLocalization.localizedValue("Unlimited", providerID: "tavily", locale: zh) == "无限")
         #expect(ProviderDetailLocalization.localizedValue("Not reported", providerID: "cosmic", locale: zh) == "未提供")
+        // Sail Research reports an unavailable organization balance with this fixed value.
+        #expect(ProviderDetailLocalization.localizedValue("Unavailable", providerID: "sailresearch", locale: zh) == "不可用")
+        #expect(ProviderDetailLocalization.localizedValue(
+            "Unavailable", providerID: "sailresearch", locale: Locale(identifier: "ja"))
+            == MobileLocalizedString.value("Unavailable", defaultValue: "Unavailable", locale: Locale(identifier: "ja")))
+        #expect(ProviderDetailLocalization.localizedValue("$64.10", providerID: "sailresearch", locale: zh) == "$64.10")
         #expect(ProviderDetailLocalization.localizedValue("1,250 credits", providerID: "tinyapi", locale: zh) == "1,250 额度")
         #expect(ProviderDetailLocalization.localizedValue("120 / 500 credits used", providerID: "qwencloud", locale: zh)
             == "已用 120 / 500 额度")
