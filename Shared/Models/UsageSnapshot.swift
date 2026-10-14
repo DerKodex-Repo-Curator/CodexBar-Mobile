@@ -1546,7 +1546,7 @@ public struct ProviderUsageSnapshot: Codable, Sendable, Equatable {
     /// generic rate/cost fields would silently discard valid provider data.
     /// Accepts only a real Gregorian `yyyy-MM-dd` calendar day.
     public static func validCalendarDay(_ value: String?) -> String? {
-        guard let value, value.count == 10, Self.calendarDayDate(value) != nil else { return nil }
+        guard let value, value.count == 10, calendarDayDate(value) != nil else { return nil }
         return value
     }
 
@@ -1561,7 +1561,10 @@ public struct ProviderUsageSnapshot: Codable, Sendable, Equatable {
         calendar.timeZone = utc
         let components = DateComponents(year: year, month: month, day: day, hour: 12)
         guard let date = calendar.date(from: components),
-              calendar.dateComponents([.year, .month, .day], from: date) == DateComponents(year: year, month: month, day: day)
+              calendar.dateComponents([.year, .month, .day], from: date) == DateComponents(
+                  year: year,
+                  month: month,
+                  day: day)
         else { return nil }
         return date
     }
