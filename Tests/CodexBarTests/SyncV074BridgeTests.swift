@@ -59,44 +59,25 @@ struct SyncV074BridgeTests {
     }
 
     @Test
-    func `date-only subscription dates publish at noon UTC and exact dates pass through`() throws {
+    func `date-only subscription dates publish as a calendar day and exact dates pass through`() throws {
         let midnight = try Self.utcDate(2026, 11, 3)
-        let anchored = try #require(SyncCoordinator.syncSubscriptionDate(midnight, isDateOnly: true))
-        #expect(try anchored == Self.utcDate(2026, 11, 3, hour: 12))
-        // Every local calendar from UTC-11 to UTC+11 still reads November 3.
-        for offsetHours in -11...11 {
-            var calendar = Calendar(identifier: .gregorian)
-            calendar.timeZone = try #require(TimeZone(secondsFromGMT: offsetHours * 3600))
-            #expect(calendar.component(.day, from: anchored) == 3)
-        }
-
-        let exact = midnight.addingTimeInterval(5 * 3600 + 17)
-        #expect(SyncCoordinator.syncSubscriptionDate(exact, isDateOnly: false) == exact)
-        #expect(SyncCoordinator.syncSubscriptionDate(nil, isDateOnly: true) == nil)
-
-        // An exact timestamp on the anchor instant moves one second so it can never read as date-only.
-        let exactNoon = try Self.utcDate(2026, 11, 3, hour: 12)
-        let published = try #require(SyncCoordinator.syncSubscriptionDate(exactNoon, isDateOnly: false))
-        #expect(published == exactNoon.addingTimeInterval(1))
-        #expect(!SyncCoordinator.isDateOnlyAnchorInstant(published))
-        #expect(SyncCoordinator.isDateOnlyAnchorInstant(anchored))
-        // The shifted instant shows the same calendar day as the original in every whole-minute zone.
-        for offsetMinutes in stride(from: -12 * 60, through: 14 * 60, by: 15) {
-            var calendar = Calendar(identifier: .gregorian)
-            calendar.timeZone = try #require(TimeZone(secondsFromGMT: offsetMinutes * 60))
-            #expect(calendar.component(.day, from: published) == calendar.component(.day, from: exactNoon))
-        }
+        #expect(SyncCoordinator.syncSubscriptionDay(midnight, isDateOnly: true) == "2026-11-03")
+        #expect(SyncCoordinator.syncSubscriptionDay(midnight.addingTimeInterval(86399), isDateOnly: true)
+            == "2026-11-03")
+        #expect(SyncCoordinator.syncSubscriptionDay(midnight, isDateOnly: false) == nil)
+        #expect(SyncCoordinator.syncSubscriptionDay(nil, isDateOnly: true) == nil)
     }
 
     @Test
-    func `Claude date-only renewal reaches iOS on the same calendar day`() async throws {
+    func `Claude date-only renewal publishes a calendar day and no instant`() async throws {
         let (settings, store) = try Self.makeStore(suite: "SyncV074BridgeTests-claude-renewal", provider: .claude)
         let renewal = try Self.utcDate(2026, 11, 3)
+        let exactExpiry = try Self.utcDate(2026, 12, 1, hour: 12)
         let snapshot = UsageSnapshot(
             primary: RateWindow(usedPercent: 12, windowMinutes: 300, resetsAt: nil, resetDescription: nil),
             secondary: nil,
             updatedAt: self.observed)
-            .withSubscriptionMetadata(expiresAt: nil, renewsAt: renewal, renewsAtIsDateOnly: true)
+            .withSubscriptionMetadata(expiresAt: exactExpiry, renewsAt: renewal, renewsAtIsDateOnly: true)
         store._setSnapshotForTesting(snapshot, provider: .claude)
         let mock = MockSyncPusher()
         let coordinator = SyncCoordinator(store: store, settings: settings, syncManager: mock)
@@ -105,8 +86,17 @@ struct SyncV074BridgeTests {
 
         let provider = try #require(mock.lastSnapshot?.providers
             .first(where: { $0.providerID == UsageProvider.claude.rawValue }))
-        #expect(try provider.subscriptionRenewsAt == Self.utcDate(2026, 11, 3, hour: 12))
-        #expect(provider.subscriptionExpiresAt == nil)
+        // Old iPhones format instants locally, so a date-only day is never sent as an instant.
+        #expect(provider.subscriptionRenewsAt == nil)
+        #expect(provider.subscriptionRenewsOn == "2026-11-03")
+        // An exact timestamp is unchanged, even on the old 12:00 UTC anchor instant.
+        #expect(provider.subscriptionExpiresAt == exactExpiry)
+        #expect(provider.subscriptionExpiresOn == nil)
+        let json = try #require(String(
+            bytes: CloudSyncConstants.makeJSONEncoder().encode(provider),
+            encoding: .utf8))
+        #expect(json.contains("\"subscriptionRenewsOn\":\"2026-11-03\""))
+        #expect(!json.contains("subscriptionExpiresOn"))
     }
 
     @Test

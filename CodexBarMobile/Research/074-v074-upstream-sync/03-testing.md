@@ -44,7 +44,7 @@ Status: `done`
 
 替代验证：`tools/check_frozen_wire.py --old-ref v0.73.0.1-mobile.2.6.0`（`tools/FrozenWireHarness.swift`）。
 - old 是最后公开发布的 `v0.73.0.1-mobile.2.6.0` 的 Shared 源码与 `ProviderSnapshotMerger`；new 是本分支 HEAD。18 个源文件里只有 `QuotaProviderList.swift` 不同。
-- old Mac 只发 Claude（没有续费日）和 Qwen Cloud（"5-hour"）；new Mac 另外发 Claude 的 12:00 UTC 续费日、Qwen "Team"、X API −1.2 余额、Aerostack 无 reset 窗口。
+- old Mac 只发 Claude（没有续费日）和 Qwen Cloud（"5-hour"）；new Mac 另外发 Claude 的续费日（`subscriptionRenewsOn` 日期字段，不发时间戳）和恰好 12:00 UTC 的精确到期时间、Qwen "Team"、X API −1.2 余额、Aerostack 无 reset 窗口。
 - 每个组合：两台 iPhone 各自读取两台 Mac 的全部 envelope（解码、校验、JSON 往返），再分别用自己的 merger 按两种顺序合并两台 Mac；还要校验订阅列表（只有 new 读端订阅 aerostack，没有任何一端订阅 xapi）。
 - 结果：`PASS: 16 masks, 64 wire reads and 32 real old/new consumer merge processes`，日志 `frozen-wire/matrix-wire.log`、`frozen-wire/matrix-wire.json`、`frozen-wire/source-manifest.json`。
 
@@ -56,7 +56,7 @@ Status: `done`
 | 2 | old | old | old | new | substituted | mask 1 PASS | 只有 old Mac，new iPhone 没有新数据可显示；新 iPhone 多订阅 3 个推送 zone，不会收到推送 |
 | 3 | old | old | new | old | substituted | mask 2 PASS | 同 2 |
 | 4 | old | old | new | new | substituted | mask 3 PASS | 同 2 |
-| 5 | old | new | old | old | substituted | mask 4 PASS | old iPhone 把新 provider 显示为未知 provider 通用卡（没有颜色、英文），X API 余额照常显示；Qwen 显示英文 "Team"；Claude 续费日在 UTC−11 到 +11 正确；不订阅新 provider 推送 |
+| 5 | old | new | old | old | substituted | mask 4 PASS | old iPhone 把新 provider 显示为未知 provider 通用卡（没有颜色、英文），X API 余额照常显示；Qwen 显示英文 "Team"；Claude 续费日不显示（旧版没有这个字段）；不订阅新 provider 推送 |
 | 6 | old | new | old | new | substituted | mask 5 PASS | iPhone A 同 5；iPhone B 完整显示 |
 | 7 | old | new | new | old | substituted | mask 6 PASS | 同 6（角色互换） |
 | 8 | old | new | new | new | substituted | mask 7 PASS | 两台 iPhone 收敛到同一状态；Claude 续费日来自 new Mac |
@@ -72,7 +72,7 @@ Status: `done`
 残余风险：
 - 实体四设备、Production CloudKit 收敛、APNs 时序、SwiftData 持久化与真实 UI 没有在本轮实测。
 - 新 provider 没有真实账号，数据来自插件 fixture、mock 注入和单元测试。
-- 旧 iPhone 上，Claude 只有日期的续费日在 UTC+12 及更东会晚一天。
+- 旧 iPhone 上，Claude 只有日期的续费日不显示（与 0.73.0.1 时相同）。
 - Gate 结论：16 个组合全部列出，均为 substituted，没有 fail。
 
 ## CloudKit Production schema 审计

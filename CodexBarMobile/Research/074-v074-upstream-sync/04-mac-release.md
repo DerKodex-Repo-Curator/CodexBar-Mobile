@@ -1,6 +1,6 @@
 # Mac 0.74.1.1 签名、公证与 Draft
 
-Status: `done`（Draft 已生成；未公开发布）
+Status: `superseded`（这个 Draft 由 `ea96a4f20` 生成；PR #192 review 修复改动了 Mac 源码 `SyncCoordinator.swift` 和 Shared 模型，打包输入已不同。合并后需删除该 Draft，再从 mobile-dev 重新生成）
 Date: 2026-10-13
 
 ## 授权与边界

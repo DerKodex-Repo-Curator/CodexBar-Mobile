@@ -103,7 +103,7 @@ git diff $LAST_TAG..HEAD -- Shared/Models/UsageSnapshot.swift | grep -E "^\+.*pu
 
 对照最新 published `v0.73.0.1-mobile.2.6.0`：
 - **schema 定义**：`Shared/iCloud/CloudConstants.swift` 与 `Scripts/cloudkit/` 无 diff，`providerPayloadVersion=1`；`Shared/Models/UsageSnapshot.swift` 没有新增或删除 `public let`，Shared 模型零改动。
-- **新数据都在既有字段里**：X API 余额复用 `providerAmount`，Qwen Cloud Team 标签复用 `SyncRateWindow.label`，Claude 只有日期的续费/到期日仍写在 `subscriptionRenewsAt` / `subscriptionExpiresAt`（只是把值锚定到 12:00 UTC），新 provider 的详情复用 `details`，都在既有 `DeviceProviderSnapshot.payload` opaque JSON 中。
+- **新数据都在既有 record 的 payload 里**：X API 余额复用 `providerAmount`，Qwen Cloud Team 标签复用 `SyncRateWindow.label`。Claude 只有日期的续费/到期日改用 `ProviderUsageSnapshot` 新增的两个可选字段 `subscriptionRenewsOn` / `subscriptionExpiresOn`（`yyyy-MM-dd` 字符串，`decodeIfPresent`，nil 时不编码）。审计第 4 步因此会看到 `UsageSnapshot.swift` 新增两个 `public let`，它们都只在既有 `DeviceProviderSnapshot.payload` 的 opaque JSON 里，不是 CloudKit field。新 provider 的详情复用 `details`。
 - **`QuotaProviderList`**：尾部追加 `aerostack`、`cosmic`、`tavily`，只增加运行时私有 zone 与 zone subscription，沿用已部署的 `QuotaTransition` type 与 fields。
 - **上游同步层**：v0.73.0→v0.74.1 没有改动 `CloudSyncEngine` 与 entitlements；fleet `SyncedPreferences` 新增的可选 `unifiedIconSource` 只在既有 `Preferences` record 的 JSON 里。
 - **打包**：`Scripts/package_app.sh` 仍为 `icloud-container-environment = Production`、容器 `iCloud.com.o1xhack.codexbar`，不含 `aps-environment`；iOS entitlements 仍为 Production。

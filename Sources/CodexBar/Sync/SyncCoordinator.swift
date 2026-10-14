@@ -982,10 +982,14 @@ final class SyncCoordinator {
             lastUpdated: snapshot?.updatedAt ?? Date(),
             costSummary: costSummary,
             budget: budget,
-            subscriptionExpiresAt: Self.syncSubscriptionDate(
+            subscriptionExpiresAt: snapshot?.subscriptionExpiresAtIsDateOnly == true
+                ? nil : snapshot?.subscriptionExpiresAt,
+            subscriptionRenewsAt: snapshot?.subscriptionRenewsAtIsDateOnly == true
+                ? nil : snapshot?.subscriptionRenewsAt,
+            subscriptionExpiresOn: Self.syncSubscriptionDay(
                 snapshot?.subscriptionExpiresAt,
                 isDateOnly: snapshot?.subscriptionExpiresAtIsDateOnly == true),
-            subscriptionRenewsAt: Self.syncSubscriptionDate(
+            subscriptionRenewsOn: Self.syncSubscriptionDay(
                 snapshot?.subscriptionRenewsAt,
                 isDateOnly: snapshot?.subscriptionRenewsAtIsDateOnly == true),
             rateWindows: rateWindows,
@@ -1325,10 +1329,14 @@ final class SyncCoordinator {
             costSummary: resolvedCostSummary,
             costSummaryCleared: clearSharedCostOwnership && resolvedCostSummary == nil ? true : nil,
             budget: budgetSnap,
-            subscriptionExpiresAt: Self.syncSubscriptionDate(
+            subscriptionExpiresAt: snapshot?.subscriptionExpiresAtIsDateOnly == true
+                ? nil : snapshot?.subscriptionExpiresAt,
+            subscriptionRenewsAt: snapshot?.subscriptionRenewsAtIsDateOnly == true
+                ? nil : snapshot?.subscriptionRenewsAt,
+            subscriptionExpiresOn: Self.syncSubscriptionDay(
                 snapshot?.subscriptionExpiresAt,
                 isDateOnly: snapshot?.subscriptionExpiresAtIsDateOnly == true),
-            subscriptionRenewsAt: Self.syncSubscriptionDate(
+            subscriptionRenewsOn: Self.syncSubscriptionDay(
                 snapshot?.subscriptionRenewsAt,
                 isDateOnly: snapshot?.subscriptionRenewsAtIsDateOnly == true),
             rateWindows: rateWindows,
@@ -1400,34 +1408,16 @@ final class SyncCoordinator {
         return values
     }
 
-    /// Date-only billing dates (Claude renewals/expirations) arrive as UTC midnight. Publish them at
-    /// 12:00 UTC so readers that format in their local time zone keep the same calendar day from
-    /// UTC-11 to UTC+11; newer iPhones format this anchor in UTC everywhere.
-    ///
-    /// Wire convention: exactly 12:00:00 UTC means "date only". An exact timestamp that happens to
-    /// fall on that instant is published one second later; iPhones show subscription dates without a
-    /// time, and no time zone offset can move a calendar day across that second.
-    static func syncSubscriptionDate(_ date: Date?, isDateOnly: Bool) -> Date? {
-        guard let date else { return nil }
-        guard isDateOnly else {
-            return Self.isDateOnlyAnchorInstant(date) ? date.addingTimeInterval(1) : date
-        }
+    /// Date-only billing dates (Claude renewals/expirations, upstream #4324) arrive as UTC midnight
+    /// of the billing day. They are published as that `yyyy-MM-dd` day instead of an instant, which no
+    /// single moment can represent for every time zone; older iPhones ignore the key and show no date.
+    static func syncSubscriptionDay(_ date: Date?, isDateOnly: Bool) -> String? {
+        guard let date, isDateOnly, let utc = TimeZone(secondsFromGMT: 0) else { return nil }
         var calendar = Calendar(identifier: .gregorian)
-        guard let utc = TimeZone(secondsFromGMT: 0) else { return date }
         calendar.timeZone = utc
         let day = calendar.dateComponents([.year, .month, .day], from: date)
-        return calendar.date(from: DateComponents(
-            year: day.year,
-            month: day.month,
-            day: day.day,
-            hour: 12)) ?? date
-    }
-
-    /// True for an instant exactly on a 12:00:00 UTC day boundary offset (the date-only anchor).
-    static func isDateOnlyAnchorInstant(_ date: Date) -> Bool {
-        let seconds = date.timeIntervalSince1970
-        guard seconds.isFinite, seconds.rounded() == seconds else { return false }
-        return (seconds - (seconds / 86400).rounded(.down) * 86400) == 43200
+        guard let year = day.year, let month = day.month, let dayOfMonth = day.day else { return nil }
+        return String(format: "%04d-%02d-%02d", year, month, dayOfMonth)
     }
 
     static func additionalWindowLabel(windowMinutes: Int?) -> String {

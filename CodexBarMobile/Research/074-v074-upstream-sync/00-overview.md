@@ -1,6 +1,6 @@
 # v0.74.0–v0.74.1 单版本上游同步 + iOS 2.8.0
 
-Status: `done`（Mac Draft 已生成；未推送、未合并、未公开发布）
+Status: `in-progress`（PR #192 Codex review 中；现有 Mac Draft 已过期，需在合并后从 mobile-dev 重新生成；未合并、未公开发布）
 Date: 2026-10-12
 
 ## 范围与依据
@@ -81,6 +81,6 @@ Date: 2026-10-12
   - 没有实体 2 Mac × 2 iPhone、Production CloudKit 收敛与 APNs 时序的验证；
   - 新 provider 没有真实账号数据；
   - 旧 iPhone 上的新 provider 显示为通用卡片（没有颜色、英文、无推送）；
-  - 旧 iPhone 在 UTC+12 及更东的时区，Claude 只有日期的续费日会晚一天；
+  - 旧 iPhone 不显示 Claude 只有日期的续费日（新字段旧版会忽略，与 0.73.0.1 时相同）；
   - iOS widget 的百分比不加 `~`；
   - iOS 的 Accounts widget 没有做（后续候选）。

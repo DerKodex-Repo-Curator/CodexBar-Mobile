@@ -11,7 +11,7 @@ All notable changes to the CodexBar iOS companion app will be documented in this
 
 ### Changed
 - Usage cards prefix the percentage with "~" when the Mac reports `usageDataConfidence == "estimated"` (OpenCode Go local ratios, Pi, Muse Code), matching the upstream v0.74.1 menu bar (#4410).
-- Claude subscription renewal/expiry dates: Mac 0.74.1.1 publishes date-only billing dates (upstream #4324) at 12:00 UTC in the existing `subscriptionRenewsAt` / `subscriptionExpiresAt` fields; iOS formats that Claude anchor in UTC (`SubscriptionDateTimeZone`), so the day matches the Mac in every time zone. An exact timestamp that falls on 12:00:00 UTC is published one second later, so exactly 12:00:00 UTC always means date-only. Older iPhones show the same day from UTC−11 to UTC+11. Exact timestamps and other providers are unchanged (MiniMax keeps Asia/Shanghai).
+- Claude subscription renewal/expiry dates: Mac 0.74.1.1 publishes date-only billing dates (upstream #4324) as new optional `subscriptionRenewsOn` / `subscriptionExpiresOn` calendar days (`yyyy-MM-dd`, validated on decode) instead of an instant; iOS formats them in the UTC calendar, so the day matches the Mac in every time zone. Exact timestamps keep using `subscriptionRenewsAt` / `subscriptionExpiresAt` unchanged. Older iPhones ignore the new keys and, as before this release, show no Claude renewal date. The merger keeps the latest non-nil day; the SwiftData payload mirror persists it (no schema change). MiniMax keeps Asia/Shanghai.
 - The Mac's Claude "credentials changed … Click Refresh" error (upstream #3395) shows as localized guidance to refresh CodexBar on that Mac.
 
 ### Notes

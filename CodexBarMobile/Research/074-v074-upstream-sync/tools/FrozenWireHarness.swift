@@ -1,23 +1,18 @@
 import Foundation
 
 /// v0.74 wire fixture. Old Macs (0.73.0.1) publish Claude without subscription dates and Qwen
-/// Cloud with its 5-hour label; new Macs (0.74.1.1) add a date-only Claude renewal anchored at
-/// 12:00 UTC, Qwen Cloud's "Team" label, and two new providers: X API with a negative balance
-/// and Aerostack with a reset-less percentage window. Old readers compile the published
-/// v0.73.0.1-mobile.2.6.0 Shared sources; new readers compile this branch.
+/// Cloud with its 5-hour label; new Macs (0.74.1.1) add a date-only Claude renewal as the
+/// `subscriptionRenewsOn` calendar day (no instant), an exact expiry instant at 12:00 UTC,
+/// Qwen Cloud's "Team" label, and two new providers: X API with a negative balance and Aerostack
+/// with a reset-less percentage window. Old readers compile the published v0.73.0.1-mobile.2.6.0
+/// Shared sources; new readers compile this branch.
 @main
 struct Harness {
     static let capture = Date(timeIntervalSince1970: 1_791_500_000)
     static let qwenReset = capture.addingTimeInterval(86400 * 9)
-    /// 2026-11-03 12:00:00 UTC — the Mac's date-only anchor.
-    static let renewal = Date(timeIntervalSince1970: 1_793_707_200)
-    /// An exact expiry that fell on 12:00:00 UTC, published one second later by new Macs.
-    static let exactExpiry = Date(timeIntervalSince1970: 1_793_707_200 + 86400 * 28 + 1)
-
-    static func isAnchor(_ date: Date) -> Bool {
-        let s = date.timeIntervalSince1970
-        return s.rounded() == s && (s - (s / 86400).rounded(.down) * 86400) == 43200
-    }
+    static let renewalDay = "2026-11-03"
+    /// An exact expiry instant exactly at 12:00:00 UTC, which must pass through unchanged.
+    static let exactExpiry = Date(timeIntervalSince1970: 1_793_707_200 + 86400 * 28)
 
     static func provider(_ id: String, isNewWriter: Bool) -> ProviderUsageSnapshot? {
         switch id {
@@ -25,13 +20,20 @@ struct Harness {
             let window = SyncRateWindow(
                 id: "primary", label: "Session", usedPercent: 12,
                 windowMinutes: 300, resetsAt: self.capture.addingTimeInterval(3600), resetDescription: nil)
+            #if NEW_WIRE
             return ProviderUsageSnapshot(
                 providerID: "claude", providerName: "Claude", primary: window, secondary: nil,
                 accountEmail: nil, loginMethod: "Max", statusMessage: nil, isError: false,
                 lastUpdated: self.capture,
                 subscriptionExpiresAt: isNewWriter ? self.exactExpiry : nil,
-                subscriptionRenewsAt: isNewWriter ? self.renewal : nil,
+                subscriptionRenewsOn: isNewWriter ? self.renewalDay : nil,
                 rateWindows: [window])
+            #else
+            return ProviderUsageSnapshot(
+                providerID: "claude", providerName: "Claude", primary: window, secondary: nil,
+                accountEmail: nil, loginMethod: "Max", statusMessage: nil, isError: false,
+                lastUpdated: self.capture, rateWindows: [window])
+            #endif
         case "qwencloud":
             let window = SyncRateWindow(
                 id: "primary", label: isNewWriter ? "Team" : "5-hour", usedPercent: 40,
@@ -82,18 +84,9 @@ struct Harness {
             precondition(provider.primary?.usedPercent == 12)
             if let expiry = provider.subscriptionExpiresAt {
                 precondition(expiry == self.exactExpiry)
-                precondition(!self.isAnchor(expiry), "an exact timestamp must never read as the date-only anchor")
             }
-            if let renewal = provider.subscriptionRenewsAt {
-                precondition(renewal == self.renewal)
-                precondition(self.isAnchor(renewal))
-                // Every local calendar from UTC-11 to UTC+11 reads November 3 for the anchor.
-                for hours in -11...11 {
-                    var calendar = Calendar(identifier: .gregorian)
-                    calendar.timeZone = TimeZone(secondsFromGMT: hours * 3600)!
-                    precondition(calendar.component(.day, from: renewal) == 3)
-                }
-            }
+            // A date-only renewal is never published as an instant that old readers would localize.
+            precondition(provider.subscriptionRenewsAt == nil)
         case "qwencloud":
             precondition(["Team", "5-hour"].contains(provider.primary?.label ?? ""))
             precondition(provider.primary?.resetsAt == self.qwenReset)
@@ -163,8 +156,10 @@ struct Harness {
                     self.checkCommon(provider)
                     if id == "claude" {
                         // A renewal from any new writer survives a mixed merge; old-only stays nil.
-                        precondition((provider.subscriptionRenewsAt != nil) == (newWriters > 0))
                         precondition((provider.subscriptionExpiresAt != nil) == (newWriters > 0))
+                        #if NEW_WIRE
+                        precondition((provider.subscriptionRenewsOn == self.renewalDay) == (newWriters > 0))
+                        #endif
                     }
                 }
             }

@@ -433,9 +433,20 @@ struct ProviderUsageView: View {
     }
 
     private func subscriptionMetadataLine() -> String? {
+        // A calendar-day value (Mac 0.74.1.1+, e.g. Claude) is the same day in every time zone.
+        if let renewsOn = self.provider.subscriptionRenewsOn,
+           let text = SubscriptionDateTimeZone.calendarDayString(renewsOn)
+        {
+            return String(format: String(localized: "Renews %@"), text)
+        }
         if let renewsAt = self.provider.subscriptionRenewsAt {
             let template = String(localized: "Renews %@")
             return String(format: template, self.subscriptionDateString(renewsAt))
+        }
+        if let expiresOn = self.provider.subscriptionExpiresOn,
+           let text = SubscriptionDateTimeZone.calendarDayString(expiresOn)
+        {
+            return String(format: String(localized: "Plan expires %@"), text)
         }
         if let expiresAt = self.provider.subscriptionExpiresAt {
             let template = String(localized: "Plan expires %@")

@@ -16,11 +16,11 @@ Status: `done`
 
 ## Mac → iOS 数据通道
 
-原则：只用已有字段或已有 opaque JSON 里的值，不新增 Shared 字段，不提升 `providerPayloadVersion`，不新增 schema 层的 record type、field 或 index，只在尾部追加运行时 zone subscription（第 4 点），不同步 credential、cookie、路径或环境变量。
+原则：只用已有字段或已有 opaque JSON 里的值（唯一例外是第 3 点新增的两个可选日期字段），不提升 `providerPayloadVersion`，不新增 schema 层的 record type、field 或 index，只在尾部追加运行时 zone subscription（第 4 点），不同步 credential、cookie、路径或环境变量。
 
 1. `mapProviderAmount` 新增 `.xapi`：`balance != nil` 时发布余额（包括负数），period 用 `providerCost.period`，没有时用 "Prepaid credits"。
 2. `buildProviderUsageSnapshot` 的 primary 标签：qwencloud 改用 descriptor 的 `rateWindowLabels(metadata:snapshot:)`，得到 "Team"（Team Token Plan）、"Monthly"（30 天）或 session 标签。其他 provider 不变。
-3. `syncSubscriptionDate`：`subscription…AtIsDateOnly` 为真时，把 UTC 0 点的日期移到当天 12:00 UTC 再发布。这是已有 `Date` 字段里的值约定，旧 iPhone 不需要改就能在 UTC−11 到 +11 显示正确日期；新 iPhone 再按 UTC 显示 Claude 的这个锚点，覆盖其余时区。为了避免和恰好落在 12:00:00 UTC 的精确时间混淆（PR #192 Codex review P2），Mac 会把这种精确时间往后挪 1 秒再发布。iPhone 只显示日期，而时区偏移都是整分钟，这 1 秒不会改变任何时区显示的日期；这样“正好 12:00:00 UTC”就只表示“只有日期”。没有选择新增 `…IsDateOnly` wire 字段：`ProviderUsageSnapshot` 有 46 处构造（merger、SwiftData bridge、各种 copy），新字段只要有一处漏传就会被悄悄丢掉；而且还要改 SwiftData 的 schema。
+3. Claude 只有日期的续费/到期日（`subscription…AtIsDateOnly` 为真）：Mac 改为发布 Shared 新增的可选字段 `subscriptionRenewsOn` / `subscriptionExpiresOn`（UTC 日历日 `yyyy-MM-dd`），不再发时间戳；精确时间仍走原来的 `subscription…At`，原样发布。这样做的原因：最初的方案是把日期锚定到 12:00 UTC。PR #192 的 Codex review 两轮指出，精确时间恰好是 12:00 UTC 时会被当成锚点；旧 iPhone 在 UTC+12 到 +14 也会显示成第二天。时区跨度有 26 小时，任何一个时刻都不可能在所有时区落在同一天，所以“只有日期”必须单独表达。旧 iPhone 会忽略新键，不显示 Claude 续费日，这和 0.73.0.1 本来就不发 Claude 日期的情况一样，不算倒退。持久化走 SwiftData 里已有的 payload JSON 镜像，不需要改 schema。
 4. 新 provider ID 走已有的 provider 列表和 per-provider 运行时 zone；QuotaTransition 只在尾部追加有百分比窗口的 aerostack、cosmic、tavily，保持已有订阅 ID 不变。
 5. Mac mock：9 个新 provider 各一个快照（115 个快照 / 105 个 ID），详情行标签与插件输出一致；没有 reset 的窗口不带 `resetsAt`。
 
@@ -30,7 +30,7 @@ Status: `done`
 - 详情本地化：9 个新 provider 加上 qwencloud、ollama、jetbrains 加入 first-party 集合，新增语义标签和取值（Unlimited、Not reported、Unavailable、"N credits"、"%@ credits used"），四语言。
 - 窗口标签：Team、API key、Plan credits、Input tokens、Output tokens、Monthly AI tokens。
 - 用量卡片：`usageDataConfidence == "estimated"` 时百分比前加 `~`。
-- Claude 只有日期的续费日按 UTC 显示（`SubscriptionDateTimeZone`）；MiniMax 继续用 Asia/Shanghai。
+- Claude 只有日期的续费/到期日（`subscription…On`）按 UTC 日历显示（`SubscriptionDateTimeZone.calendarDayString`）；MiniMax 继续用 Asia/Shanghai。
 - Claude 凭证变更错误：改为四语言说明，告诉用户去那台 Mac 上点击刷新。
 - PreviewData：按卡片类型核对。余额卡片和纯详情卡片沿用已有组件，Demo 已覆盖主要卡片类型，本轮不新增样例。
 

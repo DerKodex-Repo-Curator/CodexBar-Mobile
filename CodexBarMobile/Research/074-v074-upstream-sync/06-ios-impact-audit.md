@@ -25,7 +25,7 @@ QuotaProviderList 只追加有百分比窗口的 aerostack、cosmic、tavily（8
 | 上游变更 | Mac 数据 | 合并前到 iOS | 本轮决定 | 新 wire |
 |---|---|---|---|---|
 | Qwen Cloud Team Token Plan（#3711） | `primary{resetDescription:"Team"}`，Mac 用 descriptor labeler 显示 "Team"（30 天窗口显示 "Monthly"）；详情 Team Token Plan：Credits / Remaining / Seats | 窗口标签错发成 "5-hour"（桥接没有用 labeler） | Mac 桥接对 qwencloud 用 `rateWindowLabels` 的 primary 标签；iOS 增加窗口标签 Team，详情四语言，"u / t credits used" 本地化 | 否（沿用 `label`） |
-| Claude 续费/到期日期（#4324） | 沿用 `subscriptionRenewsAt/ExpiresAt`，新增 `…IsDateOnly`，只有日期的值按 UTC 0 点解析，Mac 按 UTC 显示 | 日期能到 iOS，但 iOS 按本地时区显示，**UTC 以西会早一天** | Mac 把只有日期的值锚定到当天 12:00 UTC 再发布（旧 iPhone 在 UTC−11 到 +11 都显示正确日期）；新 iPhone 识别 Claude 的 12:00 UTC 锚点并按 UTC 显示（`SubscriptionDateTimeZone`），所有时区都正确 | 否（沿用字段，属于值约定） |
+| Claude 续费/到期日期（#4324） | 沿用 `subscriptionRenewsAt/ExpiresAt`，新增 `…IsDateOnly`，只有日期的值按 UTC 0 点解析，Mac 按 UTC 显示 | 日期能到 iOS，但 iOS 按本地时区显示，**UTC 以西会早一天** | Mac 对只有日期的值改发新增的可选字段 `subscriptionRenewsOn/ExpiresOn`（`yyyy-MM-dd`），不再发时间戳；精确时间照旧。新 iPhone 按 UTC 日历显示，所有时区都正确；旧 iPhone 忽略新键，不显示 Claude 续费日（0.73.0.1 本来也不发）。最初的 12:00 UTC 锚点方案因 PR #192 review 指出的歧义而放弃 | 是（两个可选字段，payload 内） |
 | X API 负余额（#4127） | 见上表 | 余额丢失 | 见上表 | 否 |
 | OpenCode Go `~`（#4410）与最受限额度（#3349） | 快照级 `dataConfidence == .estimated` 时，Mac 菜单栏百分比前加 `~`；最受限额度只影响菜单栏和 switcher 的选择 | `usageDataConfidence` 已同步，iOS 只用来关闭 pace | iOS 用量卡片在 estimated 时加 `~`（OpenCode Go、Pi、Muse Code）；窗口本身已全部同步，不需要改 | 否 |
 | Claude 外部登录后的 Refresh 指引（#3395） | 新错误文本 "Claude Code credentials changed (Updated …). Click Refresh to re-grant CodexBar access." | 原样显示 Mac 的英文，相对时间停在推送时刻，而且提到的按钮只在 Mac 上有 | iOS 识别这条错误，换成四语言说明“请在那台 Mac 上打开 CodexBar 点击刷新” | 否 |
@@ -50,4 +50,4 @@ QuotaProviderList 只追加有百分比窗口的 aerostack、cosmic、tavily（8
 - iOS Accounts widget：新功能，列为后续候选。
 - 只有错误、没有快照的 Codex 账号在 iOS 上显示错误：低优先级，列为后续候选。
 - iOS widget 的百分比不加 `~`：本轮只改 app 内的用量卡片。
-- 旧 iPhone：新 provider 按未知 provider 的通用卡片显示（没有颜色、不本地化），也不会订阅新 provider 的推送 zone；Qwen Team 标签在旧 iPhone 上同样显示 "Team"（标签由 Mac 决定）；Claude 只有日期的续费日，在 UTC+12 及更东的时区会晚一天。
+- 旧 iPhone：新 provider 按未知 provider 的通用卡片显示（没有颜色、不本地化），也不会订阅新 provider 的推送 zone；Qwen Team 标签在旧 iPhone 上同样显示 "Team"（标签由 Mac 决定）；Claude 只有日期的续费日在旧 iPhone 上不显示。

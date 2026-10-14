@@ -41,7 +41,7 @@ Status: `in-progress`
 
 - `SyncCoordinator.mapProviderAmount` 新增 `.xapi`（`balance != nil` 时发布，负数也发布；period 默认 "Prepaid credits"）。
 - `buildProviderUsageSnapshot`：qwencloud 的 primary 标签改用 descriptor 的 `rateWindowLabels`（"Team" / "Monthly" / session 标签）。
-- `syncSubscriptionDate`：只有日期的续费/到期日移到当天 12:00 UTC 再发布（native 与 plugin 两条映射路径都改了）。
+- 只有日期的续费/到期日：最初移到当天 12:00 UTC 再发布；PR #192 review 之后改为发布新增的可选字段 `subscriptionRenewsOn/ExpiresOn`（`syncSubscriptionDay`），不再发时间戳。native 与 plugin 两条映射路径都改了。
 - `QuotaProviderList` 尾部追加 aerostack、cosmic、tavily（87 / 261）。
 - `MockProviderInjector`：9 个新 provider 的 mock（115 个快照 / 105 个 ID），详情行标签与插件输出逐一核对（Sofya 是 Available/Plan/Purchased credits，Sail Research 是 "Last 30 days spend"）；`resetsInSeconds <= 0` 时不带 `resetsAt`（真实插件没有 reset）。
 - 23 种语言 `Localizable.strings`：mock 说明计数 106/96 → 115/105（包括波斯数字）；删除 fork 自己的 "5-hour"、"Organization"、"Plan expires: %@"、"Renews: %@" 副本，上游在同一文件后面也定义了这 4 个 key（后定义的生效），保留上游译文。全部 `plutil -lint` OK。
@@ -66,7 +66,7 @@ Status: `in-progress`
 | 应修 | 合并后上游会保留本轮没抓取账号的旧行。Codex 可见账号超过 6 个（抓取上限）时，fork 用 `currentSnapshots.count == accounts.count` 判断完整发布，结果永远是 false，Mac fleet 可能一直拿不到 Codex 的发布来源 | 改成逐个检查本轮抓取的账号都有成功快照；新增 8 个账号的回归测试 `full publication counts fetched accounts when rows beyond the menu limit are retained`（`CodexAccountScopedRefreshTests` 167 项通过） |
 | 小 | 根 CHANGELOG 把完整性标记说成和 iPhone 有关，实际只影响 Mac fleet | 已改措辞 |
 | 小 | Qwen Team 没有 reset 时间时，卡片的重置行显示英文 "Team" | `localizedV074Value` 增加 "Team"，加测试 |
-| 小 | Claude 精确时间恰好是 12:00:00 UTC 时也会按 UTC 显示 | 只在时区偏移超过 ±12 小时时差一天，接受 |
+| 小 | Claude 精确时间恰好是 12:00:00 UTC 时也会按 UTC 显示 | 当时接受；PR #192 review 再次指出，最终改为显式的日期字段，见下节 |
 | 说明 | `pricingFingerprint` 已经没有调用者，升 `parserLogicVersion` 只通过 parser hash 起作用 | 记录；CHANGELOG 不再声称 Claude 会重扫 |
 
 全量测试时另外修了两处上游测试和 fork 行为的冲突：
@@ -74,3 +74,10 @@ Status: `in-progress`
 - `ClaudeSubscriptionPresentationTests` 用 `Locale.current` 计算期望日期，fork 的日期跟随 app 语言（`codexBarLocalizedLocale()`，与提示文字同一语言）。测试改用同一个 locale。
 
 另外删除了 `CostUsageModels.swift` 里已经多余的 `swiftlint:disable file_length`（上游把 session breakdown 拆到了单独文件），并把孤立的 doc comment 改为普通注释。`bash Scripts/lint.sh lint` 退出码 0，0 个违规。
+
+## PR #192 Codex review
+
+| 轮次 | head | 发现 | 处理 |
+|---|---|---|---|
+| 1 | `8c79f88` | P2：精确时间恰好是 12:00:00 UTC 时，iOS 会把它当成“只有日期”的锚点（UTC+12 以东会早一天） | `d28b779`：Mac 把这种精确时间往后挪 1 秒；补 Mac/iOS 测试和兼容 harness。线程已回复并 resolve |
+| 2 | `d28b779` | P2：旧 iPhone 在 UTC+12 到 +14 会把 12:00 UTC 锚点显示成第二天，新 iPhone 的判断救不了旧版本 | 改用显式日期字段：Shared 新增可选 `subscriptionRenewsOn/ExpiresOn`（校验 `yyyy-MM-dd`，非法值解码为 nil），Mac 对只有日期的值只发这两个字段；去掉正午锚点、挪 1 秒和 iOS 的锚点判断。合并器取最新的非空值，payload 镜像负责持久化，SwiftData schema 不变。补测试：Mac `SyncV074BridgeTests`、iOS `V074ProviderPresentationTests`（显示、校验、合并），兼容 harness 改为新写端发日期字段、旧读端忽略，16 组合通过 |

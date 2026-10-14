@@ -295,6 +295,7 @@ enum ProviderSnapshotMerger {
         let snapshotDerived: [Any?] = [
             provider.primary, provider.secondary, provider.providerAmount, provider.budget,
             provider.accountOrganization, provider.subscriptionExpiresAt, provider.subscriptionRenewsAt,
+            provider.subscriptionExpiresOn, provider.subscriptionRenewsOn,
             provider.perplexityCredits, provider.openAIAPIDashboard, provider.zaiHourlyUsage,
             provider.kiroCredits, provider.bedrockCost, provider.moonshotBalance, provider.grokBilling,
             provider.elevenLabsCredits, provider.deepgramUsage, provider.groqMetrics, provider.llmProxyStats,
@@ -811,6 +812,10 @@ enum ProviderSnapshotMerger {
                 entries, sourceDeviceIDs: sourceDeviceIDs, \.subscriptionExpiresAt),
             subscriptionRenewsAt: Self.latestNonNil(
                 entries, sourceDeviceIDs: sourceDeviceIDs, \.subscriptionRenewsAt),
+            subscriptionExpiresOn: Self.latestNonNil(
+                entries, sourceDeviceIDs: sourceDeviceIDs, \.subscriptionExpiresOn),
+            subscriptionRenewsOn: Self.latestNonNil(
+                entries, sourceDeviceIDs: sourceDeviceIDs, \.subscriptionRenewsOn),
             rateWindows: kimiQuotaIndex != nil ? quotaBase.rateWindows.map {
                 Self.kimiEffectiveWindow($0, blocker: kimiBlocker, capturedAt: quotaCapturedAt)
             } : Self.mergedRateWindows(presentationEntries, base: base),

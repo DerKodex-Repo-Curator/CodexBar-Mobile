@@ -78,27 +78,52 @@ struct V074ProviderPresentationTests {
             locale: Locale(identifier: "zh-Hans")) == "Claude OAuth credentials not found. Run `claude` to authenticate.")
     }
 
-    @Test func `Claude date-only renewals format in UTC and exact dates stay local`() throws {
-        let anchor = try Self.utc(2026, 11, 3, hour: 12)
-        #expect(SubscriptionDateTimeZone.isDateOnlyAnchor(anchor))
-        #expect(SubscriptionDateTimeZone.timeZone(providerID: "claude", date: anchor).secondsFromGMT() == 0)
-
-        let exact = anchor.addingTimeInterval(37)
-        #expect(!SubscriptionDateTimeZone.isDateOnlyAnchor(exact))
-        // Mac 0.74.1.1 publishes an exact Claude timestamp at 12:00:00 UTC as 12:00:01, which stays local.
-        let shiftedExactNoon = anchor.addingTimeInterval(1)
-        #expect(!SubscriptionDateTimeZone.isDateOnlyAnchor(shiftedExactNoon))
-        #expect(SubscriptionDateTimeZone.timeZone(providerID: "claude", date: shiftedExactNoon) == .current)
-        #expect(SubscriptionDateTimeZone.timeZone(providerID: "claude", date: exact) == .current)
-        // Only Claude publishes the noon anchor; another provider's noon timestamp stays local.
-        #expect(SubscriptionDateTimeZone.timeZone(providerID: "codex", date: anchor) == .current)
-        #expect(SubscriptionDateTimeZone.timeZone(providerID: "minimax", date: anchor).identifier == "Asia/Shanghai")
-
-        // Formatting the anchor in UTC keeps November 3 even far east of UTC.
+    @Test func `calendar-day subscription dates show the same day in every time zone`() throws {
+        let posix = Locale(identifier: "en_US_POSIX")
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = SubscriptionDateTimeZone.timeZone(providerID: "claude", date: anchor)
-        #expect(formatter.string(from: anchor) == "2026-11-03")
+        formatter.locale = posix
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        formatter.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let noon = try #require(ProviderUsageSnapshot.calendarDayDate("2026-11-03"))
+        #expect(SubscriptionDateTimeZone.calendarDayString("2026-11-03", locale: posix) == formatter.string(from: noon))
+        // The day string never shifts with the reader's zone; UTC calendar day 3 at noon is day 3 everywhere it is shown.
+        var utc = Calendar(identifier: .gregorian)
+        utc.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        #expect(utc.component(.day, from: noon) == 3)
+        for bad in ["2026-02-30", "2026-11-3", "11/03/2026", "", "2026-13-01"] {
+            #expect(ProviderUsageSnapshot.validCalendarDay(bad) == nil, "\(bad)")
+            #expect(SubscriptionDateTimeZone.calendarDayString(bad) == nil, "\(bad)")
+        }
+        #expect(SubscriptionDateTimeZone.timeZone(providerID: "minimax", date: noon).identifier == "Asia/Shanghai")
+        #expect(SubscriptionDateTimeZone.timeZone(providerID: "claude", date: noon) == .current)
+    }
+
+    @Test func `calendar-day subscription fields decode, validate, and survive the merge`() throws {
+        let decoder = CloudSyncConstants.makeJSONDecoder()
+        let base: [String: Any] = [
+            "providerID": "claude", "providerName": "Claude", "isError": false, "lastUpdated": "2026-10-14T00:00:00Z",
+        ]
+        func decode(_ extra: [String: Any]) throws -> ProviderUsageSnapshot {
+            try decoder.decode(
+                ProviderUsageSnapshot.self,
+                from: JSONSerialization.data(withJSONObject: base.merging(extra) { $1 }))
+        }
+        #expect(try decode(["subscriptionRenewsOn": "2026-11-03"]).subscriptionRenewsOn == "2026-11-03")
+        #expect(try decode(["subscriptionRenewsOn": "not-a-day"]).subscriptionRenewsOn == nil)
+        #expect(try decode(["subscriptionRenewsOn": 42]).subscriptionRenewsOn == nil)
+        // Payloads from older Macs have no key.
+        #expect(try decode([:]).subscriptionRenewsOn == nil)
+
+        let provider = try decode(["subscriptionRenewsOn": "2026-11-03"])
+        let merged = try #require(ProviderSnapshotMerger.mergeSnapshots([
+            SyncedUsageSnapshot(
+                providers: [provider], syncTimestamp: Date(timeIntervalSince1970: 1_791_500_000),
+                deviceName: "Synthetic Mac A", deviceID: "mac-a"),
+            SyncedUsageSnapshot(
+                providers: [try decode([:])], syncTimestamp: Date(timeIntervalSince1970: 1_791_499_000),
+                deviceName: "Synthetic Mac B", deviceID: "mac-b"),
+        ]))
+        #expect(merged.providers.first(where: { $0.providerID == "claude" })?.subscriptionRenewsOn == "2026-11-03")
     }
 }
