@@ -1,6 +1,6 @@
 # v0.74.0–v0.74.1 单版本上游同步 + iOS 2.8.0
 
-Status: `done`（PR #192 已于 2026-10-14 合并到 mobile-dev，`efd33c17f`；Final CI 见 03。旧 Mac Draft 已过期，需要从 mobile-dev 重新生成；还没有 tag、公开 release 或 TestFlight）
+Status: `done`（PR #192 已合并，`efd33c17f`；Mac 0.74.1.1 已于 2026-10-14 公开发布，#190/#191 已关闭；iOS 2.8.0 (241) 已上 TestFlight，App Store 送审待完成。见 04）
 Date: 2026-10-12
 
 ## 范围与依据
