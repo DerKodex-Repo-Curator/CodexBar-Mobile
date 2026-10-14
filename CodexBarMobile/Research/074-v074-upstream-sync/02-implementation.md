@@ -81,3 +81,6 @@ Status: `in-progress`
 |---|---|---|---|
 | 1 | `8c79f88` | P2：精确时间恰好是 12:00:00 UTC 时，iOS 会把它当成“只有日期”的锚点（UTC+12 以东会早一天） | `d28b779`：Mac 把这种精确时间往后挪 1 秒；补 Mac/iOS 测试和兼容 harness。线程已回复并 resolve |
 | 2 | `d28b779` | P2：旧 iPhone 在 UTC+12 到 +14 会把 12:00 UTC 锚点显示成第二天，新 iPhone 的判断救不了旧版本 | 改用显式日期字段：Shared 新增可选 `subscriptionRenewsOn/ExpiresOn`（校验 `yyyy-MM-dd`，非法值解码为 nil），Mac 对只有日期的值只发这两个字段；去掉正午锚点、挪 1 秒和 iOS 的锚点判断。合并器取最新的非空值，payload 镜像负责持久化，SwiftData schema 不变。补测试：Mac `SyncV074BridgeTests`、iOS `V074ProviderPresentationTests`（显示、校验、合并），兼容 harness 改为新写端发日期字段、旧读端忽略，16 组合通过 |
+| 3 | `f488e0066` | P2：Sail Research 的固定值 "Unavailable" 没有经过本地化 | `3c631fb79`：加入 `localizedV074Value` 的 provider 列表，补 iOS 测试。线程已回复并 resolve |
+| 4 | `f488e0066` | 无（这一轮看的是旧提交，不算当前 head 的结论） | 在当前 head 上重新请求 |
+| 5 | `3c631fb79` | 无（"Didn't find any major issues"） | 当前 head 干净，0 个未解决线程，review gate 通过 |

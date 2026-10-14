@@ -132,3 +132,20 @@ Status: `done`
 
 - **trace 库只读打开失败时不扫描新日志。** 如果 `logs_2.sqlite` 是 WAL 模式，但旁边没有 `-wal`/`-shm`（例如 Codex 退出后），只读连接打不开（SQLITE_CANTOPEN，错误 14）。这时新旧版本都只保留已缓存的数据，不扫描新日志，等 Codex 再运行时才统计。数据会延后，不会丢。
 - **`historyIsFullyScanned` 在 CostSnap 路径上大多为 false**，基线和沿用都是这样。fork 发给 iPhone 的每日 `costIsKnown` 不依赖这个标记，所以没有影响；但这说明“按它拦截未扫完的数据”不能作为保护手段。
+
+## 合并前最终全量（PR #192 最终 head `3c631fb79`）
+
+| 项目 | 结果 | 日志 |
+|---|---|---|
+| `bash Scripts/lint.sh lint` | 退出码 0：0 个违规（3014 个文件）、App locales OK、Codex parser hash 是最新的（`68cbd75ed0e591d9`）、parser 版本审计 OK、fork README guard 通过 | — |
+| Mac `Scripts/test.sh` 两个分片 | 77/77 + 76/76 组首轮通过（851 + 856 项） | mac-final-s0.log、mac-final-s1.log |
+| iOS 完整单测 | 1164 项通过，6 项跳过，0 失败 | ios-full-final.xcresult |
+
+## 合并后 CI（merge commit `efd33c17f`，2026-10-14）
+
+- **Linux desktop and Omarchy**（run 38500324967）：第 1 次在 aarch64 上 QML 测试全部通过后进程 segfault（退出码 139），第 2 次通过。判定为 runner 偶发问题。
+- **Final CI**（run 38500312935）：changes、lint、macOS 兼容构建、3 个 Linux CLI 构建、`swift-test-macos` 0/2/3/4/5 号分片首次通过。1 号分片跑了 3 次：
+  - 第 1 次：285 组里 1 组失败，`UsageStoreCachedTokenHydrationTests` 的 “fresh cached hydration suppresses the redundant startup token refresh”（第 207、208 行：`tokenLastAttemptAt` 不等于 `now`，`tokenRefreshCount` 为 1）。这个测试和 `hydrateCachedTokenSnapshots` 都来自上游，PR #192 没有改过。本机在同一棵源码树上连跑这个 suite 25 次全部通过（hydration-loop.log）。可能的原因是：缓存把扫描时间截断成毫秒存储，再换回 `Date` 时偶尔会比 `now` 晚不到 1 微秒，`now.timeIntervalSince(lastRefreshAt) >= 0` 不成立，于是不跳过启动时的那次刷新。模拟按微秒精度时钟计算，出现概率约 1.4×10⁻⁴。没有复现，未确认是这个原因。它只影响启动时是否多刷新一次 token，不涉及缓存写入，也不影响 iOS 账本。
+  - 第 2 次：一个测试都没跑。`swift test list` 用了 1761 秒，前后两次发现的数量不同（1707 和 1701），`ci_swift_test_by_suite.py` 为了避免分片漏跑而主动退出。属于 runner 问题。
+  - 第 3 次：285/285 组首轮通过（hydration suite 也通过），`lint-build-test` 汇总为 success。
+- 结论：Final CI 通过。hydration 测试的偶发失败列为观察项；如果再次出现，就在上游或 fork 单独修（例如把扫描时间的比较改成按毫秒），不阻塞本次发布。

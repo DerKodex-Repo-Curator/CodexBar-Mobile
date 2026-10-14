@@ -1,6 +1,6 @@
 # v0.74.0–v0.74.1 单版本上游同步 + iOS 2.8.0
 
-Status: `in-progress`（PR #192 Codex review 中；现有 Mac Draft 已过期，需在合并后从 mobile-dev 重新生成；未合并、未公开发布）
+Status: `done`（PR #192 已于 2026-10-14 合并到 mobile-dev，`efd33c17f`；Final CI 见 03。旧 Mac Draft 已过期，需要从 mobile-dev 重新生成；还没有 tag、公开 release 或 TestFlight）
 Date: 2026-10-12
 
 ## 范围与依据
@@ -45,7 +45,13 @@ Date: 2026-10-12
 
 本 Goal 不包括 live release、TestFlight 上传、tag 发布、merge 与 push；遇到发布凭证、CloudKit schema deploy 或无法判断的 iOS scope 时暂停询问。2026-10-13 用户确认可以用本机凭证生成 Mac Draft。
 
-## 最终交付状态（2026-10-13）
+## 合并（2026-10-14）
+
+- 用户授权 push 与开 PR 后，按 fork PR 流程：本地独立 review 三轮（0 阻断）→ PR [#192](https://github.com/o1xhack/CodexBar-Mobile/pull/192) → Codex review 5 轮（记录见 02）→ 最终 head `3c631fb79` 上跑一次 lint 和 Mac/iOS 全量（见 03）→ `Scripts/check_pr_review_gate.sh 192` 通过后合并，merge commit `efd33c17f`。
+- 合并后 Final CI 的结果和偶发失败的处理见 03“合并后 CI”。
+- 还需要用户单独授权的事项：删除旧 Draft 并从 mobile-dev 重新生成、打 tag `v0.74.1.1-mobile.2.8.0` 并公开发布（之后回复并关闭 #190/#191）、iOS 2.8.0 (241) 上传 TestFlight 和提交审核。
+
+## 最终交付状态（2026-10-13，合并前）
 
 - **分支**：所有工作都在 `upstream-sync/v0.74.1-mobile.2.8.0`（worktree `CodexBar-upstream-v074`）完成，没有动 mobile-dev。本地 commit（未推送）：
 
