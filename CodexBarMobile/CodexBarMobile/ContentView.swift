@@ -4949,8 +4949,34 @@ private struct ReleaseNotesVersion: Identifiable {
 private enum MobileReleaseNotesCatalog {
     static let versions: [ReleaseNotesVersion] = [
         ReleaseNotesVersion(
-            version: "2.7.0",
+            version: "2.8.0",
             status: String(localized: "Latest"),
+            summary: String(localized: "CodexBar 2.8 adds nine providers and more details from your Mac."),
+            sections: [
+                .init(title: String(localized: "What's New"), items: [
+                    String(
+                        localized: "See Aerostack, Cosmic AI, Tavily, Exa, Linkup, TinyApi, Sail Research, Sofya, and X API from your Mac, each with its own color. Aerostack, Cosmic AI, and Tavily can send quota alerts."),
+                    String(
+                        localized: "See the X API credit balance on its card, including a negative balance."),
+                    String(
+                        localized: "Qwen Cloud team plans are labeled Team instead of 5-hour, with credits and seats in the details."),
+                    String(
+                        localized: "Claude shows the day your plan renews or expires, the same day your Mac shows."),
+                    String(
+                        localized: "Usage your Mac can only estimate, such as OpenCode Go, starts with ~ on the cards."),
+                    String(
+                        localized: "More provider details are translated, including Ollama credits, JetBrains AI top-up credits, the xAI live remaining estimate, and Qwen Cloud team plans."),
+                    String(
+                        localized: "When Claude Code signs in again on your Mac, CodexBar explains how to restore access on that Mac."),
+                ]),
+                .init(title: String(localized: "Required Mac version"), items: [
+                    String(
+                        localized: "Update CodexBar on Mac to 0.74.1.1 or later for these providers and details."),
+                ]),
+            ]),
+        ReleaseNotesVersion(
+            version: "2.7.0",
+            status: "",
             summary: String(localized: "CodexBar 2.7 can order the CodexBar widget by the next weekly reset."),
             sections: [
                 .init(title: String(localized: "What's New"), items: [

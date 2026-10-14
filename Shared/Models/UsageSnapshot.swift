@@ -1268,6 +1268,11 @@ public struct ProviderUsageSnapshot: Codable, Sendable, Equatable {
     /// ignore the keys, and cross-version merges use latestNonNil semantics.
     public let subscriptionExpiresAt: Date?
     public let subscriptionRenewsAt: Date?
+    /// Calendar-date-only subscription lifecycle (`yyyy-MM-dd`, no time zone), e.g. Claude billing dates.
+    /// Mac 0.74.1.1+ publishes a date-only value here instead of the instant fields, so every reader
+    /// shows the same day in any time zone; older iOS clients ignore these keys. Malformed values decode as nil.
+    public let subscriptionExpiresOn: String?
+    public let subscriptionRenewsOn: String?
     /// Subscription utilization history (session/weekly/opus) for chart display.
     public let utilizationHistory: [SyncUtilizationSeries]?
     /// Perplexity-specific structured credit breakdown. Populated only when
@@ -1539,6 +1544,31 @@ public struct ProviderUsageSnapshot: Codable, Sendable, Equatable {
     /// "ghost" filter. Keep every typed usage payload here: providers such as
     /// Wayfinder deliberately have no quota window, so checking only the
     /// generic rate/cost fields would silently discard valid provider data.
+    /// Accepts only a real Gregorian `yyyy-MM-dd` calendar day.
+    public static func validCalendarDay(_ value: String?) -> String? {
+        guard let value, value.count == 10, calendarDayDate(value) != nil else { return nil }
+        return value
+    }
+
+    /// Noon UTC of a `yyyy-MM-dd` day, for formatting it in the UTC calendar without time zone drift.
+    public static func calendarDayDate(_ value: String) -> Date? {
+        let parts = value.split(separator: "-", omittingEmptySubsequences: false)
+        guard parts.count == 3, parts[0].count == 4, parts[1].count == 2, parts[2].count == 2,
+              let year = Int(parts[0]), let month = Int(parts[1]), let day = Int(parts[2]),
+              let utc = TimeZone(secondsFromGMT: 0)
+        else { return nil }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = utc
+        let components = DateComponents(year: year, month: month, day: day, hour: 12)
+        guard let date = calendar.date(from: components),
+              calendar.dateComponents([.year, .month, .day], from: date) == DateComponents(
+                  year: year,
+                  month: month,
+                  day: day)
+        else { return nil }
+        return date
+    }
+
     public var hasUsableSignal: Bool {
         self.primary != nil
             || self.secondary != nil
@@ -1548,6 +1578,8 @@ public struct ProviderUsageSnapshot: Codable, Sendable, Equatable {
             || self.budget != nil
             || self.subscriptionExpiresAt != nil
             || self.subscriptionRenewsAt != nil
+            || self.subscriptionExpiresOn != nil
+            || self.subscriptionRenewsOn != nil
             || self.utilizationHistory?.isEmpty == false
             || self.perplexityCredits != nil
             || !self.details.isEmpty
@@ -1604,6 +1636,8 @@ public struct ProviderUsageSnapshot: Codable, Sendable, Equatable {
         budget: SyncBudgetSnapshot? = nil,
         subscriptionExpiresAt: Date? = nil,
         subscriptionRenewsAt: Date? = nil,
+        subscriptionExpiresOn: String? = nil,
+        subscriptionRenewsOn: String? = nil,
         rateWindows: [SyncRateWindow] = [],
         utilizationHistory: [SyncUtilizationSeries]? = nil,
         perplexityCredits: SyncPerplexityCreditSummary? = nil,
@@ -1658,6 +1692,8 @@ public struct ProviderUsageSnapshot: Codable, Sendable, Equatable {
         self.budget = budget
         self.subscriptionExpiresAt = subscriptionExpiresAt
         self.subscriptionRenewsAt = subscriptionRenewsAt
+        self.subscriptionExpiresOn = Self.validCalendarDay(subscriptionExpiresOn)
+        self.subscriptionRenewsOn = Self.validCalendarDay(subscriptionRenewsOn)
         self.utilizationHistory = utilizationHistory
         self.perplexityCredits = perplexityCredits
         self.accountIdentities = accountIdentities
@@ -1715,6 +1751,8 @@ public struct ProviderUsageSnapshot: Codable, Sendable, Equatable {
             budget: self.budget,
             subscriptionExpiresAt: self.subscriptionExpiresAt,
             subscriptionRenewsAt: self.subscriptionRenewsAt,
+            subscriptionExpiresOn: self.subscriptionExpiresOn,
+            subscriptionRenewsOn: self.subscriptionRenewsOn,
             rateWindows: self.rateWindows,
             utilizationHistory: self.utilizationHistory,
             perplexityCredits: self.perplexityCredits,
@@ -1774,6 +1812,10 @@ public struct ProviderUsageSnapshot: Codable, Sendable, Equatable {
         self.budget = try container.decodeIfPresent(SyncBudgetSnapshot.self, forKey: .budget)
         self.subscriptionExpiresAt = try container.decodeIfPresent(Date.self, forKey: .subscriptionExpiresAt)
         self.subscriptionRenewsAt = try container.decodeIfPresent(Date.self, forKey: .subscriptionRenewsAt)
+        self.subscriptionExpiresOn = Self.validCalendarDay(
+            try? container.decodeIfPresent(String.self, forKey: .subscriptionExpiresOn))
+        self.subscriptionRenewsOn = Self.validCalendarDay(
+            try? container.decodeIfPresent(String.self, forKey: .subscriptionRenewsOn))
         self.utilizationHistory = try container.decodeIfPresent(
             [SyncUtilizationSeries].self,
             forKey: .utilizationHistory)

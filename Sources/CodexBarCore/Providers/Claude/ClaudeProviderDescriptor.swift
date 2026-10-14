@@ -204,6 +204,7 @@ public enum ClaudeProviderDescriptor {
                 },
                 iconDecorations: [.notches],
                 reservesMissingSecondaryIconLane: true,
+                menuBarBalanceUsesPrepaidCost: true,
                 automaticSelectionPrioritizesExhaustedWindow: false,
                 menuBarWindowResolver: self.menuBarWindow,
                 planUtilizationSeriesResolver: { snapshot in
@@ -232,8 +233,19 @@ public enum ClaudeProviderDescriptor {
                     costSummaryTitles: ["Usage summary", "Cost items"])),
             fetchPlan: ProviderFetchPlan(
                 sourceModes: [.auto, .api, .web, .cli, .oauth],
-                pipeline: ProviderFetchPipeline(resolveStrategies: self.resolveStrategies)),
-            cli: self.cli)
+                pipeline: self.pipeline),
+            cli: self.cli,
+            nativeAppBundleIdentifiers: ["com.anthropic.claudefordesktop"])
+    }
+
+    private static let pipeline = ProviderFetchPipeline(
+        resolveStrategies: ClaudeProviderDescriptor.resolveStrategies,
+        resolveFallbackError: ClaudeProviderDescriptor.resolveFallbackError)
+
+    private static func resolveFallbackError(_ previous: Error?, _ current: Error) -> Error {
+        if ClaudeOAuthFetchError.isCancellation(current) { return current }
+        if let previous, case ClaudeOAuthCredentialsError.credentialsChanged = previous { return previous }
+        return current
     }
 
     private static func menuBarWindow(
@@ -593,6 +605,8 @@ struct ClaudeOAuthFetchStrategy: ProviderFetchStrategy {
             return false
         } catch ClaudeOAuthCredentialsError.notFound {
             return true
+        } catch ClaudeOAuthCredentialsError.credentialsChanged {
+            return true
         } catch {
             // A malformed, unreadable, or otherwise unusable direct credential remains an explicit
             // OAuth error. Do not hide it by silently switching credential authorities.
@@ -641,12 +655,8 @@ struct ClaudeOAuthFetchStrategy: ProviderFetchStrategy {
             case .codexbar:
                 let refreshToken = nonInteractiveRecord.credentials.refreshToken?
                     .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-                if sourceMode == .auto {
-                    return !refreshToken.isEmpty
-                }
-                return true
+                return !refreshToken.isEmpty
             case .claudeCLI:
-                guard sourceMode == .auto else { return true }
                 guard claudeCLIAvailable else { return false }
                 guard ProviderInteractionContext.current == .background else { return true }
                 // An expired Claude CLI credential requires the delegated Claude CLI refresh path.
@@ -659,7 +669,7 @@ struct ClaudeOAuthFetchStrategy: ProviderFetchStrategy {
                 }
                 return !Self.hasMcpOAuthOnlyClaudeKeychainPayload(environment: environment)
             case .environment:
-                return sourceMode != .auto
+                return false
             }
         }
 
@@ -711,7 +721,8 @@ struct ClaudeOAuthFetchStrategy: ProviderFetchStrategy {
             webOrganizationID: context.settings?.claude?.organizationID,
             webExtrasTimeout: context.webTimeout,
             includePrepaidBalance: includePrepaidBalance,
-            includeAccountIdentity: context.includeAccountIdentity)
+            includeAccountIdentity: context.includeAccountIdentity,
+            includeSubscriptionMetadata: webEnrichmentAccess.isAvailable)
         let usage = try await fetcher.loadLatestUsage(model: "sonnet")
         return ProviderFetchResult(
             usage: Self.snapshot(from: usage, includeOptionalUsage: context.includeOptionalUsage),
@@ -742,7 +753,7 @@ struct ClaudeOAuthFetchStrategy: ProviderFetchStrategy {
            let credentialsError = error as? ClaudeOAuthCredentialsError
         {
             switch credentialsError {
-            case .notFound, .refreshDelegatedToClaudeCLI:
+            case .notFound, .credentialsChanged, .refreshDelegatedToClaudeCLI:
                 return true
             default:
                 break
@@ -769,7 +780,7 @@ struct ClaudeOAuthFetchStrategy: ProviderFetchStrategy {
         if includeOptionalUsage {
             details += usage.cloudCredits?.detailSections(now: usage.updatedAt) ?? []
         }
-        return UsageSnapshot(
+        let snapshot = UsageSnapshot(
             primary: primary,
             secondary: usage.secondary,
             tertiary: usage.opus,
@@ -780,6 +791,7 @@ struct ClaudeOAuthFetchStrategy: ProviderFetchStrategy {
             updatedAt: usage.updatedAt,
             identity: identity,
             dataConfidence: dataConfidence)
+        return usage.subscriptionMetadata?.applying(to: snapshot) ?? snapshot
     }
 
     static func _snapshotForTesting(
@@ -871,8 +883,19 @@ struct ClaudeWebFetchStrategy: ProviderFetchStrategy {
 
     func fetch(_ context: ProviderFetchContext) async throws -> ProviderFetchResult {
         let usage = try await self.loadUsage(before: context.webTimeout, context: context)
+        var snapshot = ClaudeOAuthFetchStrategy.snapshot(
+            from: usage,
+            includeOptionalUsage: context.includeOptionalUsage)
+        let access = ClaudeProviderDescriptor.webEnrichmentAccess(context: context)
+        if access.isAvailable, let cookie = access.manualCookieHeader,
+           case let .available(metadata) = await ClaudeSubscriptionMetadataFetcher.fetch(
+               cookieHeader: cookie, expectedOwnerID: usage.accountID)
+        {
+            snapshot = metadata.applying(to: snapshot)
+        }
+        try Task.checkCancellation()
         return self.makeResult(
-            usage: ClaudeOAuthFetchStrategy.snapshot(from: usage, includeOptionalUsage: context.includeOptionalUsage),
+            usage: snapshot,
             sourceLabel: "web")
     }
 
@@ -950,7 +973,8 @@ struct ClaudeWebFetchStrategy: ProviderFetchStrategy {
                 manualCookieHeader: Self.manualCookieHeader(from: context),
                 webOrganizationID: context.settings?.claude?.organizationID,
                 includePrepaidBalance: context.includeOptionalUsage,
-                includeAccountIdentity: context.includeAccountIdentity)
+                // Billing uses the owner already present in the authenticated web response.
+                includeAccountIdentity: true)
             return try await fetcher.loadLatestUsage(model: "sonnet")
         }
         let race = BoundedTaskJoin(sourceTask: sourceTask)

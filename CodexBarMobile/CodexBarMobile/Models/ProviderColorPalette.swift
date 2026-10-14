@@ -123,6 +123,17 @@ enum ProviderColorPalette {
         if normalized.contains("workbuddy") { return "0DC8A6" }
         // Upstream v0.73.0 Langdock.
         if normalized.contains("langdock") { return "5A4AE7" }
+        // Upstream v0.74.0 bundled-plugin providers. Exa and X API match exactly:
+        // "vertexai" contains "exa", and "xapi" is short enough to collide later.
+        if normalized == "exa" { return "0143D9" }
+        if normalized == "xapi" { return "71767B" }
+        if normalized.contains("aerostack") { return "6366F1" }
+        if normalized.contains("cosmic") { return "29ABE2" }
+        if normalized.contains("tavily") { return "78B0A1" }
+        if normalized.contains("linkup") { return "202020" }
+        if normalized.contains("tinyapi") { return "F97316" }
+        if normalized.contains("sailresearch") { return "2C4681" }
+        if normalized.contains("sofya") { return "B0B820" }
         return nil
     }
 

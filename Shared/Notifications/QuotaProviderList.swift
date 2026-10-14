@@ -171,6 +171,11 @@ public enum QuotaProviderList {
         Provider(id: "workbuddy", displayName: "WorkBuddy"),
         // iOS 2.6.0 / Mac v0.73.0 percentage provider. Append only.
         Provider(id: "langdock", displayName: "Langdock"),
+        // iOS 2.8.0 / Mac v0.74.0 percentage providers (Exa, Linkup, TinyApi,
+        // Sail Research, Sofya and X API report balances or spend only). Append only.
+        Provider(id: "aerostack", displayName: "Aerostack"),
+        Provider(id: "cosmic", displayName: "Cosmic AI"),
+        Provider(id: "tavily", displayName: "Tavily"),
     ]
 
     /// Returns the CloudKit zone name for a given `(providerID, state)`. The

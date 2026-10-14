@@ -1,0 +1,8 @@
+• See Aerostack, Cosmic AI, Tavily, Exa, Linkup, TinyApi, Sail Research, Sofya, and X API from your Mac, each with its own color. Aerostack, Cosmic AI, and Tavily can send quota alerts.
+• See the X API credit balance on its card, including a negative balance.
+• Qwen Cloud team plans are labeled Team instead of 5-hour, with credits and seats in the details.
+• Claude shows the day your plan renews or expires, the same day your Mac shows.
+• Usage your Mac can only estimate, such as OpenCode Go, starts with ~ on the cards.
+• More provider details are translated, including Ollama credits, JetBrains AI top-up credits, the xAI live remaining estimate, and Qwen Cloud team plans.
+• When Claude Code signs in again on your Mac, CodexBar explains how to restore access on that Mac.
+• Update CodexBar on Mac to 0.74.1.1 or later for these providers and details.

@@ -156,9 +156,9 @@ struct ProviderArchitectureGatekeeperTests {
             Self.hash(descriptor.branding.burnDownWidgetColor, into: &burnDownFingerprint)
         }
 
-        // Langdock extends the palette without changing existing provider colors.
-        #expect(widgetFingerprint == 4_709_037_098_170_366_388)
-        #expect(burnDownFingerprint == 12_054_221_810_937_042_671)
+        // Both provider batches extend the palette without changing existing provider colors.
+        #expect(widgetFingerprint == 14_588_483_983_924_548_755)
+        #expect(burnDownFingerprint == 14_027_062_183_472_836_508)
     }
 
     @Test
@@ -197,7 +197,8 @@ struct ProviderArchitectureGatekeeperTests {
     func `small provider capabilities preserve legacy registries`() {
         let descriptors = ProviderDescriptorRegistry.all
         #expect(Set(descriptors.filter(\.metadata.balanceOnly).map(\.id)) == [
-            .deepseek, .deepinfra, .moonshot, .poe, .hyper, .atlascloud, .vercel, .lithosai,
+            .deepseek, .deepinfra, .moonshot, .poe, .hyper, .atlascloud, .vercel, .lithosai, .xapi, .linkup, .tinyapi,
+            .sailresearch, .sofya,
         ])
         #expect(Set(descriptors.filter(\.metadata.usesDetailBackedWindow).map(\.id)) == [
             .perplexity,
@@ -1814,13 +1815,6 @@ struct ProviderArchitectureGatekeeperTests {
             expectedReferenceFingerprint: ["codex@0"],
             reason: "This exact shared construct dispatches a provider-owned capability at the generic integration boundary."),
         AllowedProviderConstruct(
-            path: "Sources/CodexBar/MenuBarLayoutEditor.swift",
-            anchor: "if provider == .codex,",
-            expectedProviderIDs: ["codex"],
-            expectedReferenceCount: 1,
-            expectedReferenceFingerprint: ["codex@0"],
-            reason: "This exact shared construct dispatches a provider-owned capability at the generic integration boundary."),
-        AllowedProviderConstruct(
             path: "Sources/CodexBar/MenuCardView+CodexResetCredits.swift",
             anchor: "case .codex:",
             expectedProviderIDs: ["claude", "codex", "grok"],
@@ -2440,11 +2434,11 @@ struct ProviderArchitectureGatekeeperTests {
             reason: "This exact app-runtime bridge coordinates provider-owned state through the shared controller."),
         AllowedProviderConstruct(
             path: "Sources/CodexBar/StatusItemController+Animation.swift",
-            anchor: "guard isLoading, style == .warp, let phase else {",
+            anchor: "guard style == .warp, let phase else { return self.blinkAmount(for: provider) }",
             expectedProviderIDs: ["warp"],
             expectedReferenceCount: 1,
             expectedReferenceFingerprint: ["warp@0"],
-            reason: "This exact app-runtime bridge coordinates provider-owned state through the shared controller."),
+            reason: "Warp's loading icon animates its eye blink from the loading phase; other styles keep their ordinary blink state."),
         AllowedProviderConstruct(
             path: "Sources/CodexBar/StatusItemController+Animation.swift",
             anchor: "if provider == .kiro {",
@@ -2682,9 +2676,16 @@ struct ProviderArchitectureGatekeeperTests {
             path: "Sources/CodexBar/UsageStore+PlanUtilization.swift",
             anchor: "let samples = provider == .antigravity",
             expectedProviderIDs: ["antigravity", "claude"],
-            expectedReferenceCount: 4,
-            expectedReferenceFingerprint: ["antigravity@0", "claude@9", "claude@19", "claude@29"],
+            expectedReferenceCount: 2,
+            expectedReferenceFingerprint: ["antigravity@0", "claude@9"],
             reason: "This exact app-runtime bridge coordinates provider-owned state through the shared controller."),
+        AllowedProviderConstruct(
+            path: "Sources/CodexBar/UsageStore+PlanUtilization.swift",
+            anchor: "let detectorAccountKey = if provider == .claude, isClaudeOAuthSample {",
+            expectedProviderIDs: ["claude"],
+            expectedReferenceCount: 2,
+            expectedReferenceFingerprint: ["claude@0", "claude@9"],
+            reason: "Claude OAuth history requires corroborated ownership before reset detection or persistence."),
         AllowedProviderConstruct(
             path: "Sources/CodexBar/UsageStore+PlanUtilization.swift",
             anchor: "if provider == .antigravity,",
@@ -2762,10 +2763,10 @@ struct ProviderArchitectureGatekeeperTests {
                 "codex@0",
                 "codex@1",
                 "codex@10",
-                "codex@15",
-                "kilo@19",
-                "kilo@25",
-                "claude@29",
+                "codex@19",
+                "kilo@23",
+                "kilo@29",
+                "claude@33",
             ],
             reason: "This exact app-runtime bridge coordinates provider-owned state through the shared controller."),
         AllowedProviderConstruct(
@@ -2918,7 +2919,7 @@ struct ProviderArchitectureGatekeeperTests {
             reason: "This exact app-runtime bridge coordinates provider-owned state through the shared controller."),
         AllowedProviderConstruct(
             path: "Sources/CodexBar/UsageStore+SpendDashboardCodexCostCatchUp.swift",
-            anchor: "self.settings.providerConfigRevision(for: .codex) == context.providerConfigRevision",
+            anchor: "&& self.settings.providerConfigRevision(for: .codex) == context.providerConfigRevision",
             expectedProviderIDs: ["codex"],
             expectedReferenceCount: 1,
             expectedReferenceFingerprint: ["codex@0"],
@@ -4315,14 +4316,16 @@ struct ProviderArchitectureGatekeeperTests {
             line: 977,
             occurrence: 1,
             anchor: "let label: String? = if provider == .alibabatokenplan {",
-            expectedProviderIDs: ["alibabatokenplan", "grok", "ollama"],
-            expectedReferenceCount: 5,
+            expectedProviderIDs: ["alibabatokenplan", "grok", "ollama", "qwencloud"],
+            expectedReferenceCount: 7,
             expectedReferenceFingerprint: [
                 "alibabatokenplan@0",
                 "grok@4",
                 "ollama@6",
-                "alibabatokenplan@16",
-                "alibabatokenplan@26",
+                "qwencloud@8",
+                "qwencloud@11",
+                "alibabatokenplan@21",
+                "alibabatokenplan@31",
             ],
             reason: "The Mac-to-iOS bridge maps provider-owned account identity, quota, cost, and details into stable optional payload fields."),
         AllowedProviderConstruct(
@@ -4370,9 +4373,9 @@ struct ProviderArchitectureGatekeeperTests {
             line: 1267,
             anchor: "case .neuralwatt, .zenmux, .lithosai:",
             expectedProviderIDs: [
-                "aiand", "claude", "codex", "fireworks", "grok", "lithosai", "neuralwatt", "xai", "zenmux",
+                "aiand", "claude", "codex", "fireworks", "grok", "lithosai", "neuralwatt", "xai", "xapi", "zenmux",
             ],
-            expectedReferenceCount: 9,
+            expectedReferenceCount: 10,
             expectedReferenceFingerprint: [
                 "lithosai@0",
                 "neuralwatt@0",
@@ -4381,8 +4384,9 @@ struct ProviderArchitectureGatekeeperTests {
                 "fireworks@4",
                 "codex@8",
                 "claude@16",
-                "xai@20",
-                "grok@23",
+                "xapi@20",
+                "xai@26",
+                "grok@29",
             ],
             reason: "The Mac-to-iOS bridge maps provider-owned account identity, quota, cost, and details into stable optional payload fields."),
         AllowedProviderConstruct(
@@ -4725,19 +4729,24 @@ struct ProviderArchitectureGatekeeperTests {
             line: 87,
             anchor: ".clinepass, .deepinfra, .neuralwatt, .longcat, .sub2api,",
             expectedProviderIDs: [
+                "aerostack",
                 "aiand",
                 "atlascloud",
                 "bifrost",
                 "clinepass",
                 "coderabbit",
+                "cosmic",
                 "deepinfra",
                 "devpass",
+                "exa",
                 "fireworks",
                 "gitkraken",
                 "helmcode",
                 "huggingface",
                 "hyper",
-                "ibmbob", "langdock",
+                "ibmbob",
+                "langdock",
+                "linkup",
                 "lithosai",
                 "llmman",
                 "longcat",
@@ -4750,18 +4759,23 @@ struct ProviderArchitectureGatekeeperTests {
                 "qwencloud",
                 "raycast",
                 "replicate",
+                "sailresearch",
+                "sofya",
                 "sub2api",
+                "tavily",
+                "tinyapi",
                 "typesafe",
                 "v0",
                 "vercel",
                 "wayfinder",
                 "workbuddy",
                 "xai",
+                "xapi",
                 "xkiro",
                 "zenmux",
                 "zoommate",
             ],
-            expectedReferenceCount: 36,
+            expectedReferenceCount: 45,
             expectedReferenceFingerprint: [
                 "clinepass@0",
                 "deepinfra@0",
@@ -4798,6 +4812,8 @@ struct ProviderArchitectureGatekeeperTests {
                 "lithosai@16",
                 "museai@16",
                 "workbuddy@16", "langdock@18",
+                "aerostack@21", "cosmic@21", "exa@21", "linkup@21", "tavily@21", "tinyapi@21", "xapi@21",
+                "sailresearch@22", "sofya@22",
             ],
             reason: "Account identity keys follow provider-specific credential scope contracts."),
         AllowedProviderConstruct(

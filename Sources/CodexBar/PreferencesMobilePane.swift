@@ -263,7 +263,7 @@ struct MobilePane: View {
 
             // Codex
             VStack(alignment: .leading, spacing: 4) {
-                Text("Codex").font(.caption.bold())
+                Text(verbatim: "Codex").font(.caption.bold())
                 HStack(spacing: 12) {
                     Button {
                         self.runTestPush(provider: "Codex", providerID: "codex", state: "depleted")
@@ -284,7 +284,7 @@ struct MobilePane: View {
 
             // Claude
             VStack(alignment: .leading, spacing: 4) {
-                Text("Claude").font(.caption.bold())
+                Text(verbatim: "Claude").font(.caption.bold())
                 HStack(spacing: 12) {
                     Button {
                         self.runTestPush(provider: "Claude", providerID: "claude", state: "depleted")
@@ -306,7 +306,8 @@ struct MobilePane: View {
             Button {
                 self.runBurstWarningTest()
             } label: {
-                Label("Burst Test (5×)", systemImage: "bolt.fill")
+                // Developer push-test tools are English-only.
+                Label { Text(verbatim: "Burst Test (5×)") } icon: { Image(systemName: "bolt.fill") }
             }
             .controlSize(.small)
             .disabled(!self.settings.notificationPushToiOSEnabled)
@@ -314,7 +315,7 @@ struct MobilePane: View {
             Button {
                 self.dumpIOSNSELog()
             } label: {
-                Label("Dump iOS NSE Log", systemImage: "doc.text")
+                Label { Text(verbatim: "Dump iOS NSE Log") } icon: { Image(systemName: "doc.text") }
             }
             .controlSize(.small)
 

@@ -478,12 +478,12 @@ struct DebugPane: View {
                     self.unknownModelEntries = await UnknownModelDiagnostics.shared.snapshot()
                 }
             } label: {
-                Label("Refresh", systemImage: "arrow.clockwise")
+                Label(L("Refresh"), systemImage: "arrow.clockwise")
             }
             .controlSize(.small)
 
             if self.unknownModelEntries.isEmpty {
-                Text("No unknown models recorded this session.")
+                Text(verbatim: "No unknown models recorded this session.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
             } else {

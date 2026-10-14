@@ -199,20 +199,31 @@ extension UsageStore {
             tokenOverride: nil)
     }
 
-    func refreshCodexVisibleAccountsForMenu(generation: UInt64? = nil) async {
-        _ = await self.refreshCodexVisibleAccountsForSnapshotPublication(generation: generation)
+    func refreshCodexVisibleAccountsForMenu(
+        generation: UInt64? = nil,
+        requestedAccountIDs: Set<String>? = nil) async
+    {
+        _ = await self.refreshCodexVisibleAccountsForSnapshotPublication(
+            generation: generation,
+            requestedAccountIDs: requestedAccountIDs)
     }
 
+    // Returns true only when a complete all-account pass published every fetched account. A requested
+    // subset (Settings per-account refresh) updates its rows but never counts as a full publication.
     // The restore/refresh/rollback sequence is intentionally kept contiguous so
     // every early exit can be audited against the original-account restoration.
     // swiftlint:disable:next function_body_length
-    func refreshCodexVisibleAccountsForSnapshotPublication(generation: UInt64? = nil) async -> Bool {
+    func refreshCodexVisibleAccountsForSnapshotPublication(
+        generation: UInt64? = nil,
+        requestedAccountIDs: Set<String>? = nil) async -> Bool
+    {
         let projection = self.freshCodexVisibleAccountProjectionForAccountRefresh()
         let accounts = self.limitedCodexVisibleAccounts(
-            projection.visibleAccounts,
+            projection.visibleAccounts.filter { requestedAccountIDs?.contains($0.id) ?? true },
             snapshots: self.codexAccountSnapshots,
             activeVisibleAccountID: projection.activeVisibleAccountID)
-        guard accounts.count > 1 else {
+        guard requestedAccountIDs != nil ? !accounts.isEmpty : accounts.count > 1 else {
+            if requestedAccountIDs != nil { return false }
             self.codexAccountSnapshots = []
             return false
         }
@@ -223,7 +234,7 @@ extension UsageStore {
             projection.source(forVisibleAccountID: $0)
         }
         let originalVisibleAccount = originalVisibleAccountID.flatMap { id in
-            accounts.first { $0.id == id }
+            projection.visibleAccounts.first { $0.id == id }
         }
         let priorSnapshots = self.codexAccountSnapshots
         var snapshots: [CodexAccountUsageSnapshot] = []
@@ -300,9 +311,15 @@ extension UsageStore {
             }
         }
 
-        let currentSnapshots = Self.codexAccountSnapshots(snapshots, reconciledWith: currentProjection)
+        let fetchedIDs = Set(accounts.map(\.id))
+        let retained = Self.codexAccountSnapshots(priorSnapshots, reconciledWith: projection)
+            .filter { !fetchedIDs.contains($0.id) }
+        let currentSnapshots = Self.codexAccountSnapshots(retained + snapshots, reconciledWith: currentProjection)
         self.codexAccountSnapshots = currentSnapshots
         self.codexAccountUsageSnapshotStore?.store(currentSnapshots)
+
+        // A view-only refresh of a sibling owns its row, not the globally followed presentation.
+        if requestedAccountIDs != nil, !accounts.contains(where: \.isActive) { return false }
 
         let selectionStillMatches = self.codexVisibleSelectionStillMatches(
             originalVisibleAccountID: originalVisibleAccountID,
@@ -363,8 +380,10 @@ extension UsageStore {
         } else {
             self.reconcileCodexAccountStateForUsageOwner(self.freshCodexAccountScopedRefreshGuard())
         }
-        return allFetchesSucceeded && currentSnapshots.count == accounts.count && currentSnapshots.allSatisfy {
-            $0.snapshot != nil && $0.error == nil
+        // Upstream retains rows for visible accounts beyond this pass (more than the fetch limit, or
+        // earlier per-account refreshes), so completeness checks each fetched account, not the row count.
+        return requestedAccountIDs == nil && allFetchesSucceeded && accounts.allSatisfy { account in
+            currentSnapshots.contains { $0.id == account.id && $0.snapshot != nil && $0.error == nil }
         }
     }
 
@@ -379,20 +398,11 @@ extension UsageStore {
             currentProjection.visibleAccounts.first { $0.id == id }
         }
         let currentSelectionSource = currentActiveAccount?.selectionSource
-        if currentProjection.activeVisibleAccountID == originalVisibleAccountID,
-           currentSelectionSource == originalSelectionSource
-        {
-            guard let originalAccount else { return true }
-            guard let currentActiveAccount else { return false }
-            return Self.codexVisibleAccountMatchesCurrentProjection(
-                originalAccount,
-                account: currentActiveAccount)
+        guard currentSelectionSource == originalSelectionSource else { return false }
+        guard let originalAccount else {
+            return currentProjection.activeVisibleAccountID == originalVisibleAccountID
         }
-        guard let originalAccount, let currentActiveAccount,
-              currentSelectionSource == originalSelectionSource
-        else {
-            return false
-        }
+        guard let currentActiveAccount else { return false }
         return Self.codexVisibleAccountMatchesCurrentProjection(
             originalAccount, account: currentActiveAccount)
     }
@@ -403,6 +413,12 @@ extension UsageStore {
         // Auth files can change while account fetches are in flight, so account refreshes bypass the
         // short-lived reconciliation cache used for normal menu rendering and stale-result guards.
         self.settings.invalidateCodexAccountReconciliationSnapshotCache()
+        return self.codexVisibleAccountProjectionWithCurrentManagedAuth(requireLiveManagedAuthFor: accountIDs)
+    }
+
+    func codexVisibleAccountProjectionWithCurrentManagedAuth(
+        requireLiveManagedAuthFor accountIDs: Set<UUID> = []) -> CodexVisibleAccountProjection
+    {
         let snapshot = self.settings.codexAccountReconciliationSnapshot
         return Self.codexVisibleAccountProjectionWithFreshManagedAuthFingerprints(
             CodexVisibleAccountProjection.make(from: snapshot),

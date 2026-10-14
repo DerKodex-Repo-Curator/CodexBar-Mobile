@@ -32,6 +32,13 @@ enum ProviderWindowLabel {
         case "Daily Routines": "v045_window_daily_routines"
         case "Web Sonnet": "v045_window_web_sonnet"
         case "Extra usage": "v045_window_extra_usage"
+        // Upstream v0.74.0 bundled plugins and the Qwen Cloud Team Token Plan.
+        case "Team": "Team"
+        case "API key": "API key"
+        case "Plan credits": "Plan credits"
+        case "Input tokens": "Input tokens"
+        case "Output tokens": "Output tokens"
+        case "Monthly AI tokens": "Monthly AI tokens"
         default: nil
         }
     }
@@ -170,6 +177,9 @@ enum ProviderWindowLabel {
                 "v045_window_web_sonnet",
                 defaultValue: "Web Sonnet",
                 locale: locale)
+        case "Team", "API key", "Plan credits", "Input tokens", "Output tokens", "Monthly AI tokens":
+            // Upstream v0.74 windows use their English label as the catalog key.
+            return MobileLocalizedString.value(key, defaultValue: key, locale: locale)
         default:
             return MobileLocalizedString.value(
                 "v045_window_extra_usage",

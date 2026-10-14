@@ -570,6 +570,35 @@ struct ProviderColorPaletteTests {
         }
     }
 
+    @Test("v0.74 provider colors use upstream brand tints and Exa never tints Vertex AI")
+    func v074ProviderColorsMatchUpstreamBrands() {
+        let expected: [(String, String, UInt32)] = [
+            ("aerostack", "Aerostack", 0x6366F1), ("cosmic", "Cosmic AI", 0x29ABE2),
+            ("tavily", "Tavily", 0x78B0A1), ("exa", "Exa", 0x0143D9), ("linkup", "Linkup", 0x202020),
+            ("tinyapi", "TinyApi", 0xF97316), ("sailresearch", "Sail Research", 0x2C4681),
+            ("sofya", "Sofya", 0xB0B820), ("xapi", "X API", 0x71767B),
+        ]
+        for (id, name, rgb) in expected {
+            let color = UIColor(
+                red: CGFloat((rgb >> 16) & 0xFF) / 255,
+                green: CGFloat((rgb >> 8) & 0xFF) / 255,
+                blue: CGFloat(rgb & 0xFF) / 255,
+                alpha: 1)
+            #expect(
+                UIColor(ProviderColorPalette.color(for: id))
+                    .isApproximately(ProviderColorPalette.darkened(color)),
+                "\(id)")
+            #expect(
+                UIColor(ProviderColorPalette.color(for: id))
+                    .isApproximately(UIColor(ProviderColorPalette.color(for: name))),
+                "\(name)")
+        }
+        let exa = UIColor(ProviderColorPalette.color(for: "exa"))
+        for vertex in ["vertexai", "Vertex AI"] {
+            #expect(!UIColor(ProviderColorPalette.color(for: vertex)).isApproximately(exa), "\(vertex)")
+        }
+    }
+
     @Test("muse.ai never borrows the Muse Code tint")
     func v072MuseAIIsDistinctFromMuseCode() {
         let museCode = UIColor(ProviderColorPalette.color(for: "muse"))

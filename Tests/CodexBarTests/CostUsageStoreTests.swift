@@ -955,6 +955,16 @@ extension CostUsageStoreTests {
 
 extension CostUsageStoreTests {
     @Test(arguments: [
+        "0d41437dcd95c17e", // Published 0.73.0.1 with the ledger pricing fix.
+        "379b799bb4b91683", // Current main before on-demand tool inspection.
+        "7ce21041b7a36242", // Prior tool inspection build before upstream process cleanup.
+        "0d8f9504f8e63d0f", // Current main before on-demand tool inspection.
+        "c0f8e9be04d824c2", // Timing before supplied start timestamps were validated.
+        "89c0662767e633ea", // Upstream row-string sharing before timing.
+        "e1088fb29c221187", // Timing before value-preserving row-string sharing.
+        "7ff985e81e281a11", // Upstream accounting before timing.
+        "865cef15206ea5c0", // Advanced timing before upstream accounting correction.
+        "d35c9fb00bee059b", // Initial timing before upstream accounting correction.
         "ed735dc27ffa70d9", // Current release before session-tier evidence.
         "99d920977063318a", // Scheduling diagnostics retain history and checkpoints.
         "029fe80aa98f27e8", // Before the shared JSON fallback.
@@ -1003,6 +1013,16 @@ extension CostUsageStoreTests {
         let fixture = try StoreFixture()
         defer { fixture.remove() }
         #expect(CostUsageStore.compatiblePredecessorParserHashes == [
+            "0d41437dcd95c17e",
+            "379b799bb4b91683",
+            "7ce21041b7a36242",
+            "0d8f9504f8e63d0f",
+            "c0f8e9be04d824c2",
+            "89c0662767e633ea",
+            "e1088fb29c221187",
+            "7ff985e81e281a11",
+            "865cef15206ea5c0",
+            "d35c9fb00bee059b",
             "99d920977063318a",
             "ed735dc27ffa70d9",
             "029fe80aa98f27e8",

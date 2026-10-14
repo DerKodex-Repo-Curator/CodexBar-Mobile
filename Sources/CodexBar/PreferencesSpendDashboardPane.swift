@@ -114,22 +114,6 @@ func codexCostCatchUpProgressText(_ activity: CodexCostCatchUpActivity) -> Strin
     return L("Loading…")
 }
 
-enum SpendDashboardModelHistoryPresentation: Equatable {
-    case unavailable
-    case empty
-    case partial
-    case complete
-}
-
-func spendDashboardModelHistoryPresentation(
-    _ group: SpendDashboardModel.CurrencyGroup) -> SpendDashboardModelHistoryPresentation
-{
-    if group.models.isEmpty {
-        return group.modelHistoryCompleteness == .incomplete ? .unavailable : .empty
-    }
-    return group.modelHistoryCompleteness == .incomplete ? .partial : .complete
-}
-
 @MainActor
 struct SpendDashboardPane: View {
     @Bindable var settings: SettingsStore
@@ -1039,7 +1023,7 @@ private struct SpendDailyLedgerRow: View {
     }
 }
 
-private struct SpendSessionRows: View {
+struct SpendSessionRows: View {
     let group: SpendDashboardModel.CurrencyGroup
     let hidePersonalInfo: Bool
     @State private var showsAllRows = false
@@ -1056,30 +1040,47 @@ private struct SpendSessionRows: View {
                 if row.rank > 1 {
                     Divider()
                 }
-                HStack(spacing: 10) {
-                    Text(spendDashboardRankText(row.rank))
-                        .font(.caption.monospacedDigit())
-                        .foregroundStyle(.tertiary)
-                        .frame(width: 26, alignment: .leading)
-                    SpendProviderIcon(provider: row.provider, sourceKind: .native)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(identity.name)
-                            .lineLimit(1)
-                            .help(identity.name)
-                        Text(subtitle)
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(alignment: .top, spacing: 10) {
+                        Text(spendDashboardRankText(row.rank))
+                            .font(.caption.monospacedDigit())
+                            .foregroundStyle(.tertiary)
+                            .frame(width: 26, alignment: .leading)
+                        SpendProviderIcon(provider: row.provider, sourceKind: .native)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(identity.name)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
+                                .help(identity.name)
+                            Text(subtitle)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .help(subtitle)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        Text(spendDashboardMetricText(
+                            cost: row.totalCost,
+                            tokens: row.totalTokens,
+                            currencyCode: self.group.currencyCode))
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .help(subtitle)
+                            .monospacedDigit()
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    Spacer()
-                    Text(spendDashboardMetricText(
-                        cost: row.totalCost,
-                        tokens: row.totalTokens,
-                        currencyCode: self.group.currencyCode))
-                        .monospacedDigit()
+                    if let performance = row.turnPerformance {
+                        SpendSessionPerformanceView(summary: performance)
+                    }
+                    if let source = row.toolActivitySource {
+                        SpendSessionToolActivityView(
+                            source: source,
+                            lastActivity: row.lastActivity,
+                            range: spendToolActivityRange(group: self.group),
+                            timeZone: self.group.timeZone,
+                            hidePersonalInfo: self.hidePersonalInfo)
+                    }
                 }
-                .padding(.vertical, 9)
+                .padding(.vertical, 12)
             }
             SpendPanelExpandButton(
                 rowCount: self.group.sessions.count,
@@ -1353,10 +1354,6 @@ private func spendDashboardIncludesLocalHistory(_ group: SpendDashboardModel.Cur
 
 func spendDashboardProviderCountTitle(_ group: SpendDashboardModel.CurrencyGroup) -> String {
     spendDashboardIncludesLocalHistory(group) ? L("Sources") : L("Subscriptions")
-}
-
-func spendDashboardProviderPanelTitle(_ group: SpendDashboardModel.CurrencyGroup) -> String {
-    spendDashboardIncludesLocalHistory(group) ? L("By source") : L("By subscription")
 }
 
 func spendDashboardPartialSourceCoverageText(_ group: SpendDashboardModel.CurrencyGroup) -> String {

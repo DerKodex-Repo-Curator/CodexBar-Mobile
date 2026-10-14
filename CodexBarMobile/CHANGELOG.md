@@ -2,6 +2,21 @@
 
 All notable changes to the CodexBar iOS companion app will be documented in this file.
 
+## [2.8.0 (241)] — Upstream v0.74 companion
+
+### Added
+- Upstream v0.74.0 providers (Research 074): Aerostack (`aerostack`), Cosmic AI (`cosmic`), Tavily (`tavily`), Exa (`exa`), Linkup (`linkup`), TinyApi (`tinyapi`), Sail Research (`sailresearch`), Sofya (`sofya`) and X API (`xapi`) with upstream brand tints (Mac-tuned values darkened for Light Mode; Exa and X API match by exact ID or name so `vertexai` never takes the Exa tint), first-party detail localization, and QuotaTransition subscriptions for the three providers with percentage windows (Aerostack, Cosmic AI, Tavily), appended at the tail (87 providers × 3 states = 261 zones) so existing subscription IDs stay stable. The other six are balance/spend detail cards.
+- X API prepaid + free credit balance on its card via the existing `providerAmount` (`kind: "balance"`, period "Prepaid credits"), including negative balances. Requires Mac 0.74.1.1.
+- Quota window labels Team, API key, Plan credits, Input tokens, Output tokens and Monthly AI tokens; detail labels and values for the new providers, Qwen Cloud Team Token Plan (credits, seats, "<used> / <total> credits used"), Ollama credit wallet (Monthly credits used, Next refill) and JetBrains AI top-up credits (`ollama`, `jetbrains`, `qwencloud` join the first-party detail set), and xAI's "Live remaining (est.)" row, in all four languages.
+
+### Changed
+- Usage cards prefix the percentage with "~" when the Mac reports `usageDataConfidence == "estimated"` (OpenCode Go local ratios, Pi, Muse Code), matching the upstream v0.74.1 menu bar (#4410).
+- Claude subscription renewal/expiry dates: Mac 0.74.1.1 publishes date-only billing dates (upstream #4324) as new optional `subscriptionRenewsOn` / `subscriptionExpiresOn` calendar days (`yyyy-MM-dd`, validated on decode) instead of an instant; iOS formats them in the UTC calendar, so the day matches the Mac in every time zone. Exact timestamps keep using `subscriptionRenewsAt` / `subscriptionExpiresAt` unchanged. Older iPhones ignore the new keys and, as before this release, show no Claude renewal date. The merger keeps the latest non-nil day; the SwiftData payload mirror persists it (no schema change). MiniMax keeps Asia/Shanghai.
+- The Mac's Claude "credentials changed … Click Refresh" error (upstream #3395) shows as localized guidance to refresh CodexBar on that Mac.
+
+### Notes
+- No new wire field or CloudKit schema change: all data rides existing optional payload fields; `providerPayloadVersion` stays 1 (Research 074 §CloudKit).
+
 ## [2.7.0 (240)] — Soonest weekly reset in the CodexBar widget
 
 ### Added

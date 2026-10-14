@@ -106,8 +106,7 @@ struct AboutPane: View {
                 AboutHomebrewUpdateStatusView(updater: homebrewUpdater)
             } else if !self.updater.isAvailable {
                 AboutUpdatesUnavailableView(
-                    reason: self.updater.unavailableReason ?? L("updates_unavailable"),
-                    command: self.updater.manualUpdateCommand)
+                    reason: self.updater.unavailableReason ?? L("updates_unavailable"))
             }
         } header: {
             Text(L("section_updates"))
@@ -149,7 +148,8 @@ struct AboutPane: View {
                     .foregroundStyle(.secondary)
             }
 
-            Text("Based on CodexBar by Peter Steinberger. © 2026 Yuxiao Wang. MIT License.")
+            // Fork attribution line stays in English like the license text.
+            Text(verbatim: "Based on CodexBar by Peter Steinberger. © 2026 Yuxiao Wang. MIT License.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .padding(.top, 4)
@@ -205,8 +205,8 @@ struct AboutHomebrewUpdateStatusView: View {
             Self.progressRow(L("Updating with Homebrew…"))
         case let .failed(message):
             AboutUpdatesUnavailableView(
-                reason: L("Homebrew update failed. You can run this command in Terminal instead:") + "\n" + message,
-                command: .homebrew)
+                reason: L("Managed by Homebrew") + "\n" + message,
+                command: self.updater.manualUpdateCommand)
         }
     }
 
@@ -223,13 +223,13 @@ struct AboutUpdatesUnavailableView: View {
     typealias CopyAction = @MainActor @Sendable (String, @escaping @MainActor @Sendable (Bool) -> Void) -> Void
 
     let reason: String
-    let command: ManualUpdateCommand?
+    let command: String?
     let copyAction: CopyAction
     @State private var didCopy = false
 
     init(
         reason: String,
-        command: ManualUpdateCommand? = nil,
+        command: String? = nil,
         copyAction: @escaping CopyAction = Self.copyCommand)
     {
         self.reason = reason
@@ -244,14 +244,14 @@ struct AboutUpdatesUnavailableView: View {
                 .textSelection(.enabled)
             if let command {
                 HStack(spacing: 12) {
-                    Text(command.command)
+                    Text(command)
                         .font(.system(.callout, design: .monospaced))
                         .foregroundStyle(.primary)
                         .textSelection(.enabled)
                         .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     Button {
-                        self.copyAction(command.command) { self.didCopy = $0 }
+                        self.copyAction(command) { self.didCopy = $0 }
                     } label: {
                         Label(
                             self.didCopy ? L("Copied") : L("Copy update command"),

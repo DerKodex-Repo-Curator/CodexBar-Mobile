@@ -515,9 +515,11 @@ struct CostHistoryChartMenuView: View {
     }
 
     private func sessionRow(_ session: CostUsageSessionBreakdown) -> some View {
-        HStack(alignment: .top, spacing: 8) {
+        let identity = CostHistoryIdentity(
+            sessionID: session.sessionID, title: session.title, hidePersonalInfo: self.hidePersonalInfo)
+        return HStack(alignment: .top, spacing: 8) {
             VStack(alignment: .leading, spacing: 1) {
-                Text(L("Session %@", Self.shortSessionID(session.sessionID)))
+                Text(identity.name)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -539,6 +541,7 @@ struct CostHistoryChartMenuView: View {
                 .lineLimit(1)
         }
         .frame(height: Self.sessionRowHeight, alignment: .topLeading)
+        .help(L("Session %@", Self.shortSessionID(session.sessionID)))
         .accessibilityElement(children: .combine)
     }
 
@@ -1232,6 +1235,7 @@ extension CostHistoryChartMenuView {
 
     struct VisibleSessionFingerprint: Equatable {
         let sessionID: String
+        let name: String
         let lastActivityBitPattern: UInt64
         let inputTokens: Int?
         let cachedInputTokens: Int?
@@ -1294,6 +1298,8 @@ extension CostHistoryChartMenuView {
             sessions: sessions.map { session in
                 VisibleSessionFingerprint(
                     sessionID: session.sessionID,
+                    name: CostHistoryIdentity(
+                        sessionID: session.sessionID, title: session.title, hidePersonalInfo: hidePersonalInfo).name,
                     lastActivityBitPattern: session.lastActivity.timeIntervalSince1970.bitPattern,
                     inputTokens: session.inputTokens,
                     cachedInputTokens: session.cachedInputTokens,

@@ -18,6 +18,9 @@ struct UsageCardView: View {
     /// Whether to render warning markers at all. Mirrors Mac's per
     /// (provider, window) enable flag.
     var quotaWarningsEnabled: Bool = true
+    /// The Mac marks this provider's quota as estimated (local ratios, not account quota);
+    /// like the Mac menu bar (upstream v0.74 #4410) the percentage gets a "~" prefix.
+    var isEstimated: Bool = false
     @AppStorage(MobileSettingsKeys.showRemainingUsage) private var showRemainingUsage =
         UserDefaults.standard.string(forKey: MobileSettingsKeys.usagePercentDisplayMode) == UsagePercentDisplayMode
             .remaining.rawValue
@@ -178,12 +181,16 @@ struct UsageCardView: View {
             .accessibilityIdentifier("usage.reset.absolute")
     }
 
+    private var estimatePrefix: String {
+        self.isEstimated ? "~" : ""
+    }
+
     @ViewBuilder
     private var percentageLabel: some View {
         if self.window.usageKnown, self.window.usedPercent.isFinite {
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text(self.displayMode.percentageValueText(for: self.window))
+                    Text(self.estimatePrefix + self.displayMode.percentageValueText(for: self.window))
                         .font(.title2.monospacedDigit())
                         .fontWeight(.bold)
 
@@ -194,7 +201,7 @@ struct UsageCardView: View {
                 .foregroundColor(self.usageColor)
                 .fixedSize(horizontal: true, vertical: false)
 
-                Text(self.displayMode.percentageText(for: self.window))
+                Text(self.estimatePrefix + self.displayMode.percentageText(for: self.window))
                     .font(.title3.monospacedDigit())
                     .fontWeight(.bold)
                     .foregroundColor(self.usageColor)

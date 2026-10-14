@@ -1,0 +1,8 @@
+• 可以查看 Mac 上的 Aerostack、Cosmic AI、Tavily、Exa、Linkup、TinyApi、Sail Research、Sofya 和 X API，每个都有自己的颜色。Aerostack、Cosmic AI 和 Tavily 可以发送额度提醒。
+• X API 卡片显示额度余额，余额为负时也会显示。
+• Qwen Cloud 团队套餐显示为“团队”，不再显示为“5 小时”，详情中可查看额度和席位。
+• Claude 会显示套餐续费或到期的日期，与 Mac 上显示的日期一致。
+• Mac 只能估算的用量（例如 OpenCode Go）在卡片上会以 ~ 开头。
+• 更多服务商详情已翻译，包括 Ollama 额度、JetBrains AI 充值额度、xAI 实时剩余估算和 Qwen Cloud 团队套餐。
+• 当 Mac 上的 Claude Code 重新登录后，CodexBar 会说明如何在那台 Mac 上恢复访问。
+• 如需这些服务商和详情，请将 Mac 上的 CodexBar 更新到 0.74.1.1 或更高版本。

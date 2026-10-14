@@ -982,8 +982,16 @@ final class SyncCoordinator {
             lastUpdated: snapshot?.updatedAt ?? Date(),
             costSummary: costSummary,
             budget: budget,
-            subscriptionExpiresAt: snapshot?.subscriptionExpiresAt,
-            subscriptionRenewsAt: snapshot?.subscriptionRenewsAt,
+            subscriptionExpiresAt: snapshot?.subscriptionExpiresAtIsDateOnly == true
+                ? nil : snapshot?.subscriptionExpiresAt,
+            subscriptionRenewsAt: snapshot?.subscriptionRenewsAtIsDateOnly == true
+                ? nil : snapshot?.subscriptionRenewsAt,
+            subscriptionExpiresOn: Self.syncSubscriptionDay(
+                snapshot?.subscriptionExpiresAt,
+                isDateOnly: snapshot?.subscriptionExpiresAtIsDateOnly == true),
+            subscriptionRenewsOn: Self.syncSubscriptionDay(
+                snapshot?.subscriptionRenewsAt,
+                isDateOnly: snapshot?.subscriptionRenewsAtIsDateOnly == true),
             rateWindows: rateWindows,
             accountIdentities: accountIdentities,
             usageDataConfidence: Self.mapUsageDataConfidence(snapshot: snapshot),
@@ -1131,6 +1139,11 @@ final class SyncCoordinator {
                 GrokProviderDescriptor.displayLabel(window: p) ?? metadata?.sessionLabel
             } else if provider == .ollama {
                 OllamaProviderDescriptor.primaryLabel(window: p) ?? metadata?.sessionLabel
+            } else if provider == .qwencloud, let metadata, let snapshot {
+                // Provider-specific by design: Qwen Cloud's Team Token Plan and 30-day windows carry
+                // their Mac menu labels ("Team" / "Monthly") instead of the 5-hour session label.
+                ProviderDescriptorRegistry.descriptor(for: .qwencloud).presentation
+                    .rateWindowLabels(metadata: metadata, snapshot: snapshot).primary
             } else {
                 metadata?.sessionLabel
             }
@@ -1316,8 +1329,16 @@ final class SyncCoordinator {
             costSummary: resolvedCostSummary,
             costSummaryCleared: clearSharedCostOwnership && resolvedCostSummary == nil ? true : nil,
             budget: budgetSnap,
-            subscriptionExpiresAt: snapshot?.subscriptionExpiresAt,
-            subscriptionRenewsAt: snapshot?.subscriptionRenewsAt,
+            subscriptionExpiresAt: snapshot?.subscriptionExpiresAtIsDateOnly == true
+                ? nil : snapshot?.subscriptionExpiresAt,
+            subscriptionRenewsAt: snapshot?.subscriptionRenewsAtIsDateOnly == true
+                ? nil : snapshot?.subscriptionRenewsAt,
+            subscriptionExpiresOn: Self.syncSubscriptionDay(
+                snapshot?.subscriptionExpiresAt,
+                isDateOnly: snapshot?.subscriptionExpiresAtIsDateOnly == true),
+            subscriptionRenewsOn: Self.syncSubscriptionDay(
+                snapshot?.subscriptionRenewsAt,
+                isDateOnly: snapshot?.subscriptionRenewsAtIsDateOnly == true),
             rateWindows: rateWindows,
             utilizationHistory: sharedUtilizationHistory,
             perplexityCredits: perplexityCredits,
@@ -1387,6 +1408,18 @@ final class SyncCoordinator {
         return values
     }
 
+    /// Date-only billing dates (Claude renewals/expirations, upstream #4324) arrive as UTC midnight
+    /// of the billing day. They are published as that `yyyy-MM-dd` day instead of an instant, which no
+    /// single moment can represent for every time zone; older iPhones ignore the key and show no date.
+    static func syncSubscriptionDay(_ date: Date?, isDateOnly: Bool) -> String? {
+        guard let date, isDateOnly, let utc = TimeZone(secondsFromGMT: 0) else { return nil }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = utc
+        let day = calendar.dateComponents([.year, .month, .day], from: date)
+        guard let year = day.year, let month = day.month, let dayOfMonth = day.day else { return nil }
+        return String(format: "%04d-%02d-%02d", year, month, dayOfMonth)
+    }
+
     static func additionalWindowLabel(windowMinutes: Int?) -> String {
         switch windowMinutes {
         case 1440: "Daily"
@@ -1450,6 +1483,12 @@ final class SyncCoordinator {
             guard let balance = providerCost.balance else { return nil }
             kind = "balance"
             amount = balance
+        case .xapi:
+            // Provider-specific by design: X API prepaid + free developer credits; the balance can be negative.
+            guard let balance = providerCost.balance else { return nil }
+            kind = "balance"
+            amount = balance
+            period = providerCost.period ?? "Prepaid credits"
         case .xai:
             kind = "balance"
             amount = providerCost.balance ?? providerCost.used

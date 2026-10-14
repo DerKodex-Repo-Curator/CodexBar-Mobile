@@ -17,6 +17,10 @@ enum ProviderDetailLocalization {
         "mimo", "minimax", "moonshot", "muse", "museai", "nous", "openai", "openrouter",
         "perplexity", "pi", "poe", "raycast", "replicate", "sakana", "sub2api", "typesafe",
         "v0", "vercel", "wayfinder", "workbuddy", "xai", "xkiro", "zai", "zoommate",
+        // Upstream v0.74.0 bundled plugins, plus the providers whose v0.74 detail rows are new
+        // (Qwen Cloud Team Token Plan, Ollama credit wallet, JetBrains top-up credits).
+        "aerostack", "cosmic", "exa", "jetbrains", "linkup", "ollama", "qwencloud", "sailresearch",
+        "sofya", "tavily", "tinyapi", "xapi",
     ]
 
     /// Stable semantic labels currently emitted by bundled provider detail
@@ -62,6 +66,13 @@ enum ProviderDetailLocalization {
         // Upstream v0.71-v0.72: WorkBuddy, LithosAI, muse.ai and Claude cloud credits.
         "Account status", "Additional tokens", "Cloud credits", "Payment card", "Spend",
         "This month (UTC)", "Today (UTC)", "Total",
+        // Upstream v0.74: new bundled plugins and Qwen Cloud / Ollama / xAI detail rows.
+        "Above allowance", "Account credits", "Account plan", "Allowance", "API key this month (UTC)",
+        "Available credits", "Billing-period spend", "Free credits", "Input tokens", "Last 6 hours spend",
+        "Last 7 days spend", "Last 24 hours spend", "Last 30 days spend", "Last hour spend", "Limit",
+        "Live remaining (est.)", "Monthly AI tokens", "Monthly credits used", "Monthly reset", "Next refill",
+        "Organization billing", "Output tokens", "Pay as you go", "Plan credits", "Purchased credits", "Seats",
+        "Team Token Plan", "Tokens used",
     ]
 
     /// These sections deliberately use provider-returned account, team, model,
@@ -129,8 +140,21 @@ enum ProviderDetailLocalization {
         isError: Bool,
         locale: Locale = .current) -> String
     {
+        if isError, self.isClaudeCredentialsChangedMessage(message) {
+            // The Mac's text names a Mac-only Refresh button and a relative time frozen at push time.
+            return MobileLocalizedString.value(
+                "mac_error_claude_credentials_changed",
+                defaultValue: message,
+                locale: locale)
+        }
         guard !isError, message == SyncStatusNote.limitsUnavailable else { return message }
         return MobileLocalizedString.value("mac_note_limits_unavailable", defaultValue: message, locale: locale)
+    }
+
+    /// Upstream v0.74 (#3395): `ClaudeOAuthCredentialsError.credentialsChanged` on the Mac.
+    static func isClaudeCredentialsChangedMessage(_ message: String) -> Bool {
+        message.hasPrefix("Claude Code credentials changed (")
+            && message.hasSuffix("Click Refresh to re-grant CodexBar access.")
     }
 
     static func localizedValue(
@@ -187,6 +211,8 @@ enum ProviderDetailLocalization {
             return MobileLocalizedString.value("langdock_value_no_included_limits", defaultValue: value, locale: locale)
         case "museai":
             return self.localizedAmountLeft(value, locale: locale) ?? value
+        case "aerostack", "cosmic", "qwencloud", "sailresearch", "sofya", "tavily", "tinyapi":
+            return self.localizedV074Value(value, locale: locale)
         case "kiro":
             break
         default:
@@ -223,6 +249,31 @@ enum ProviderDetailLocalization {
             return "\(amount) \(credits)"
         }
 
+        return value
+    }
+
+    /// Upstream v0.74 plugin values: fixed allowance states and "<number> credits" amounts.
+    /// Qwen Cloud Team reports "<used> / <total> credits used", and "Team" as the reset text of a
+    /// cycle without a reported reset time. Numbers keep the Mac's formatting.
+    static func localizedV074Value(_ value: String, locale: Locale = .current) -> String {
+        if ["Unlimited", "Not reported", "Unavailable", "Team"].contains(value) {
+            return MobileLocalizedString.value(value, defaultValue: value, locale: locale)
+        }
+        let usedSuffix = " credits used"
+        if value.hasSuffix(usedSuffix) {
+            let amounts = String(value.dropLast(usedSuffix.count))
+            if !amounts.isEmpty {
+                return self.localizedFormat("%@ credits used", argument: amounts, locale: locale)
+            }
+        }
+        let creditsSuffix = " credits"
+        if value.hasSuffix(creditsSuffix) {
+            let amount = String(value.dropLast(creditsSuffix.count))
+            if !amount.isEmpty {
+                let credits = MobileLocalizedString.value("credits", defaultValue: "credits", locale: locale)
+                return "\(amount) \(credits)"
+            }
+        }
         return value
     }
 

@@ -108,7 +108,7 @@ public struct KiroUsageSnapshot: Sendable {
         let primary: RateWindow? = self.hasUsageMetrics
             ? RateWindow(
                 usedPercent: self.creditsPercent,
-                windowMinutes: nil,
+                windowMinutes: self.resetsAt == nil ? nil : ProviderPaceCapability.monthlyWindowSentinelMinutes,
                 resetsAt: self.resetsAt,
                 resetDescription: nil)
             : nil
