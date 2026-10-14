@@ -73,6 +73,19 @@ struct SyncV074BridgeTests {
         let exact = midnight.addingTimeInterval(5 * 3600 + 17)
         #expect(SyncCoordinator.syncSubscriptionDate(exact, isDateOnly: false) == exact)
         #expect(SyncCoordinator.syncSubscriptionDate(nil, isDateOnly: true) == nil)
+
+        // An exact timestamp on the anchor instant moves one second so it can never read as date-only.
+        let exactNoon = try Self.utcDate(2026, 11, 3, hour: 12)
+        let published = try #require(SyncCoordinator.syncSubscriptionDate(exactNoon, isDateOnly: false))
+        #expect(published == exactNoon.addingTimeInterval(1))
+        #expect(!SyncCoordinator.isDateOnlyAnchorInstant(published))
+        #expect(SyncCoordinator.isDateOnlyAnchorInstant(anchored))
+        // The shifted instant shows the same calendar day as the original in every whole-minute zone.
+        for offsetMinutes in stride(from: -12 * 60, through: 14 * 60, by: 15) {
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = try #require(TimeZone(secondsFromGMT: offsetMinutes * 60))
+            #expect(calendar.component(.day, from: published) == calendar.component(.day, from: exactNoon))
+        }
     }
 
     @Test

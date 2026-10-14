@@ -11,6 +11,13 @@ struct Harness {
     static let qwenReset = capture.addingTimeInterval(86400 * 9)
     /// 2026-11-03 12:00:00 UTC — the Mac's date-only anchor.
     static let renewal = Date(timeIntervalSince1970: 1_793_707_200)
+    /// An exact expiry that fell on 12:00:00 UTC, published one second later by new Macs.
+    static let exactExpiry = Date(timeIntervalSince1970: 1_793_707_200 + 86400 * 28 + 1)
+
+    static func isAnchor(_ date: Date) -> Bool {
+        let s = date.timeIntervalSince1970
+        return s.rounded() == s && (s - (s / 86400).rounded(.down) * 86400) == 43200
+    }
 
     static func provider(_ id: String, isNewWriter: Bool) -> ProviderUsageSnapshot? {
         switch id {
@@ -22,6 +29,7 @@ struct Harness {
                 providerID: "claude", providerName: "Claude", primary: window, secondary: nil,
                 accountEmail: nil, loginMethod: "Max", statusMessage: nil, isError: false,
                 lastUpdated: self.capture,
+                subscriptionExpiresAt: isNewWriter ? self.exactExpiry : nil,
                 subscriptionRenewsAt: isNewWriter ? self.renewal : nil,
                 rateWindows: [window])
         case "qwencloud":
@@ -72,8 +80,13 @@ struct Harness {
         switch provider.providerID {
         case "claude":
             precondition(provider.primary?.usedPercent == 12)
+            if let expiry = provider.subscriptionExpiresAt {
+                precondition(expiry == self.exactExpiry)
+                precondition(!self.isAnchor(expiry), "an exact timestamp must never read as the date-only anchor")
+            }
             if let renewal = provider.subscriptionRenewsAt {
                 precondition(renewal == self.renewal)
+                precondition(self.isAnchor(renewal))
                 // Every local calendar from UTC-11 to UTC+11 reads November 3 for the anchor.
                 for hours in -11...11 {
                     var calendar = Calendar(identifier: .gregorian)
@@ -151,6 +164,7 @@ struct Harness {
                     if id == "claude" {
                         // A renewal from any new writer survives a mixed merge; old-only stays nil.
                         precondition((provider.subscriptionRenewsAt != nil) == (newWriters > 0))
+                        precondition((provider.subscriptionExpiresAt != nil) == (newWriters > 0))
                     }
                 }
             }

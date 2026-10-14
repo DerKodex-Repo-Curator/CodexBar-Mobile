@@ -85,6 +85,10 @@ struct V074ProviderPresentationTests {
 
         let exact = anchor.addingTimeInterval(37)
         #expect(!SubscriptionDateTimeZone.isDateOnlyAnchor(exact))
+        // Mac 0.74.1.1 publishes an exact Claude timestamp at 12:00:00 UTC as 12:00:01, which stays local.
+        let shiftedExactNoon = anchor.addingTimeInterval(1)
+        #expect(!SubscriptionDateTimeZone.isDateOnlyAnchor(shiftedExactNoon))
+        #expect(SubscriptionDateTimeZone.timeZone(providerID: "claude", date: shiftedExactNoon) == .current)
         #expect(SubscriptionDateTimeZone.timeZone(providerID: "claude", date: exact) == .current)
         // Only Claude publishes the noon anchor; another provider's noon timestamp stays local.
         #expect(SubscriptionDateTimeZone.timeZone(providerID: "codex", date: anchor) == .current)

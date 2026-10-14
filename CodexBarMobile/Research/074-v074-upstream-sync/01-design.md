@@ -20,7 +20,7 @@ Status: `done`
 
 1. `mapProviderAmount` 新增 `.xapi`：`balance != nil` 时发布余额（包括负数），period 用 `providerCost.period`，没有时用 "Prepaid credits"。
 2. `buildProviderUsageSnapshot` 的 primary 标签：qwencloud 改用 descriptor 的 `rateWindowLabels(metadata:snapshot:)`，得到 "Team"（Team Token Plan）、"Monthly"（30 天）或 session 标签。其他 provider 不变。
-3. `syncSubscriptionDate`：`subscription…AtIsDateOnly` 为真时，把 UTC 0 点的日期移到当天 12:00 UTC 再发布。这是已有 `Date` 字段里的值约定，旧 iPhone 不需要改就能在 UTC−11 到 +11 显示正确日期；新 iPhone 再按 UTC 显示 Claude 的这个锚点，覆盖其余时区。没有选择新增 `…IsDateOnly` wire 字段：`ProviderUsageSnapshot` 有 46 处构造（merger、SwiftData bridge、各种 copy），新字段只要有一处漏传就会被悄悄丢掉；而且还要改 SwiftData 的 schema。
+3. `syncSubscriptionDate`：`subscription…AtIsDateOnly` 为真时，把 UTC 0 点的日期移到当天 12:00 UTC 再发布。这是已有 `Date` 字段里的值约定，旧 iPhone 不需要改就能在 UTC−11 到 +11 显示正确日期；新 iPhone 再按 UTC 显示 Claude 的这个锚点，覆盖其余时区。为了避免和恰好落在 12:00:00 UTC 的精确时间混淆（PR #192 Codex review P2），Mac 会把这种精确时间往后挪 1 秒再发布。iPhone 只显示日期，而时区偏移都是整分钟，这 1 秒不会改变任何时区显示的日期；这样“正好 12:00:00 UTC”就只表示“只有日期”。没有选择新增 `…IsDateOnly` wire 字段：`ProviderUsageSnapshot` 有 46 处构造（merger、SwiftData bridge、各种 copy），新字段只要有一处漏传就会被悄悄丢掉；而且还要改 SwiftData 的 schema。
 4. 新 provider ID 走已有的 provider 列表和 per-provider 运行时 zone；QuotaTransition 只在尾部追加有百分比窗口的 aerostack、cosmic、tavily，保持已有订阅 ID 不变。
 5. Mac mock：9 个新 provider 各一个快照（115 个快照 / 105 个 ID），详情行标签与插件输出一致；没有 reset 的窗口不带 `resetsAt`。
 
