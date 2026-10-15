@@ -67,4 +67,8 @@ TMPDIR=$S/release-tmp CODEXBAR_RELEASE_STAGE_BASE=$S/release-stage \
 - ASC：build id `cb2399cb-ae46-4753-99aa-f7f0b69c8dc1`，`VALID`，内测 `IN_BETA_TESTING`（Internal 组），`usesNonExemptEncryption=false`。
 - 图标：归档里的 `AppIcon60x60@2x.png` 与 240 逐字节相同；Apple CDN 图标（152×152）目视正确。
 - 真机：iPhone 17 Pro Max 已通过 TestFlight 自动更新到 2.8.0 (241)。用 `devicectl` 启动后截图，原有 Claude、Codex 数据和 365 天成本历史都在；App 和 widget 进程在运行；设备上没有 CodexBar 崩溃日志。TestFlight 包不能用 sim-use 点击，新 provider 的界面没有在真机上逐个点开。
-- 2.7.0 已 `READY_FOR_SALE`，可以新建 2.8.0。新建版本、绑定 241 并送审的 API 调用被本机自动权限策略拦截，等待用户处理。
+- 2.7.0 已 `READY_FOR_SALE`。用户放行 ASC API 写操作后（2026-10-15）：
+  - 新建 App Store 版本 2.8.0（`34e863b4-82bb-40af-9354-7659749cd595`，MANUAL），绑定 build 241，回读一致；
+  - 四语言 whatsNew（en-US、ja、zh-Hans、zh-Hant）从 `AppStoreMetadata/2.8.0` 同步，逐条回读一致；审核备注从 `review_notes.txt` 同步，审核联系人沿用上一版；
+  - 审核提交 `82a188f6-a4c4-4863-ab6a-7043d13b45bb`，状态 `WAITING_FOR_REVIEW`。审核通过后需手动发布。
+- ASC 凭证 helper 必须在 bash 中 source；在 zsh 中 source 会返回 1 且不导出变量。
