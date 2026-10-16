@@ -105,8 +105,8 @@ struct CostUsageForkParserRevisionTests {
         #expect(reopened.files[apikeyPath]?.codexTokenSnapshots?.compactMap { $0.total?.input } == [50])
     }
 
-    @Test
-    func `an adopted unchanged parent still resolves a fork child that appears later`() throws {
+    @Test(arguments: [false, true])
+    func `an adopted parent still resolves a fork child that appears later`(parentGrows: Bool) throws {
         let env = try CostUsageTestEnvironment()
         defer { env.cleanup() }
         let day = try env.makeLocalNoon(year: 2026, month: 10, day: 7)
@@ -155,6 +155,13 @@ struct CostUsageForkParserRevisionTests {
         let adopted = CostUsageStoreAccess.read(cacheRoot: env.cacheRoot)
         #expect(adopted.files[parentKey]?.hasCurrentCodexParser == true)
         #expect(adopted.files[parentKey]?.codexTokenSnapshots?.compactMap { $0.total?.input } == [100, 300])
+        if parentGrows {
+            // The parent keeps running after the fork point; its tail must not be copied into the child.
+            let handle = try FileHandle(forWritingTo: parentPath)
+            try handle.seekToEnd()
+            try handle.write(contentsOf: Data(event(400, second: 6).utf8))
+            try handle.close()
+        }
 
         // A child forked from the parent's first turn appears afterwards; it must inherit the baseline.
         let childHeader = try env.jsonl([
@@ -181,6 +188,8 @@ struct CostUsageForkParserRevisionTests {
             provider: .codex, since: day, until: day, now: day.addingTimeInterval(5), options: referenceOptions)
         #expect(final.data == expected.data)
         #expect(final.summary?.totalTokens == expected.summary?.totalTokens)
+        // Parent 300 (+100 when it grows) plus the child's own 50 after the fork point.
+        #expect(final.summary?.totalTokens == (parentGrows ? 450 : 350))
     }
 
     @Test
@@ -195,16 +204,21 @@ struct CostUsageForkParserRevisionTests {
         usage.codexParserRevision = CostUsageScanner.codexCreatorAccountParserRevision
         #expect(CostUsageScanner.codexFileUsageAdoptingCreatorAccountRevision(usage, fileURL: url) == nil)
         #expect(CostUsageScanner.codexFileUsageAdoptingCreatorAccountRevision(nil, fileURL: url) == nil)
-        // A revision-12 file that cannot be read right now is left for the next refresh.
+        // A revision-12 file that cannot be read, or has no session_meta, is handed to the upstream path.
         usage.codexParserRevision = CostUsageScanner.codexCreatorAccountParserRevision - 1
         #expect(CostUsageScanner.codexFileUsageNeedsCreatorAccountRevision(usage))
         #expect(CostUsageScanner.codexFileUsageAdoptingCreatorAccountRevision(usage, fileURL: url) == nil)
-        // A readable file without any session_meta adopts the revision with the flag still unknown.
         let bare = env.root.appendingPathComponent("bare.jsonl")
         try Data("{\"type\":\"event_msg\"}\n".utf8).write(to: bare)
-        let adopted = try #require(CostUsageScanner.codexFileUsageAdoptingCreatorAccountRevision(usage, fileURL: bare))
+        #expect(CostUsageScanner.codexFileUsageAdoptingCreatorAccountRevision(usage, fileURL: bare) == nil)
+        // A readable leaf without a creator account adopts the revision with the flag set to false.
+        let apiKey = env.root.appendingPathComponent("apikey.jsonl")
+        try Data("{\"type\":\"session_meta\",\"payload\":{\"id\":\"api\"}}\n".utf8).write(to: apiKey)
+        let adopted = try #require(CostUsageScanner.codexFileUsageAdoptingCreatorAccountRevision(
+            usage,
+            fileURL: apiKey))
         #expect(adopted.hasCurrentCodexParser)
-        #expect(adopted.codexSession?.hasCreatorAccount == nil)
+        #expect(adopted.codexSession?.hasCreatorAccount == false)
         #expect(adopted.codexRows == usage.codexRows)
     }
 }
