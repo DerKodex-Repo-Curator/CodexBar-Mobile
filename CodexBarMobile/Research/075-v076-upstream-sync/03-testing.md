@@ -14,12 +14,12 @@ Status: `in-progress`
 | 定向（第一次） | `swift test --filter 'SyncV076Bridge\|CostUsageCodexAutoReview\|QuotaProviderList\|MockProvider\|AccountIdentityComputer\|ProviderArchitectureGatekeeper\|CostUsageStoreTests\|CostUsageStoreReadWork'` | 337 项，8 处失败，全部是预期中的计数与指纹更新：mock 115/105/110 → 119/109/114；gatekeeper 两处允许列表（`mapProviderAmount` 新增 claudeplatform、`AccountIdentityComputer` 新增 4 个）；`SyncV076BridgeTests` 的 FLORA 用例——FLORA 需要 API key 才会被 Mac 标为可用，改用浏览器会话型的 Parallel 走完整发布路径，FLORA 改为直接测 `mapSyncedDetails` | t-focused1.log |
 | 定向（第二次） | `swift test --filter 'SyncV076Bridge\|MockProvider\|ProviderArchitectureGatekeeper'` | 127 项通过（计数、指纹、Parallel/FLORA 用例修正后） | t-focused2.log |
 | 定向（第三到六次） | `swift test --filter 'SyncV076Bridge\|ProviderArchitectureGatekeeper\|SyncCoordinatorTests\|SyncV074Bridge\|CostUsageCodexAutoReview'` | 第三次：Claude budget 推断误加在插件路径导致编译失败；第四、五次：gatekeeper 把新的 `provider == .claude` 并入相邻的 alibabatokenplan/perplexity 集群、随后新 helper 的 guard 与已有锚点同文、说明注释不在紧邻行；抽成独立 `inferredBudgetReset` helper 并用单行 `Provider-specific by design` 注释后，第六次 53 项通过（含 98 项的第四次集合在前几轮已通过的部分） | t-focused3.log … t-focused6.log |
-| lint（第三到五次） | `bash Scripts/lint.sh lint` | 第三次：新测试两行超宽；第四次：swiftlint 5 处（multiline_arguments、line_length）；第五次 **退出码 0**：0 违规（3087 文件）、acknowledgements 18 components、CI policy、Codex parser hash 最新（`55900964921884fb`）、parser 版本审计 OK（parser 改动且已 bump）、fork README guard、App locales OK、i18n 409 个 key 齐全 | lint3.log、lint4.log、lint5.log |
+| lint（第三到五次） | `bash Scripts/lint.sh lint` | 第三次：新测试两行超宽；第四次：swiftlint 5 处（multiline_arguments、line_length）；第五次 **退出码 0**：0 违规（3087 文件）、acknowledgements 18 components、CI policy、Codex parser hash 最新（`dfc233f15775044b`）、parser 版本审计 OK（parser 改动且已 bump）、fork README guard、App locales OK、i18n 409 个 key 齐全 | lint3.log、lint4.log、lint5.log |
 | 全量分片 0（第一次） | `CODEXBAR_TEST_SHARD_INDEX=0 CODEXBAR_TEST_SHARD_COUNT=2 Scripts/test.sh` | 第 23 组 `CodexLaunchPreflightNPMMemoTests`（上游 #4080，fork 未改）首轮 2 处失败（standalone + hardened 的 Gatekeeper memo），`test.sh` 自动重试后该组通过；属于环境/时序抖动，记为观察项 | mac-full1-s0.log |
 | 全量分片 0（结果） | 同上 | **退出码 0**：79 组，8048 项，第 23 组重试后通过；Timed out groups 0 | mac-full1-s0.log |
 | 全量分片 1（第一次） | `CODEXBAR_TEST_SHARD_INDEX=1 … Scripts/test.sh` | `swift test list` 编译失败：review 轮把 mock 计数断言消息改成了字符串拼接，`#expect` 的 `Comment` 只接受字面量；改回单一字面量 | mac-full1-s1.log |
 | 全量分片 1（第二次） | 同上 | **退出码 0**：7278 项，Isolated selection retries 12，Timed out groups 0 | mac-full2-s1.log |
-| 定向（parser hash 复核） | `bash Scripts/lint.sh lint` 第二次 | 发现 `CodexParserHash` 过期（`codexPricingIsEstimated` 改动在重生成之后），重生成为 `55900964921884fb` | lint2.log |
+| 定向（parser hash 复核） | `bash Scripts/lint.sh lint` 第二次 | 发现 `CodexParserHash` 过期（`codexPricingIsEstimated` 改动在重生成之后），重生成为 `dfc233f15775044b` | lint2.log |
 
 ## iOS
 
