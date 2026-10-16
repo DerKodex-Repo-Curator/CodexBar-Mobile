@@ -5529,9 +5529,20 @@ enum CostUsageScanner {
             return .deferred
         }
         var cached = cache.files[metadata.path]
-        if let adopted = Self.codexFileUsageAdoptingCreatorAccountRevision(cached, fileURL: fileURL) {
-            cache.files[metadata.path] = adopted
-            cached = adopted
+        if Self.codexFileUsageNeedsCreatorAccountRevision(cached) {
+            // The store persists a parser-revision change as a full rewrite, so the token snapshots must be
+            // loaded first or the rewrite would delete them (fork-only in-place adoption, see the helper).
+            if !loadHistoryBeforeFreshness,
+               !Self.hydrateCodexScanHistory(for: fileURL, context: context, cache: &cache)
+            {
+                state.deferredCachePaths.insert(metadata.path)
+                return .deferred
+            }
+            cached = cache.files[metadata.path]
+            if let adopted = Self.codexFileUsageAdoptingCreatorAccountRevision(cached, fileURL: fileURL) {
+                cache.files[metadata.path] = adopted
+                cached = adopted
+            }
         }
         var input = CodexFileScanInput(fileURL: fileURL, metadata: metadata, cached: cached)
         if try Self.keepCachedCodexFileIfFresh(input: input, context: context, cache: &cache, state: &state) {

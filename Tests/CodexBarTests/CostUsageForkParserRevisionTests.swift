@@ -98,6 +98,89 @@ struct CostUsageForkParserRevisionTests {
         let reopened = CostUsageStore(cacheRoot: env.cacheRoot).syncLoadCodexCache(calendar: .current)
         #expect(reopened.files[chatgptPath]?.codexRows?.map(\.input) == (growing ? [100, 100, 100] : [100, 100]))
         #expect(reopened.files[chatgptPath]?.codexSession?.hasCreatorAccount == true)
+        // The in-place adoption must keep the persisted token history that fork children resolve from.
+        #expect(reopened.files[chatgptPath]?.codexTokenSnapshots?.compactMap { $0.total?.input }
+            == (growing ? [100, 200, 300] : [100, 200]))
+        #expect(reopened.files[chatgptPath]?.codexTokenCheckpoints?.isEmpty == false)
+        #expect(reopened.files[apikeyPath]?.codexTokenSnapshots?.compactMap { $0.total?.input } == [50])
+    }
+
+    @Test
+    func `an adopted unchanged parent still resolves a fork child that appears later`() throws {
+        let env = try CostUsageTestEnvironment()
+        defer { env.cleanup() }
+        let day = try env.makeLocalNoon(year: 2026, month: 10, day: 7)
+        let model = "gpt-5.6-luna"
+        func event(_ input: Int, second: Double) throws -> String {
+            try env.jsonl([[
+                "type": "event_msg",
+                "timestamp": env.isoString(for: day.addingTimeInterval(second)),
+                "payload": [
+                    "type": "token_count",
+                    "info": ["total_token_usage": [
+                        "input_tokens": input, "cached_input_tokens": 0, "output_tokens": 0,
+                    ]],
+                ],
+            ]]) + "\n"
+        }
+        let parentHeader = try env.jsonl([
+            [
+                "type": "session_meta",
+                "timestamp": env.isoString(for: day),
+                "payload": ["id": "parent", "creator_account_id": "acct_fixture"],
+            ],
+            ["type": "turn_context", "timestamp": env.isoString(for: day), "payload": ["model": model]],
+        ]) + "\n"
+        let parentPath = try env.writeCodexSessionFile(
+            day: day,
+            filename: "parent.jsonl",
+            contents: parentHeader + event(100, second: 1) + event(300, second: 2))
+        var options = CostUsageScanner.Options(
+            codexSessionsRoot: env.codexSessionsRoot,
+            claudeProjectsRoots: nil,
+            cacheRoot: env.cacheRoot,
+            codexTraceDatabaseURL: env.root.appendingPathComponent("missing-traces.sqlite"))
+        options.refreshMinIntervalSeconds = 0
+        options.preferNewestCodexSessionsFirst = false
+        _ = CostUsageScanner.loadDailyReport(provider: .codex, since: day, until: day, now: day, options: options)
+
+        var legacy = CostUsageStoreAccess.read(cacheRoot: env.cacheRoot)
+        let parentKey = try #require(legacy.files.keys.first { $0.hasSuffix("/" + parentPath.lastPathComponent) })
+        legacy.files[parentKey]?.codexParserRevision = CostUsageScanner.codexCreatorAccountParserRevision - 1
+        legacy.files[parentKey]?.codexSession?.hasCreatorAccount = nil
+        CostUsageStoreAccess.replace(cacheRoot: env.cacheRoot, cache: legacy)
+        // Adopt the unchanged parent in place.
+        _ = CostUsageScanner.loadDailyReport(
+            provider: .codex, since: day, until: day, now: day.addingTimeInterval(3), options: options)
+        let adopted = CostUsageStoreAccess.read(cacheRoot: env.cacheRoot)
+        #expect(adopted.files[parentKey]?.hasCurrentCodexParser == true)
+        #expect(adopted.files[parentKey]?.codexTokenSnapshots?.compactMap { $0.total?.input } == [100, 300])
+
+        // A child forked from the parent's first turn appears afterwards; it must inherit the baseline.
+        let childHeader = try env.jsonl([
+            [
+                "type": "session_meta",
+                "timestamp": env.isoString(for: day.addingTimeInterval(1.5)),
+                "payload": ["id": "child", "forked_from_id": "parent", "creator_account_id": "acct_fixture"],
+            ],
+            [
+                "type": "turn_context",
+                "timestamp": env.isoString(for: day.addingTimeInterval(1.5)),
+                "payload": ["model": model],
+            ],
+        ]) + "\n"
+        _ = try env.writeCodexSessionFile(
+            day: day,
+            filename: "child.jsonl",
+            contents: childHeader + event(100, second: 1) + event(150, second: 4))
+        let final = CostUsageScanner.loadDailyReport(
+            provider: .codex, since: day, until: day, now: day.addingTimeInterval(5), options: options)
+        var referenceOptions = options
+        referenceOptions.cacheRoot = env.root.appendingPathComponent("reference-cache")
+        let expected = CostUsageScanner.loadDailyReport(
+            provider: .codex, since: day, until: day, now: day.addingTimeInterval(5), options: referenceOptions)
+        #expect(final.data == expected.data)
+        #expect(final.summary?.totalTokens == expected.summary?.totalTokens)
     }
 
     @Test
@@ -112,9 +195,14 @@ struct CostUsageForkParserRevisionTests {
         usage.codexParserRevision = CostUsageScanner.codexCreatorAccountParserRevision
         #expect(CostUsageScanner.codexFileUsageAdoptingCreatorAccountRevision(usage, fileURL: url) == nil)
         #expect(CostUsageScanner.codexFileUsageAdoptingCreatorAccountRevision(nil, fileURL: url) == nil)
-        // A revision-12 file whose leaf metadata cannot be read still adopts the revision and keeps its rows.
+        // A revision-12 file that cannot be read right now is left for the next refresh.
         usage.codexParserRevision = CostUsageScanner.codexCreatorAccountParserRevision - 1
-        let adopted = try #require(CostUsageScanner.codexFileUsageAdoptingCreatorAccountRevision(usage, fileURL: url))
+        #expect(CostUsageScanner.codexFileUsageNeedsCreatorAccountRevision(usage))
+        #expect(CostUsageScanner.codexFileUsageAdoptingCreatorAccountRevision(usage, fileURL: url) == nil)
+        // A readable file without any session_meta adopts the revision with the flag still unknown.
+        let bare = env.root.appendingPathComponent("bare.jsonl")
+        try Data("{\"type\":\"event_msg\"}\n".utf8).write(to: bare)
+        let adopted = try #require(CostUsageScanner.codexFileUsageAdoptingCreatorAccountRevision(usage, fileURL: bare))
         #expect(adopted.hasCurrentCodexParser)
         #expect(adopted.codexSession?.hasCreatorAccount == nil)
         #expect(adopted.codexRows == usage.codexRows)

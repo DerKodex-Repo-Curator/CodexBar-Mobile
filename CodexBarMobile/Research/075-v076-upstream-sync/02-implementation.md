@@ -20,14 +20,14 @@ Status: `in-progress`
 
 ## Codex 成本缓存与 parser 版本
 
-- 上游 0.75/0.76 改动了 parser-hash 覆盖的文件（`CostUsageScanner.swift`、`+CacheHelpers`、`+PricingRows`、`+TemporalBuckets`、`+TurnPerformance`、`CostUsageCacheModels`）。按发布清单，`CostUsagePricing.parserLogicVersion` 从 21 升到 22，并重新生成 `CodexParserHash`，结果 `dfc233f15775044b`。
+- 上游 0.75/0.76 改动了 parser-hash 覆盖的文件（`CostUsageScanner.swift`、`+CacheHelpers`、`+PricingRows`、`+TemporalBuckets`、`+TurnPerformance`、`CostUsageCacheModels`）。按发布清单，`CostUsagePricing.parserLogicVersion` 从 21 升到 22，并重新生成 `CodexParserHash`（合并时 `107dd20abdb8d0b0`，之后随 parser 文件改动重生成，最终值见下文 revision 升级一节）。
 - 上游把自家 v0.74.1 的 store（`f406dae284de4a55`，“Revision 13 reparses rows to record the session creator account for Auto-review”）和 `fc698834d6329beb` 登记为可沿用前驱，通过 revision 迁移重新解析行。fork 已发布的 0.74.1.1 store（`68cbd75ed0e591d9`）等于上游 0.74.1 的解析逻辑加上 fork 的 ledger 重新定价（与 074 处理 0.73.0.1 时相同的关系），因此也登记为 `compatiblePredecessorParserHashes`，并加入测试的前驱参数表，使 0.74.1.1 用户升级后不全量重扫 Codex 日志。0.73.0.1 的 `0d41437dcd95c17e` 继续保留。
 
 ## Codex parser revision 13 的原地升级（fork 专有，成本验证后追加）
 
 - 真实日志验证（见 03）发现：上游 revision 13 只为记录 leaf `session_meta` 的 `creator_account_id`，但 `keepCachedCodexFileIfFresh` 对旧 revision 文件直接返回 false、`replaceCachedRows` 为 true，于是每个旧文件都在扫描额度内从头重解析，并用部分行替换已缓存的行。App 刷新路径下 30 天已知成本从 $3171 逐次降到 $2713（某些天掉到 1/5），持续数十次刷新；iPhone 账本会把这些偏低值当作“已知”覆盖。这正是 074 轮拒绝“重建缓存”的原因。
-- 修法：新增 `CostUsageScanner+ForkParserRevision.swift` 的 `codexFileUsageAdoptingCreatorAccountRevision`，在构造 `CodexFileScanInput` 前对 revision 12 的文件重读 leaf `session_meta`（`parseCodexSessionMetadata` 改为非 private），写入 `codexSession.hasCreatorAccount`，盖上 revision 13，保留全部行、checkpoint 与缓冲；更旧的 revision 与已是当前 revision 的文件走上游路径。文件增长时从原 checkpoint 继续增量解析。
-- 测试：`CostUsageForkParserRevisionTests`（1 字节额度下 revision 12 文件仍保留全部行并得到正确的 creator 标记；增长后与全新扫描一致；更旧/当前 revision 不处理）。parser hash 重生成为 `dfc233f15775044b`。
+- 修法：新增 `CostUsageScanner+ForkParserRevision.swift`，在构造 `CodexFileScanInput` 前对 revision 12 的文件先 `hydrateCodexScanHistory`（store 把 revision 变化当作整份重写，不先加载 token snapshots 就会把它们删掉——第二轮 review 用 scratch store 证实：修前 `token_snapshots` 从 147,102 行掉到 13,250 行、43 个 fork 子会话失去父基线），再用 `codexFileUsageAdoptingCreatorAccountRevision` 重读 leaf `session_meta`（`parseCodexSessionMetadata` 改为非 private），写入 `codexSession.hasCreatorAccount`，盖上 revision 13，保留全部行、snapshot、checkpoint 与缓冲；更旧的 revision 与已是当前 revision 的文件走上游路径；文件暂时不可读时返回 nil 留给下次刷新。文件增长时从原 checkpoint 继续增量解析。
+- 测试：`CostUsageForkParserRevisionTests`（1 字节额度下 revision 12 文件仍保留全部行、token snapshots 与 checkpoint，并得到正确的 creator 标记；增长后与全新扫描一致；升级后的未变化父会话仍能解析之后出现的 fork 子会话；更旧/当前 revision 不处理，不可读文件延后）。parser hash 最终为 `8bf44283c990726d`（每次改动 hash 覆盖文件后重生成；合并时为 `107dd20abdb8d0b0`，加 `isIncludedInPlan` 判断后 `e34dea88998a523f`）。
 
 ## 编译修复
 
