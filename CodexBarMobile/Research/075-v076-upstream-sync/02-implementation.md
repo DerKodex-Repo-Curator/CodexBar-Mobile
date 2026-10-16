@@ -61,3 +61,10 @@ Status: `in-progress`
 ## 版本
 
 `version.env`：0.76.0.1 / 169.1 / Mobile 2.9.0 / v0.76.0 / 2026-10-15；根 CHANGELOG 增加 fork 0.76.0.1 段（`Scripts/validate_changelog.sh 0.76.0.1` 通过，`changelog-to-html.sh` 提取的是 fork 段）。
+
+## 独立 review 循环
+
+| 轮次 | 范围 | 发现 | 处理 |
+|---|---|---|---|
+| 1 | `62fc10079..c8d141180`（合并冲突决策、README、桥接、iOS 2.9.0） | 无阻塞。应修 5 项：`inferredBudgetReset` 插在 `syncSubscriptionDay` 的 doc 注释与函数之间；两份 CHANGELOG 漏了 Claude 月度上限推断 reset、Auto-review 应写 "lower bounds" 而非 "estimates"；01/06 把 `QuotaProviderList` 的追加写成 "Shared 零改动"、00 链接了尚不存在的 04；mock 测试里的旧计数文案；03 缺最终 lint/全量记录。小问题：无年份到期日的年份替换与非公历系统日历、`command_timeout` 参数已无实际作用、`codexPricedModel`/`codexPricingModel` 重复、Claude Platform mock 的 `windowMinutes`/`usageValue` 与真实插件略有差异、陈旧快照会给出过去的推断 reset | `784578c38`：helper 移到 doc 注释之前；CHANGELOG 两处补充并改措辞；文档改正；测试文案更新；日期解析固定公历、无年份时保留解析器参考年（闰年）并加测试。其余小问题记录不改 |
+| 2 | `c8d141180..HEAD`（revision 原地升级、第一轮修复） | **阻塞 1 项**：原地升级在未加载 token snapshots 时盖 revision，store 把 revision 变化当作整份重写而删除 `token_snapshots`（scratch store 实测 147,102 → 13,250 行，43 个 fork 子会话失去父基线）。应修：`parserLogicVersion` 22 的注释与实现不符；02/03 中 hash 与"保留 checkpoint"叙述。小问题：不可读文件会永久盖 revision 且标记未知；文件头读取不受额度/取消约束；formatter 先设 calendar 再设 locale；`+ForkParserRevision` 命名可能与上游的会话 fork 混淆 | `ee6084b0e`：升级前先 `hydrateCodexScanHistory`；不可读文件返回 nil 留给下次刷新；注释与文档修正；测试补 snapshot/checkpoint 保留与"升级后父会话仍能解析之后出现的 fork 子会话"。文件头读取与取消、命名记录不改 |
