@@ -87,7 +87,8 @@ struct V076ProviderPresentationTests {
         #expect(leap.contains("2月29日"), "\(leap)")
         let hebrew = ProviderDetailLocalization.localizedValue(
             "Expires Oct 28 (UTC)", providerID: "claudeplatform", locale: Locale(identifier: "en_US@calendar=hebrew"))
-        #expect(hebrew == "Expires Oct 28 (UTC)", "\(hebrew)")
+        // The locale may reorder day and month, but the day stays Gregorian (28 Oct, not a Hebrew date).
+        #expect(hebrew.contains("28") && hebrew.contains("Oct") && hebrew.hasSuffix("(UTC)"), "\(hebrew)")
         #expect(ProviderDetailLocalization.localizedValue("Unavailable", providerID: "claudeplatform", locale: zh) == "不可用")
         // Unknown shapes and dynamic text stay verbatim.
         #expect(ProviderDetailLocalization.localizedValue("Expires someday (UTC)", providerID: "claudeplatform", locale: zh)
