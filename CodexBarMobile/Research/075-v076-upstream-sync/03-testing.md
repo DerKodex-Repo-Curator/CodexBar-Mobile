@@ -111,6 +111,25 @@ Status: `in-progress`
 ### 修复：revision 13 原地升级（commit `0e4463a4e`，见 02）
 对 revision 12 的文件只重读 leaf `session_meta`、写入 `hasCreatorAccount`、盖上 revision 13，保留全部行。单元测试 `CostUsageForkParserRevisionTests`（1 字节额度下仍保留全部行、增长后与全新扫描一致）。真实日志复验见下方 plan3。
 
+### plan3：上游对照与修复复验（同一目录原地增长，App 刷新路径 CostSnap，`plan3.out`）
+
+| 场景 | 30 天已知成本（逐次刷新） |
+|---|---|
+| F0：0.74.1.1 沿用自己的 0.74.1.1 store（基线） | 3171.91 → 3184.71 → 3203.87 → **3208.45**（第 4 次 `historyCoverageIsEstablished=true`） |
+| U1：**上游 v0.76.0** 沿用上游 0.74.1 store | 3068.72 → 2756.58 ×3 → 2719.59 → 2081.62 ×2 → **1909.28** ×2 → 1952.04 → 2266.16 → 2455.50，12 次仍未 established，knownDays 一度 29 |
+| U2：修复后的 0.76.0.1 沿用上游 0.74.1 store | 3171.07 → 3183.86 → 3203.87 → **3208.45**（第 4 次 established），之后保持 3208.45（第 11 次一次性回到 3171.18，第 12 次又是 3208.45） |
+| F1：修复后的 0.76.0.1 沿用 fork 0.74.1.1 store | 3163.86 → 3177.92 → 3203.87 → **3208.45**（第 4 次 established），之后同 U2 |
+| U0 / F2：空缓存全新建立（上游 / fork） | 154 → 1668（6 次）/ 280 → 1331（6 次），两者都在逐次补齐，仅作参考 |
+
+结论：
+- 下降是上游 0.75/0.76 对所有 0.74.x store 的迁移行为（U1），不是 fork 合并引入；修复后 fork 的升级路径与 0.74.1.1 基线逐次一致（U2/F1 vs F0），iPhone 不会收到偏低的已知值。
+- 观察项：U2/F1 第 11 次刷新一次性回到 3171.18（与基线第 1 次相同的值，`fully=true established=true`），下一次恢复 3208.45，差 $37（1.2%）。F0 只跑了 4 次未观察到；疑似上游 #4467 "bounded refresh keeps complete snapshots" 在某次刷新返回了保留的完整快照，不是行丢失。记为观察项，不阻塞。
+- 上游 issue：已在 PR/issue 评论前确认 `gh search` 中没有同类报告；是否向上游反馈由用户决定（涉及上游仓库的外部操作，本轮不做）。
+
+## 同步兼容 gate 复跑（最终提交 `10b9bb304`）
+
+`tools/check_frozen_wire.py --old-ref v0.74.1.1-mobile.2.8.0 --scratch …/frozen-wire-final`：`PASS: 16 masks, 64 wire reads and 32 real old/new consumer merge processes`；old `1c5b6bd9e`，new `10b9bb304`，18 个源文件里仍只有 `QuotaProviderList.swift` 不同。`matrix-wire.json` 已复制到本目录。
+
 ## CloudKit Production schema 审计
 
 对照最新公开 tag `v0.74.1.1-mobile.2.8.0`：
