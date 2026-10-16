@@ -1,0 +1,85 @@
+2d8b1409a 2026-10-15 docs: update appcast for 0.76.0
+85f38b8c2 2026-10-15 chore(release): prepare 0.76.0
+27e9b9a08 2026-10-15 fix(settings): never overwrite an unreadable config (#4509)
+a8eb7b8c4 2026-10-15 fix(pty): keep buffered output when commands exit quickly (#4543)
+74f64b62b 2026-10-15 test(plugins): wait for watchdog release with a deadline (#4541)
+0bedb9924 2026-10-15 fix(helmcode): import Cloud sessions scoped to the API host (#4492)
+a49c61c30 2026-10-15 fix(muse): earn the Keychain grant on manual refresh (#4489)
+21dc8b664 2026-10-15 fix(claude): show the OAuth account email on ordinary refreshes (#4538)
+02e909685 2026-10-15 feat(menubar): add optional large text and monospaced digits (#4455)
+9ebd90017 2026-10-15 fix(factory): import sessions from every Firefox channel (#4461)
+02834172b 2026-10-14 feat(about): add open-source acknowledgements and third-party notices (#4483)
+9d3480006 2026-10-14 feat(providers): add Claude Platform API credits (#4510)
+cf828de7a 2026-10-14 perf(cli): fetch provider usage in parallel (#4501)
+278e9056e 2026-10-14 fix(memory): release plugin worker temporaries and retired runtimes (#4522)
+46fc250d0 2026-10-14 fix(claude): preserve email from requested OAuth profiles (#4521)
+052ded413 2026-10-13 docs(readme): add the Notify! CodexBar companion (#4504)
+6964f7036 2026-10-14 docs(readme): rename the KDE integration to CodexBar AgentView (#4502)
+3bfbf4a51 2026-10-13 chore: start 0.75.1 development
+4668969c8 2026-10-13 docs: update appcast for 0.75.0
+ed3c650e1 2026-10-13 chore(release): prepare 0.75.0
+2e19c9276 2026-10-13 fix(claude): give spend-only accounts a meter, pace and UTC monthly reset (#4480)
+848096328 2026-10-14 fix(spend): keep native Codex details and tabs stable across replaced totals (#4467)
+910dc82e7 2026-10-13 fix(parallel): use the shared browser order (#4508)
+0fbebbb42 2026-10-13 feat(providers): add Parallel credit balance (#4479)
+8b2ef4216 2026-10-13 test: fix two Xcode 27 CI flakes (#4505)
+5a40ac439 2026-10-13 feat(openai): live tokens-per-minute usage with org limits (#4495)
+8ec603346 2026-10-14 fix(cli): mark incomplete project cost reports (#4472)
+b3d6ffb3f 2026-10-14 fix(spend): retain every bounded Codex account result (#4466)
+0aef66c73 2026-10-13 feat(cookies): import cookies from all supported browsers for every provider (#4498)
+961220823 2026-10-14 feat(commandcode): fetch usage with an API key (#4462)
+84059f7f7 2026-10-13 fix(cookies): explain Files & Folders denial instead of Sign in (#4482)
+1228e9fa9 2026-10-14 fix(devin): use the official hexagon mark for the provider icon (#4458)
+bab8d5dd2 2026-10-14 fix(jetbrains): read quota from JbaiQuota and Junie log records (#4457)
+d74a0f9f1 2026-10-14 fix(sessions): preserve macOS CLI sessions with app paths in prompts (#4474)
+5fdb2c79f 2026-10-13 test(claude): isolate OAuth cache tests from the shared test store (#4500)
+664311fc8 2026-10-13 ci: build and test macOS with Xcode 27 only (#4497)
+d6171aeb8 2026-10-13 feat(cursor): add short menu bar tags for lanes and Grok Bot (#4481)
+f3d237304 2026-10-13 feat(claude): make credits, resets and plan dates independently selectable (#4484)
+b05a63dcb 2026-10-13 fix(menu): separate provider errors from stale-usage notices (#4496)
+d1639ce82 2026-10-13 feat(menubar): add graphical progress bar layouts (#4436)
+1321fe2d7 2026-10-12 fix(menubar): let a provider icon span two text rows (#4454)
+d554d4493 2026-10-12 test: let the real-cache catch-up test own its sleep release (#4488)
+3a45dc7cf 2026-10-13 feat(settings): filter, search, and reversibly reorder providers (#4440)
+447a5efce 2026-10-12 chore(deps): bump SweetCookieKit to 0.5.7 (#4485)
+b41a66b95 2026-10-12 fix(cookies): stop browser imports after a working session (#4478)
+6f45c0d32 2026-10-12 feat(menu): name the cost token after the history window (#4448)
+6dda5346e 2026-10-12 test: measure two timing budgets without runner stalls (#4477)
+c4acdac74 2026-10-12 refactor(minimax): remove dead code and duplication (#4476)
+590f42ae9 2026-10-12 refactor(store): remove dead code and duplication from UsageStore (#4468)
+f19f87e22 2026-10-12 refactor(cost): remove dead code from cost and usage fetchers (#4473)
+f66d18fc6 2026-10-12 fix(menu-bar): redraw meters after leaving a stored layout (#4463)
+e79974386 2026-10-12 fix(keychain): bound browser cookie prompts per refresh (#4464)
+348215900 2026-10-12 test(opencodego): isolate required error requests
+a08c91804 2026-10-12 fix(hyper): keep generated error handling lint clean
+f497e48c5 2026-10-11 chore(deps): bump SweetCookieKit to 0.5.6 (#4459)
+f153cfb50 2026-10-11 test(codex): share predecessor cache adoption inventory
+25ef0d017 2026-10-11 test(deps): preserve explicit interactive browser coverage
+e2a1fcc97 2026-10-11 test(cursor): treat Ego Lite as unmapped for interactive login
+fa2b14e5e 2026-10-11 fix(codex): preserve partial identified-request subtotals
+47cf7fc4e 2026-10-11 test(deps): preserve explicit interactive browser coverage
+5114f84fe 2026-10-11 fix(antigravity): block browser sign-in during usage probes
+636af1f1f 2026-10-11 fix(cost): let an explicit custom rate price free Auto-review requests
+999978609 2026-10-11 fix(cost): keep uncovered free Auto-review requests off list prices
+1d4d5db25 2026-10-11 chore(deps): bump SweetCookieKit to 0.5.6
+a10b9a0df 2026-10-11 docs(changelog): reference #4453
+6ee04fb84 2026-10-11 fix(cost): price free Codex Auto-review requests at $0
+1309f21bd 2026-10-11 Antigravity: keep agy usage probes from opening browser sign-in
+e92d0ed0f 2026-10-11 chore: start 0.74.2 development
+a72bc83ad 2026-10-11 Cover prior parser hash cache adoption
+d3724b213 2026-10-11 Add Codex identified request subtotals over SSH
+976d8a0aa 2026-10-11 fix(opencodego): cache local database scans with WAL fingerprinting
+8770f855c 2026-10-11 Cache OpenCode Go local usage scans and discover auto browser session
+4a52de54e 2026-10-12 README: add TokenTV desk clock to integrations
+69ef0cb9e 2026-10-11 fix(typesafe): keep the catalog browser order in descriptor metadata
+1e3302a6c 2026-10-11 docs(changelog): link TypeSafe browser import PR
+43121f17a 2026-10-11 fix(typesafe): import cookies from all supported browsers
+15510d555 2026-10-11 Restore manual cookie recovery on expiry
+28ded89ec 2026-10-11 Read Charm Hyper balance from signed-in dashboard
+7bcf523bf 2026-10-11 feat(flora): add FLORA workspace balance provider
+c4d4dbe58 2026-10-11 feat(fal): add fal credit balance provider
+c3110630a 2026-10-11 Explain recovery after Kimi Desktop session changes
+6acc6b2da 2026-10-11 Revalidate Desktop sessions before Kimi dispatch
+310eb72d1 2026-10-11 Gate current-record tests on the paired reader
+1d059cee2 2026-10-11 Point Kimi verification at published reader proposal
+985e603c3 2026-10-11 Add bounded Kimi Desktop current-session candidate
