@@ -82,7 +82,7 @@ Date: 2026-10-15
   - 旧 iPhone 上 Claude Platform 显示为旧版 Claude 橙、grant 到期日英文；新旧 Mac 混用期间 Claude 会出现两张卡（legacy 身份 + 邮箱身份）；
   - Codex 把旧 rollout 压缩成 `.jsonl.zst` 后，Mac 的历史成本只剩压缩点之后（上游 #4523 / PR #4534 未合并，两个版本相同，本机已受影响）；
   - fork Final CI 仍用 macOS 26 / Xcode 26.x runner（上游已改 Xcode 27 only），代码仍兼容 Swift 6.2（上游 release-cli 仍用 Xcode 26.3）；
-  - plan3 在丢 snapshot 的中间构建上观察到第 11 次刷新一次性回落 $37 后恢复；最终代码上的 12 次复验见 03 的 plan5；
+  - 在这份 129k 行的历史上，Mac 的 catch-up 持续 pending，上游 #3051 会在大多数刷新返回保留的旧报告（0.74.1.1 在 3013.54 与 2980.85 之间周期性跳动；最终 fork 稳定在 2980.85，更接近全新扫描真值），见 03 的 plan5/plan6；
   - OpenAI Live Usage 吞吐本轮不同步到 iOS。
 
 ## 授权边界
