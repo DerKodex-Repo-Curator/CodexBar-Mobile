@@ -73,6 +73,44 @@ Status: `in-progress`
 - 旧 iPhone 上，Claude Platform 以旧版 Claude 橙显示、grant 到期日为英文。
 - Gate 结论：16 个组合全部列出，均为 substituted，没有 fail。
 
+## 真实日志成本验证（2026-10-15/16）
+
+目的：确认 0.74.1.1 用户升级到 0.76.0.1 后成本数据不被破坏，升级过程中 iPhone 不会收到偏低的“已知值”（Research 068/069/070/074 的核心要求）。
+
+工具与数据（全部在 `/Volumes/StudioSSD/Developer/BuildScratch/CodexBar/costdiag/v076/`）：
+- `CostDiag`（`loadDailyReport`）与 `CostSnap`（App 的 `CostUsageFetcher.loadTokenSnapshot`，默认扫描额度，每次调用相当于 App 刷新一次，统计会作为已知值发给 iPhone 的天数和 30 天金额）。两者都只在临时 worktree 里加 target：`wt-0741rel`（published tag `v0.74.1.1-mobile.2.8.0`）、`wt-0761`（本分支）、`wt-up-0760`（上游 v0.76.0），用 `swift build -c release -Xswiftc -enable-testing` 构建。
+- 只读快照：T2 = 2026-10-13 的 `~/.codex`（沿用 074 的 `codex-t2-stage`，930 个 jsonl）；T3 = 2026-10-15 的 `~/.codex`（`rsync` + `sqlite3 .backup`，**只剩 58 个 jsonl + 883 个 `.jsonl.zst`**，见 00 的 zst 问题）。定价目录冻结为同一份 `models-dev-v1.json`。trace 库必须转成 `journal_mode=delete`，否则只读打开失败、扫描不执行（074 已记录；本轮第一次跑出 0 天就是这个原因）。
+
+### 第一版（作废）
+缓存建在 `codex-home-t2`，却对另一份拷贝扫描（inode 不同），上游把每个文件当作“文件 ID 变了”整体作废，结果不可信（074 已踩过同样的坑：`rsync --inplace` 才能保留 inode）。
+
+### 第二版（忠实设置：同一目录原地增长）
+| 对比 | 结果 |
+|---|---|
+| 0.74.1.1 全新扫描 vs 0.76.0.1 全新扫描（增长后，76 天） | $9,555.02 / 19.618B token，逐天逐模型一致（浮点差 <1e-12） |
+| 0.74.1.1 在 T2 建缓存 → 原地增长到 T3 → 0.74.1.1 增量 | $9,555.02，与全新扫描完全一致 |
+| 同一缓存 → **合并后代码（未修复前）沿用，无限额度 1 次** | $9,473.86：最近 3 天偏低（10-13/14/15） |
+| 同一缓存 → 合并后代码沿用，默认额度 30 次 | $9,574.44：6 天与全新扫描不同（有高有低） |
+| **CostSnap（App 路径）**：0.74.1.1 自己的缓存，3 次刷新 | 30 天已知成本 3024.97 → 3153.08 → 3171.18，第 3 次 `historyCoverageIsEstablished=true` |
+| **CostSnap：合并后代码（未修复前）沿用 0.74.1.1 缓存，12 次刷新** | 3095 → 3094 → 2790 → 2757 → … → **2713**，第 8 次起 knownDays 29，直到第 12 次仍 2713 / last30 2808，从未 established；逐天看 10-10 从 $144.45 降到 $28.83、09-26 从 $75.74 降到 $17.15 |
+
+缓存库对比：升级后的 store `usage_rows` 从 129,037 降到 88,263，`file_day_aggregates` 849 → 592，若干大文件 `parsed_bytes` 远小于 `size`、`scan_complete=0`（重解析进行中），另有文件 `parsed_bytes=0` 且 0 行。
+
+根因：上游 #4452 把 `currentCodexParserRevision` 从 12 升到 13，只为记录 leaf `session_meta` 的 `creator_account_id`；`keepCachedCodexFileIfFresh` 对旧 revision 文件返回 false，`replaceCachedRows` 为 true，于是每个旧文件都在扫描额度内从头重解析，并用部分行替换已缓存的行，直到该文件解析完为止——整份历史（约 11 GB）要几十次刷新才能恢复，期间 Mac 显示偏低的 30 天成本，iPhone 账本会把这些偏低值当作已知值覆盖（`CostLedgerService.upsertDayPoint` 只拦“未知覆盖已知”）。这不是 fork 合并引入，而是上游 0.75/0.76 对所有 0.74.x store 的迁移行为（plan3 用上游 v0.76.0 + 上游 0.74.1 store 对照，见下）。
+
+### 模拟 Codex 归档（同一目录，把 T3 中已是 .zst 的 883 个 jsonl 换成 zst）
+| 对比 | 结果 |
+|---|---|
+| 0.76.0.1 沿用（已升级的 store） | $1,310.32 / 4.064B |
+| 0.74.1.1 自己的 store | $1,179.40 / 3.942B |
+| 0.76.0.1 全新扫描 | $1,028.56 / 3.653B |
+| CostSnap 归档后继续刷新 3 次 | knownDays 25/30，30 天已知成本 2252 → 2296，last30 2530 |
+
+结论：jsonl 被压缩后，两个版本都只保留极少量历史（已缓存的行随文件消失而被清理），这是上游扫描器不识别 `.zst` 的既有问题（issue #4523 / PR #4534），0.74.1.1 与 0.76.0.1 行为相同，不是本轮回归；本机用户的 Mac 在 2026-10-13 之后已处于这个状态。
+
+### 修复：revision 13 原地升级（commit `0e4463a4e`，见 02）
+对 revision 12 的文件只重读 leaf `session_meta`、写入 `hasCreatorAccount`、盖上 revision 13，保留全部行。单元测试 `CostUsageForkParserRevisionTests`（1 字节额度下仍保留全部行、增长后与全新扫描一致）。真实日志复验见下方 plan3。
+
 ## CloudKit Production schema 审计
 
 对照最新公开 tag `v0.74.1.1-mobile.2.8.0`：
