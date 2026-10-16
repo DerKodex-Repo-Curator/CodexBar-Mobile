@@ -127,6 +127,20 @@ Status: `in-progress`
 - 观察项：U2/F1 第 11 次刷新一次性回到 3171.18（与基线第 1 次相同的值，`fully=true established=true`），下一次恢复 3208.45，差 $37（1.2%）。F0 只跑了 4 次未观察到；疑似上游 #4467 "bounded refresh keeps complete snapshots" 在某次刷新返回了保留的完整快照，不是行丢失。记为观察项，不阻塞。
 - 是否把这个迁移下降反馈给上游由用户决定（涉及上游仓库的外部操作，本轮不做）。
 
+### plan4：第二轮 review 阻塞问题修复后的复验（`ee6084b0e`，`plan4.out`）
+
+第二轮 review 用只读 sqlite 查询发现：plan3 的 F1/U2 store 虽然 `usage_rows` 未丢，但 `token_snapshots` 从 147,102 行掉到 13,250 行（有 snapshot 的文件 435 → 32），43 个 fork 子会话的父会话失去基线——原地升级在未加载 token 历史时盖 revision，store 把 revision 变化当作整份重写而删除了 snapshots。改为先 `hydrateCodexScanHistory` 再升级后：
+
+| store | token_snapshots | 有 snapshot 的文件 | usage_rows | 30 天已知成本（逐次） |
+|---|---|---|---|---|
+| fk0741（0.74.1.1 源 store） | 147,102 | 435 | 125,324 | — |
+| F0（0.74.1.1 基线） | 153,057 | 451 | 130,424 | 3171.91 → 3184.71 → 3203.87 → 3208.45 |
+| F1（修复前，作废） | 13,250 | 32 | 129,037 | 3163.86 → … → 3208.45 |
+| **F3（修复后，fork 0.74.1.1 store）** | **153,057** | **451** | **130,424** | 3166.26 → 3179.05 → 3203.87 → 3208.45（第 4 次 established），之后保持 |
+| **U3（修复后，上游 0.74.1 store）** | **153,057** | **451** | **130,424** | 3164.62 → 3177.42 → 3203.87 → 3208.45（第 4 次 established） |
+
+结论：修复后的升级路径与 0.74.1.1 基线在行数、snapshot 数与逐次成本上完全一致；第一次刷新比基线低 $5（0.2%，3166 vs 3172），来自同一批新增日志在两条路径上被分批读取的顺序差异，第 3 次起完全相同。
+
 ## 同步兼容 gate 复跑（最终提交 `10b9bb304`）
 
 `tools/check_frozen_wire.py --old-ref v0.74.1.1-mobile.2.8.0 --scratch …/frozen-wire-final`：`PASS: 16 masks, 64 wire reads and 32 real old/new consumer merge processes`；old `1c5b6bd9e`，new `10b9bb304`，18 个源文件里仍只有 `QuotaProviderList.swift` 不同。`matrix-wire.json` 已复制到本目录。
