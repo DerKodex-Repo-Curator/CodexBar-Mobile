@@ -71,7 +71,7 @@ Date: 2026-10-15
 
 - **Mac**：已同步到上游 v0.76.0（包含 v0.75.0）。`0.76.0.1 / 169.1 / Mobile 2.9.0`（Sparkle `169.1.2.9.0`）已签名、公证、staple，并生成 **Draft**：https://github.com/o1xhack/CodexBar-Mobile/releases/tag/untagged-091dead320bd4660a6c2（没有 tag，详见 04）。
 - **iOS**：2.9.0 (242)，全部 target 同步；CHANGELOG、应用内说明（2.9.0 Latest，2.8.0 不再标 Latest）、AppStoreMetadata/2.9.0 四语言。没有上传 TestFlight。
-- **测试**（详见 03）：Mac `Scripts/test.sh` 两个分片在最终源码 `ee6084b0e` 上 8071 + 7275 项通过；`lint.sh lint` 0 违规；多账号/多设备 filter 通过；iOS 完整单测 1093 项通过；iOS Release 设备构建未单独跑（模拟器构建与单测通过）；四语言审计通过；真实日志成本验证（plan2/3/4）证明 0.74.1.1 缓存沿用与基线一致。
+- **测试**（详见 03）：Mac `Scripts/test.sh` 两个分片在 `ee6084b0e` 上 8071 + 7275 项通过（第三轮 review 后的最终 HEAD `ca74e7954` 再跑一次全量，结果见 03）；`lint.sh lint` 0 违规；多账号/多设备 filter 通过；iOS 完整单测 1093 项通过；iOS Release 设备构建未单独跑（模拟器构建与单测通过）；四语言审计通过；真实日志成本验证（plan2/3/4）证明 0.74.1.1 缓存沿用与基线一致。
 - **同步兼容 gate**：16 个组合都已列出，均为 substituted（冻结 wire：64 次读取、32 次新旧合并，全部 PASS，最终提交复跑），没有 fail。
 - **CloudKit**：`NO_DEPLOY`（已写入 `docs/cloudkit-deploy-audit.md`）。
 - **Review**：独立 review 两轮。第 1 轮无阻塞、5 项应修已修；第 2 轮 1 项阻塞（原地升级删除 token snapshots）已修并用真实 store 复验，应修与小问题已处理或记录。最终阻塞问题为 0。
@@ -82,7 +82,7 @@ Date: 2026-10-15
   - 旧 iPhone 上 Claude Platform 显示为旧版 Claude 橙、grant 到期日英文；新旧 Mac 混用期间 Claude 会出现两张卡（legacy 身份 + 邮箱身份）；
   - Codex 把旧 rollout 压缩成 `.jsonl.zst` 后，Mac 的历史成本只剩压缩点之后（上游 #4523 / PR #4534 未合并，两个版本相同，本机已受影响）；
   - fork Final CI 仍用 macOS 26 / Xcode 26.x runner（上游已改 Xcode 27 only），代码仍兼容 Swift 6.2（上游 release-cli 仍用 Xcode 26.3）；
-  - plan3 观察到修复后的升级路径第 11 次刷新一次性回到基线第 1 次的值（-$37，1.2%），下一次恢复；
+  - plan3 在丢 snapshot 的中间构建上观察到第 11 次刷新一次性回落 $37 后恢复；最终代码上的 12 次复验见 03 的 plan5；
   - OpenAI Live Usage 吞吐本轮不同步到 iOS。
 
 ## 授权边界
