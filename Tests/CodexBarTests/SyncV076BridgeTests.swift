@@ -154,7 +154,11 @@ struct SyncV076BridgeTests {
                 primary: nil,
                 secondary: nil,
                 providerCost: ProviderCostSnapshot(
-                    used: 1, limit: 10, currencyCode: "USD", period: "Spend limit", resetsAt: explicit,
+                    used: 1,
+                    limit: 10,
+                    currencyCode: "USD",
+                    period: "Spend limit",
+                    resetsAt: explicit,
                     updatedAt: observed),
                 updatedAt: observed),
             provider: .claude)
