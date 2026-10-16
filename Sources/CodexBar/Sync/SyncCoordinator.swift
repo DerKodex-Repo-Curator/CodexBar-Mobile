@@ -1213,7 +1213,7 @@ final class SyncCoordinator {
                 limitAmount: pc.limit,
                 currencyCode: pc.currencyCode,
                 period: pc.period,
-                resetsAt: pc.resetsAt,
+                resetsAt: pc.resetsAt ?? Self.inferredBudgetReset(provider: provider, snapshot: snapshot),
                 observedAt: pc.updatedAt)
         }
 
@@ -1411,6 +1411,14 @@ final class SyncCoordinator {
     /// Date-only billing dates (Claude renewals/expirations, upstream #4324) arrive as UTC midnight
     /// of the billing day. They are published as that `yyyy-MM-dd` day instead of an instant, which no
     /// single moment can represent for every time zone; older iPhones ignore the key and show no date.
+    /// Budget reset for providers whose monthly spend cap reports no rollover of its own.
+    static func inferredBudgetReset(provider: UsageProvider, snapshot: UsageSnapshot?) -> Date? {
+        // The Mac meter infers the UTC month rollover (upstream v0.75 #4480); iPhones of every version reuse it.
+        // Provider-specific by design: Claude reports no reset for its monthly spend cap.
+        if provider != .claude { return nil }
+        return snapshot?.claudeMonthlySpendWindow?.window.resetsAt
+    }
+
     static func syncSubscriptionDay(_ date: Date?, isDateOnly: Bool) -> String? {
         guard let date, isDateOnly, let utc = TimeZone(secondsFromGMT: 0) else { return nil }
         var calendar = Calendar(identifier: .gregorian)
@@ -1485,6 +1493,13 @@ final class SyncCoordinator {
             amount = balance
         case .xapi:
             // Provider-specific by design: X API prepaid + free developer credits; the balance can be negative.
+            guard let balance = providerCost.balance else { return nil }
+            kind = "balance"
+            amount = balance
+            period = providerCost.period ?? "Prepaid credits"
+        case .claudeplatform:
+            // Provider-specific by design: Claude Platform Console prepaid API credits (sum of all
+            // grants, upstream v0.76.0). The plugin reports no limit, so the budget lane stays empty.
             guard let balance = providerCost.balance else { return nil }
             kind = "balance"
             amount = balance

@@ -1,0 +1,6 @@
+• 可以查看 Mac 上的 Claude Platform、fal、FLORA 和 Parallel，每个都有自己的颜色。Claude Platform 可以发送额度提醒。
+• Claude Platform 卡片显示 Console API 额度余额，详情中可查看每笔额度授予的剩余金额和到期日。
+• 更多服务商详情已翻译，包括 FLORA 工作区余额、Parallel 待扣款和 Claude 的每月支出上限。
+• 当 Mac 读取到 Claude 登录账号的邮箱后，登录同一 Claude 账号的多台 Mac 会合并为一张卡片。
+• 10 月 6 日起，包含在 ChatGPT 中发起的 Codex Auto-review 请求的日期会显示准确费用，而不再是下限。
+• 如需这些服务商和详情，请将 Mac 上的 CodexBar 更新到 0.76.0.1 或更高版本。

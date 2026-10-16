@@ -443,6 +443,11 @@ enum CostUsagePricing {
     /// `CostUsageJsonl.swift` change vs origin/mobile-dev.
     ///
     /// History:
+    /// - `22` (0.76.0.1): merged upstream v0.75.0-v0.76.0 Codex scanner changes:
+    ///   ChatGPT-created Auto-review requests priced at $0 from 2026-10-06 via the
+    ///   session creator account (parser revision 13 bounded reparse), identified
+    ///   request observers, and project-report completeness. The published 0.74.1.1
+    ///   store is adopted like upstream's 0.74.1 store instead of being rebuilt.
     /// - `18` (0.70.0.1): upstream sparse priority-day reconciliation, aliased model
     ///   pricing and Claude compact cache adoption; invalidate fork report fingerprints.
     /// - `14` (0.56.0.1): merged upstream v0.54.1-v0.56.0 Codex scanner semantics,

@@ -39,6 +39,9 @@ enum ProviderWindowLabel {
         case "Input tokens": "Input tokens"
         case "Output tokens": "Output tokens"
         case "Monthly AI tokens": "Monthly AI tokens"
+        // Upstream v0.76.0 Claude Platform credit grants.
+        case "API credit": "API credit"
+        case "Purchased credit": "Purchased credit"
         default: nil
         }
     }
@@ -177,8 +180,9 @@ enum ProviderWindowLabel {
                 "v045_window_web_sonnet",
                 defaultValue: "Web Sonnet",
                 locale: locale)
-        case "Team", "API key", "Plan credits", "Input tokens", "Output tokens", "Monthly AI tokens":
-            // Upstream v0.74 windows use their English label as the catalog key.
+        case "Team", "API key", "Plan credits", "Input tokens", "Output tokens", "Monthly AI tokens",
+             "API credit", "Purchased credit":
+            // Upstream v0.74 and v0.76 windows use their English label as the catalog key.
             return MobileLocalizedString.value(key, defaultValue: key, locale: locale)
         default:
             return MobileLocalizedString.value(

@@ -176,6 +176,9 @@ public enum QuotaProviderList {
         Provider(id: "aerostack", displayName: "Aerostack"),
         Provider(id: "cosmic", displayName: "Cosmic AI"),
         Provider(id: "tavily", displayName: "Tavily"),
+        // iOS 2.9.0 / Mac v0.75.0–v0.76.0 percentage provider (fal, FLORA and
+        // Parallel report balances only). Append only.
+        Provider(id: "claudeplatform", displayName: "Claude Platform"),
     ]
 
     /// Returns the CloudKit zone name for a given `(providerID, state)`. The

@@ -134,6 +134,12 @@ enum ProviderColorPalette {
         if normalized.contains("tinyapi") { return "F97316" }
         if normalized.contains("sailresearch") { return "2C4681" }
         if normalized.contains("sofya") { return "B0B820" }
+        // Upstream v0.75.0–v0.76.0 bundled-plugin providers. Exact matches: "claudeplatform"
+        // must never fall into the generic Claude rule below, and "fal" is three letters.
+        if normalized == "claudeplatform" { return "CC7C5E" }
+        if normalized == "fal" { return "7C3AED" }
+        if normalized == "flora" { return "111111" }
+        if normalized == "parallel" { return "1D1C1A" }
         return nil
     }
 

@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.76.0.1 — 2026-10-15
+
+### Highlights
+
+- New providers: Claude Platform (Console API credits with expiring grants and month-to-date spend), fal, FLORA, and Parallel; Command Code API keys, Kimi China Desktop sessions, Charm Hyper and Helmcode browser sessions, and current JetBrains AI quota from newer IDE logs.
+- Claude: spend-only accounts get a real meter, pace, and a reset at midnight UTC on the 1st; reset credits, Extra usage, Credits, and plan dates are independently selectable; OAuth accounts show their email; stale usage notices are separated from errors.
+- Codex and Usage & Spend: every saved account shows up again beyond the third, native details stay stable when OpenCodex replaces totals, ChatGPT-created Auto-review requests are priced at $0 from October 6, and project cost reports flag incomplete history.
+- OpenAI Live Usage with per-minute token throughput, cookie imports that find signed-in sessions in every supported browser with bounded Keychain prompts, plugin memory that no longer grows on every refresh, menu bar progress-bar tokens with a stacked-bars preset, Large text and monospaced digits, a Settings provider list you can filter and search, and open-source acknowledgements in About.
+- The iPhone companion (Mobile 2.9) receives the new providers, the Claude Platform credit balance and grant expiry days, Claude sign-in emails, and exact $0 Auto-review days.
+
+### Changed
+
+- Sync upstream v0.75.0 and v0.76.0 in one fork release, retaining the complete upstream provider, Claude, Codex, OpenAI, menu bar, Settings, CLI, localization, packaging, and Linux changes listed below.
+- Codex cost caches written by 0.74.1.1 are kept and upgraded in place like upstream 0.74.1 caches instead of being rebuilt, so saved history and pricing stay visible while Auto-review creator accounts are re-read in the background.
+- Preserve fork CloudKit Production publishing, mobile payloads, download entrypoints, About links, and the fast PR / post-merge CI policy.
+
+### Fixed
+
+- Mobile snapshots publish the Claude Platform Console credit balance (including negative balances) as a prepaid balance, and Claude Platform joins the quota-alert provider list so iPhones can subscribe to its grant warnings.
+- Days containing $0 ChatGPT-created Auto-review requests are published to the iPhone as exact costs rather than estimates.
+
 ## 0.76.0 — 2026-10-15
 
 ### Highlights

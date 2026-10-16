@@ -234,6 +234,9 @@ extension CostUsageScanner {
         pricingResolver: CostUsagePricing.CodexResolver? = nil) -> Bool
     {
         guard row.knownCostNanos == nil else { return false }
+        // Upstream v0.75 (#4452): ChatGPT-created Auto-review requests are included in the plan and
+        // priced at $0 with certainty, so they must not mark the day as estimated for the iPhone.
+        if row.isIncludedInPlan == true { return false }
         let model = self.codexPricingModel(for: row, priorityMetadata: priorityMetadata)
         if customPricing?.rates(
             providerID: CostUsagePricing.codexModelsDevProviderID,

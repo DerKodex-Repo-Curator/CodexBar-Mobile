@@ -123,7 +123,7 @@ actor CostUsageStore {
     static let cacheGeneration = "sqlite:\(CostUsageStore.schemaVersion)"
     static let compatiblePredecessorParserHashes: Set<String> = [
         "0d41437dcd95c17e", // Published 0.73.0.1: upstream 0.73.0 rows plus the fork ledger repricing survive.
-        "68cbd75ed0e591d9", // Published 0.74.1.1: upstream 0.74.1 rows plus the fork ledger repricing survive revision migration.
+        "68cbd75ed0e591d9", // Published 0.74.1.1: upstream 0.74.1 rows plus the fork repricing survive migration.
         "fc698834d6329beb", // Opt-in request observation defaults to nil; saved rows and cursors are unchanged.
         "f406dae284de4a55", // Revision 13 reparses rows to record the session creator account for Auto-review.
         "379b799bb4b91683", // Current main before tool inspection; stored rows and checkpoints are unchanged.

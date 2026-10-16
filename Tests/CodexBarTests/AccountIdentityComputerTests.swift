@@ -133,6 +133,7 @@ struct AccountIdentityComputerTests {
             .clinepass, .deepinfra, .neuralwatt, .longcat, .sub2api, .wayfinder, .zenmux, .aiand,
             .raycast, .xkiro, .museai, .lithosai, .workbuddy, .langdock,
             .xapi, .tavily, .linkup, .tinyapi, .exa, .cosmic, .aerostack, .sailresearch, .sofya,
+            .fal, .flora, .parallel, .claudeplatform,
         ]
         let identity = ProviderIdentitySnapshot(
             providerID: .codex,

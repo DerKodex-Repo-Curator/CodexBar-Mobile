@@ -110,6 +110,17 @@ git diff $LAST_TAG..HEAD -- Shared/Models/UsageSnapshot.swift | grep -E "^\+.*pu
 
 判定 `NO_DEPLOY`。本轮没有调用 Production schema export 或 deploy，也没有读写实际数据库。
 
+## v0.76.0.1 候选代码审计（2026-10-15，尚未发布）
+
+对照最新 published `v0.74.1.1-mobile.2.8.0`：
+- **schema 定义**：`Shared/iCloud/CloudConstants.swift` 与 `Scripts/cloudkit/` 无 diff，`providerPayloadVersion=1`；`Shared/Models/UsageSnapshot.swift` 没有新增或删除 `public let`。上游 v0.74.1→v0.76.0 不含 `Shared/`，Shared 模型零改动。
+- **新数据都在既有 record 的 payload 里**：Claude Platform 的 Console 余额复用 `providerAmount`（kind `balance`），两个 grant 窗口是既有 `rateWindows`（无 `resetsAt`，描述在 `resetDescription`），grant 明细与 FLORA / fal / Parallel 的余额都在既有 `details`；Claude OAuth 邮箱走既有 `accountEmail` / `accountIdentities`；Codex Auto-review $0 只改变既有 `SyncDailyPoint.costIsKnown` 的值。
+- **`QuotaProviderList`**：尾部追加 `claudeplatform`，只增加运行时私有 zone 与 zone subscription，沿用已部署的 `QuotaTransition` type 与 fields。
+- **上游同步层**：`Sources/CodexBar/Sync/`（CloudSyncEngine 等）零 diff；`SyncModels.swift` 新增的可选 `modelRateLimits`、`claudeResetCreditsVisibilityMigrated` 只在既有 fleet `ProviderIntent` record 的 JSON 里。
+- **打包**：`Scripts/package_app.sh` 仍为 `icloud-container-environment = Production`、容器 `iCloud.com.o1xhack.codexbar`，不含 `aps-environment`；iOS entitlements 仍为 Production。
+
+判定 `NO_DEPLOY`。本轮没有调用 Production schema export 或 deploy，也没有读写实际数据库。
+
 ## 注意事项
 
 - **`providerPayloadVersion` bump = 强制全量重写**。看到 commit 改它必须警惕：除了 CK deploy，还会触发用户首次启动新版后 CPU/网络 spike。Phase B 加 6 个 optional 字段时**故意不 bump** 就是为了避这个。

@@ -19,7 +19,7 @@ import Testing
 @Suite("Quota provider list")
 struct QuotaProviderListTests {
 
-    @Test("Total count is 87 after the v0.74 catch-up")
+    @Test("Total count is 88 after the v0.76 catch-up")
     func totalCount() {
         // Outcome: 25 → 27 in iOS 1.5.0 (Abacus + Mistral) →
         // 38 in iOS 1.6.0 (11 new from Mac v0.24+v0.25 catch-up) →
@@ -40,14 +40,14 @@ struct QuotaProviderListTests {
         // iOS 2.3.0 (xKiro, Raycast, and Aixy from Mac v0.67) → 83 in
         // iOS 2.6.0 (Muse (muse.ai) and WorkBuddy from Mac v0.72) → 84
         // (Langdock, Mac v0.73) → 87 in iOS 2.8.0 (Aerostack, Cosmic AI,
-        // Tavily from Mac v0.74).
+        // Tavily from Mac v0.74) → 88 in iOS 2.9.0 (Claude Platform from Mac v0.76).
         // If this number shifts without matching upstream updates,
         // the push-subscription set drifts out of sync with Mac's
         // actual emitting providers.
-        #expect(QuotaProviderList.providers.count == 87)
+        #expect(QuotaProviderList.providers.count == 88)
     }
 
-    @Test("Subscription zone count is 261 (87 providers × 3 states)")
+    @Test("Subscription zone count is 264 (88 providers × 3 states)")
     func subscriptionZoneCount() {
         // iOS 1.5.0: 27 × 2 = 54 zones.
         // iOS 1.6.0 / Mac 0.25.2: 38 × 3 (depleted/restored/warning) = 114.
@@ -72,10 +72,11 @@ struct QuotaProviderListTests {
         // iOS 2.6.0 / Mac 0.72.0: 83 × 3 = 249 zones (+museai, +workbuddy).
         // iOS 2.6.0 / Mac 0.73.0: 84 × 3 = 252 zones (+langdock).
         // iOS 2.8.0 / Mac 0.74.1: 87 × 3 = 261 zones (+aerostack, +cosmic, +tavily).
+        // iOS 2.9.0 / Mac 0.76.0: 88 × 3 = 264 zones (+claudeplatform).
         // `QuotaTransitionSubscriptions.makeConfigs()` builds one
         // `SubConfig` per (provider, state) — pinning here so a
         // future state addition/removal can't drift silently.
-        #expect(QuotaProviderList.providers.count * 3 == 261)
+        #expect(QuotaProviderList.providers.count * 3 == 264)
     }
 
     @Test("Warning-zone name format matches Mac/iOS contract")
@@ -166,12 +167,13 @@ struct QuotaProviderListTests {
         //  - iOS 2.3.0 appended xKiro, Raycast, and Aixy after that.
         //  - iOS 2.6.0 appended Muse (muse.ai) and WorkBuddy, then Langdock (v0.73).
         //  - iOS 2.8.0 appended Aerostack, Cosmic AI, and Tavily (v0.74).
-        let tail = providers.suffix(17).map(\.id)
+        //  - iOS 2.9.0 appended Claude Platform (v0.76).
+        let tail = providers.suffix(18).map(\.id)
         #expect(tail == [
             "bifrost", "helmcode", "nous", "muse", "huggingface", "v0",
             "gitkraken", "devpass", "xkiro", "raycast", "aixy", "museai", "workbuddy", "langdock",
-            "aerostack", "cosmic", "tavily",
-        ], "v0.66, v0.67, v0.72, v0.73, and v0.74 quota additions must stay appended in this order")
+            "aerostack", "cosmic", "tavily", "claudeplatform",
+        ], "v0.66, v0.67, v0.72, v0.73, v0.74, and v0.76 quota additions must stay appended in this order")
     }
 
     @Test("Sakana AI present (v0.38)")
@@ -323,10 +325,10 @@ struct QuotaProviderListTests {
     /// list, the user-facing release notes lie. Doc the cross-coupling.
     /// (Zone count is providers × 3 states since iOS 1.6.0 added the
     /// `warning` state alongside `depleted`/`restored`.)
-    @Test("Cause: catalog 87/261 numbers match the actual list")
+    @Test("Cause: catalog 88/264 numbers match the actual list")
     func catalogNumbersAlignWithList() {
-        #expect(QuotaProviderList.providers.count == 87)
-        #expect(QuotaProviderList.providers.count * 3 == 261)
+        #expect(QuotaProviderList.providers.count == 88)
+        #expect(QuotaProviderList.providers.count * 3 == 264)
     }
 
     @Test("IBM Bob is appended for v0.49 monthly quota pushes")
@@ -418,10 +420,23 @@ struct QuotaProviderListTests {
         #expect(QuotaProviderList.quotaZoneName(providerID: "langdock", state: "warning") == "Quota-langdock-warningZone")
     }
 
+    @Test("v0.76 Claude Platform is appended after Tavily; balance-only v0.75/v0.76 providers are absent")
+    func v076ProvidersAppended() {
+        let ids = QuotaProviderList.providers.map(\.id)
+        #expect(Array(ids.suffix(2)) == ["tavily", "claudeplatform"])
+        #expect(QuotaProviderList.providers.last?.displayName == "Claude Platform")
+        // fal, FLORA and Parallel report balances only; nothing to warn on.
+        for id in ["fal", "flora", "parallel"] {
+            #expect(!ids.contains(id), "\(id) must not subscribe to quota pushes")
+        }
+        #expect(QuotaProviderList.quotaZoneName(providerID: "claudeplatform", state: "warning")
+            == "Quota-claudeplatform-warningZone")
+    }
+
     @Test("v0.74 percentage providers are appended after Langdock")
     func v074ProvidersAppended() {
         let ids = QuotaProviderList.providers.map(\.id)
-        #expect(Array(ids.suffix(4)) == ["langdock", "aerostack", "cosmic", "tavily"])
+        #expect(Array(ids.suffix(5)) == ["langdock", "aerostack", "cosmic", "tavily", "claudeplatform"])
         // Balance- and spend-only v0.74 providers have no percentage window to warn on.
         for id in ["exa", "linkup", "tinyapi", "sailresearch", "sofya", "xapi"] {
             #expect(!ids.contains(id), "\(id)")

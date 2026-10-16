@@ -244,6 +244,8 @@ enum MockProviderInjector {
         // Provider-specific by design: upstream v0.74.0 bundled-plugin providers borrowed by mocks.
         "aerostack", "cosmic", "tavily", "exa", "linkup", "tinyapi",
         "sailresearch", "sofya", "xapi",
+        // Provider-specific by design: upstream v0.75.0–v0.76.0 bundled-plugin providers borrowed by mocks.
+        "fal", "flora", "parallel", "claudeplatform",
     ]
 
     /// Synthetic providerIDs unique to mocks. Always prefixed `_mock_`.
@@ -1941,6 +1943,49 @@ enum MockProviderInjector {
             primaryResetDescription: "",
             secondary: nil,
             thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        // Provider-specific by design: upstream v0.75.0–v0.76.0 balance-only providers (details carry the balance).
+        .init(
+            providerID: "fal", providerName: "fal",
+            accountLocal: "fixture-team", loginMethod: "API key",
+            primaryUsage: nil, primaryLabel: "Usage",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "",
+            secondary: nil,
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        .init(
+            providerID: "flora", providerName: "FLORA",
+            accountLocal: "workspace", loginMethod: "API key",
+            primaryUsage: nil, primaryLabel: "Usage",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "",
+            secondary: nil,
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        .init(
+            providerID: "parallel", providerName: "Parallel",
+            accountLocal: "platform", loginMethod: "Browser session",
+            primaryUsage: nil, primaryLabel: "Usage",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "",
+            secondary: nil,
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
+        // Provider-specific by design: upstream v0.76.0 Claude Platform Console credit grants. The
+        // grants expire instead of resetting, so both windows carry a description without a reset time.
+        .init(
+            providerID: "claudeplatform", providerName: "Claude Platform",
+            accountLocal: "console", loginMethod: "Console session",
+            primaryUsage: 38, primaryLabel: "API credit",
+            primaryWindowMinutes: 43200,
+            primaryResetsInSeconds: 0,
+            primaryResetDescription: "$124.75 of $200.00 left · Expires Oct 28 (UTC)",
+            secondary: .init(
+                label: "Purchased credit", usedPercent: 12,
+                windowMinutes: 43200,
+                resetsInSeconds: 0,
+                resetDescription: "$44.00 of $50.00 left · Expires Dec 31 (UTC)"),
+            thirtyDayCostUSD: nil, sessionCostUSD: nil),
         // Phase G — multi-account second-tab mocks. Each entry below
         // produces a SECOND ProviderUsageSnapshot for an already-
         // present providerID (same provider, different accountLocal
@@ -2315,6 +2360,54 @@ enum MockProviderInjector {
                 period: "Prepaid credits",
                 isEstimated: false,
                 observedAt: now)
+            return extras
+        // Provider-specific by design: upstream v0.75.0–v0.76.0 balance-only providers mirror their plugin sections.
+        case "fal":
+            var extras = V026MockExtras(details: [SyncProviderDetailSection(
+                title: "Account balance",
+                rows: [.init(label: "Credit balance", value: "$42.50", usageValue: 42.5)])])
+            extras.accountOrganization = "fixture-team"
+            return extras
+        case "flora":
+            return V026MockExtras(details: [SyncProviderDetailSection(
+                title: "Workspace balance",
+                rows: [
+                    .init(label: "Available", value: "$7.25", secondaryValue: "Your allowance", usageValue: 7.25),
+                    .init(label: "Member limit", value: "$50.00", secondaryValue: "Monthly", usageValue: 50),
+                    .init(label: "Spent this month", value: "Unavailable", secondaryValue: "Needs billing permission"),
+                ])])
+        case "parallel":
+            return V026MockExtras(details: [SyncProviderDetailSection(
+                title: "Account balance",
+                rows: [
+                    .init(label: "Balance", value: "$123.45", usageValue: 123.45),
+                    .init(label: "Pending debit", value: "$1.50", usageValue: 1.5),
+                ])])
+        // Provider-specific by design: Claude Platform publishes the summed Console credit balance and
+        // the remaining grants with their UTC expiry dates.
+        case "claudeplatform":
+            var extras = V026MockExtras(details: [
+                SyncProviderDetailSection(
+                    title: "Other credit grants",
+                    rows: [
+                        .init(
+                            label: "Launch promo",
+                            value: "$20.00 of $25.00 left",
+                            secondaryValue: "Expires Nov 15 (UTC)",
+                            progress: .init(used: 5, total: 25)),
+                    ]),
+                SyncProviderDetailSection(
+                    title: "Billing",
+                    rows: [.init(label: "This month (UTC)", value: "$36.20", usageValue: 36.2)]),
+            ])
+            extras.providerAmount = SyncProviderAmount(
+                kind: "balance",
+                amount: 188.75,
+                currencyCode: "USD",
+                period: "Prepaid credits",
+                isEstimated: false,
+                observedAt: now)
+            extras.accountOrganization = "Fixture Org"
             return extras
         default:
             return nil

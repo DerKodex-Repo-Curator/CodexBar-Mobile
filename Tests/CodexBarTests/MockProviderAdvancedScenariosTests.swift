@@ -240,7 +240,7 @@ struct MockProviderAdvancedScenariosTests {
         // muse.ai, LithosAI, and WorkBuddy → 100. Multiple accounts deliberately
         // give some provider IDs more than one snapshot. v0.73 Langdock → 101;
         // v0.74 adds nine bundled-plugin providers → 110.
-        #expect(realBorrowedMocks.count == 110)
+        #expect(realBorrowedMocks.count == 114)
         #expect(Set(realBorrowedMocks.map(\.providerID)) ==
             MockProviderInjector.realProviderIDsBorrowedByMocks.intersection(realCatalog))
         for snap in realBorrowedMocks {
