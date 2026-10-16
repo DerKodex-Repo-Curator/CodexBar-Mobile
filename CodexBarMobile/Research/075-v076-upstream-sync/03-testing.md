@@ -20,6 +20,11 @@ Status: `in-progress`
 | 全量分片 1（第一次） | `CODEXBAR_TEST_SHARD_INDEX=1 … Scripts/test.sh` | `swift test list` 编译失败：review 轮把 mock 计数断言消息改成了字符串拼接，`#expect` 的 `Comment` 只接受字面量；改回单一字面量 | mac-full1-s1.log |
 | 全量分片 1（第二次） | 同上 | **退出码 0**：7278 项，Isolated selection retries 12，Timed out groups 0 | mac-full2-s1.log |
 | lint（第六次，revision 原地升级后） | `bash Scripts/lint.sh lint` | 退出码 0：0 违规、parser hash 当时最新（`dfc233f15775044b`）、parser 版本审计 OK | lint6.log |
+| lint（第七次，最终源码 `ee6084b0e`） | `bash Scripts/lint.sh lint` | 退出码 0：0 违规、parser hash 最新（`8bf44283c990726d`）、parser 版本审计 OK、i18n 409 个 key | lint7.log |
+| **最终全量分片 0**（`ee6084b0e`） | `CODEXBAR_TEST_SHARD_INDEX=0 … Scripts/test.sh` | **退出码 0**：79 组，8071 项；第 24 组 `CodexPaginatedHistoryAccountingTests` 的 "stale parser revision reparses an inflated continuation" 首轮失败、组重试通过（见下） | mac-final-s0.log |
+| **最终全量分片 1**（`ee6084b0e`） | 同上 index 1 | **退出码 0**：7275 项，Timed out 0，Isolated retries 0 | mac-final-s1.log |
+| 多账号 / 多设备 | `swift test --filter 'AccountIdentity\|MultiAccount\|DualZoneReader\|CodexAccountScopedRefresh'` | 通过（见 t-multiaccount.log） | t-multiaccount.log |
+| 上游测试调整 | `swift test --filter 'CodexPaginatedHistoryAccounting\|CostUsageForkParserRevision\|CodexDayAttribution\|CostUsageCodexSourceRecovery\|CostUsageCodexAutoReview'` | 那条上游测试把 `currentCodexParserRevision - 1` 当作“任意陈旧 revision”并期望从头重解析修正人为注入的虚高 `days`；fork 对 12→13 原地升级保留缓存，于是结果取决于分页续写页的枚举顺序（首轮失败、重试通过）。改为 `- 2`（更旧的 stale revision 仍走上游重解析），6 个 suite 32 项通过；该 suite 单独循环 5 次全部通过。其他使用 `- 1` 的上游测试（DayAttribution、SourceRecovery、AutoReview）与原地升级兼容，均通过 | t-revision3.log、t-pag-1..5.log |
 | 定向（parser hash 复核） | `bash Scripts/lint.sh lint` 第二次 | 发现 `CodexParserHash` 过期（`codexPricingIsEstimated` 改动在重生成之后），重生成为 `e34dea88998a523f` | lint2.log |
 
 ## iOS
