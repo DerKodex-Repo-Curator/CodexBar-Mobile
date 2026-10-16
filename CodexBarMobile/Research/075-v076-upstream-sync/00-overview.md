@@ -1,6 +1,6 @@
 # v0.75.0–v0.76.0 单版本上游同步 + iOS 2.9.0
 
-Status: `draft`
+Status: `in-progress`（代码、测试、review 完成；Mac Draft 生成中，见 04）
 Date: 2026-10-15
 
 ## 范围与依据
@@ -54,6 +54,36 @@ Date: 2026-10-15
 ## 本轮发现的上游未修复问题（不在本轮修）
 
 - **Codex 把旧 rollout 压缩成 `rollout-*.jsonl.zst`，上游成本扫描器只读 `.jsonl`**（上游 issue [#4523](https://github.com/steipete/CodexBar/issues/4523)，开放 PR [#4534](https://github.com/steipete/CodexBar/pull/4534)：vendored zstd 解码器 + 镜像目录，约 2.9 万行，含新 C target，尚未经维护者 review）。本机 `~/.codex` 在 2026-10-13 后出现 640 个 `.zst`（T2 快照 930 个 jsonl，T3 只剩 58 个 jsonl + 883 个 zst），codex-cli 0.142.1。影响：全新扫描的 Codex 历史从压缩点之后开始；已缓存的行是否保留见 03 的成本验证。0.74.1.1 与 0.76.0.1 行为相同，不是本轮回归；等上游合并后下一轮同步跟进（或届时单独移植）。
+
+## 最终交付状态（2026-10-16，合并前）
+
+- **分支**：所有工作都在 `upstream-sync/v0.76.0-mobile.2.9.0`（worktree `CodexBar-upstream-v076`）完成，没有动 mobile-dev。本地 commit（未推送）：
+
+  | Commit | 内容 |
+  |---|---|
+  | `62fc10079` | merge 上游 v0.76.0（含 v0.75.0）+ 冲突解决 + 编译修复 |
+  | `90409cf01` | README 移植上游事实 + guard hash |
+  | `cccb84e49` | Mac→iOS 桥接、QuotaProviderList、mock、23 locale 计数、iOS 2.9.0 (242)、version.env、根 CHANGELOG |
+  | `784578c38`、`7bcc821cd`、`67ccaa437`、`aee1af601` | 第一轮 review 修复与 lint 修正 |
+  | `0e4463a4e`、`1d2d20516`、`ee6084b0e` | Codex parser revision 13 原地升级（先 hydrate 再升级）与 parser hash |
+  | `e76becc4b` | 上游分页测试改用更旧 stale revision |
+  | 其余 | Research 075、CloudKit 审计、测试记录 |
+
+- **Mac**：已同步到上游 v0.76.0（包含 v0.75.0）。`0.76.0.1 / 169.1 / Mobile 2.9.0`（Sparkle `169.1.2.9.0`）。Draft 生成见 04。
+- **iOS**：2.9.0 (242)，全部 target 同步；CHANGELOG、应用内说明（2.9.0 Latest，2.8.0 不再标 Latest）、AppStoreMetadata/2.9.0 四语言。没有上传 TestFlight。
+- **测试**（详见 03）：Mac `Scripts/test.sh` 两个分片在最终源码 `ee6084b0e` 上 8071 + 7275 项通过；`lint.sh lint` 0 违规；多账号/多设备 filter 通过；iOS 完整单测 1093 项通过；iOS Release 设备构建未单独跑（模拟器构建与单测通过）；四语言审计通过；真实日志成本验证（plan2/3/4）证明 0.74.1.1 缓存沿用与基线一致。
+- **同步兼容 gate**：16 个组合都已列出，均为 substituted（冻结 wire：64 次读取、32 次新旧合并，全部 PASS，最终提交复跑），没有 fail。
+- **CloudKit**：`NO_DEPLOY`（已写入 `docs/cloudkit-deploy-audit.md`）。
+- **Review**：独立 review 两轮。第 1 轮无阻塞、5 项应修已修；第 2 轮 1 项阻塞（原地升级删除 token snapshots）已修并用真实 store 复验，应修与小问题已处理或记录。最终阻塞问题为 0。
+- **issue**：#193 保持 open。按发布清单，正式 release 公开后再回复并关闭（v0.76.0 若由 monitor 另开 issue，一并关闭）。
+- **未覆盖风险**：
+  - 没有实体 2 Mac × 2 iPhone、Production CloudKit 收敛与 APNs 时序的验证；
+  - 新 provider 没有真实账号数据；
+  - 旧 iPhone 上 Claude Platform 显示为旧版 Claude 橙、grant 到期日英文；新旧 Mac 混用期间 Claude 会出现两张卡（legacy 身份 + 邮箱身份）；
+  - Codex 把旧 rollout 压缩成 `.jsonl.zst` 后，Mac 的历史成本只剩压缩点之后（上游 #4523 / PR #4534 未合并，两个版本相同，本机已受影响）；
+  - fork Final CI 仍用 macOS 26 / Xcode 26.x runner（上游已改 Xcode 27 only），代码仍兼容 Swift 6.2（上游 release-cli 仍用 Xcode 26.3）；
+  - plan3 观察到修复后的升级路径第 11 次刷新一次性回到基线第 1 次的值（-$37，1.2%），下一次恢复；
+  - OpenAI Live Usage 吞吐本轮不同步到 iOS。
 
 ## 授权边界
 
