@@ -1,6 +1,6 @@
 # Mac 0.76.0.1 签名、公证与 Draft
 
-Status: `done`（Draft 已生成，未公开；见下文）
+Status: `done`（第二次 Draft 已生成，未公开；第一次 Draft 因第三轮 review 后 Sources 变更已删除）
 Date: 2026-10-16
 
 ## 授权与边界
@@ -23,7 +23,19 @@ TMPDIR=$S/release-tmp CODEXBAR_RELEASE_STAGE_BASE=$S/release-stage \
 - 第一次（mac-release-draft0-nohup-failed.log）：用 `nohup` 启动，phase1 的 `lint.sh lint` 在 `test_swift_test_process_cleanup.py` 的 `test_keyboard_interrupt_drains_children_and_propagates` 失败——`nohup` 把 SIGINT 设为忽略，测试依赖 SIGINT 触发 `KeyboardInterrupt`。在构建、签名、上传之前就停止，GitHub 上没有留下任何东西。
 - 第二次（mac-release-draft1.log）：改用 Python `os.setsid()` 脱离会话（保留默认信号处理）启动。lint 0 违规 → Release 构建（arm64 + x86_64）→ Widget 扩展 → 签名 → 公证 `Accepted` → staple → dSYM 配对 → 启动 smoke（无 Aqua 会话，只检查 resource-bundle fatal 签名）→ Draft 创建，退出码 0。
 
-## 版本与资产
+- 第三轮 review 修改了 `CostUsageScanner+ForkParserRevision.swift`（Sources 变更），按发布清单删除第一次 Draft（`untagged-091dead320bd4660a6c2`，`CodexGitCommit=9c43d67c9`，zip SHA256 `f99b8b37…`），在最终 HEAD 的全量测试通过后重新打包（mac-release-draft2.log，同样用 setsid 启动）：lint 0 违规 → Release 构建 → 签名 → 公证 `Accepted` → staple → Draft 创建，退出码 0。
+
+## 版本与资产（第二次 Draft，当前有效）
+
+- `0.76.0.1` / `169.1` / Mobile `2.9.0`；包内 `CFBundleVersion = 169.1.2.9.0`，`CFBundleShortVersionString = 0.76.0.1`。
+- 构建源码：`0e6408597`（包内 `CodexGitCommit=0e6408597`）。相对最终全量测试所用的 `ca74e7954`，Sources/Shared/Package/打包脚本/version.env/WidgetExtension 无差异（`git diff --stat` 为空），只多了 Research 文档提交。
+- Draft：https://github.com/o1xhack/CodexBar-Mobile/releases/tag/untagged-87deca90011959e5f109（`isDraft=true`，标题 `CodexBar 0.76.0.1 Mobile 2.9.0`，tag 名 `v0.76.0.1-mobile.2.9.0` 尚未创建，target 占位 `mobile-dev`）。
+- `CodexBar-0.76.0.1-mobile.2.9.0.zip`：88,965,680 bytes，SHA256 `6a25018122450fe769d95ad3881c04e89b8a0ec6c71da62eed46031d50ef1456`。
+- `CodexBar-0.76.0.1-mobile.2.9.0.dSYM.zip`：71,582,260 bytes，SHA256 `cb8a7c87ee20601504cd60385840929b5470533ed6b2a48f7490fb091f551fb0`。
+- 本地 SHA256 与 GitHub asset digest 一致。没有创建 tag，没有推送分支，`appcast.xml` 与 mobile-dev 相同。
+- 包验证（`$S/verify-zip2`）：`x86_64 arm64`；`codesign --verify --deep --strict` 通过；Gatekeeper `source=Notarized Developer ID`；`stapler validate` 通过；entitlements `icloud-container-environment = Production`、容器 `iCloud.com.o1xhack.codexbar`、无 `aps-environment`；`embedded.provisionprofile` 存在。
+
+## 版本与资产（第一次 Draft，已删除）
 
 - `0.76.0.1` / `169.1` / Mobile `2.9.0`；包内 `CFBundleVersion = 169.1.2.9.0`（= Sparkle `sparkle:version`，大于已发布的 `167.1.2.8.0`），`CFBundleShortVersionString = 0.76.0.1`。
 - 构建源码：分支 `upstream-sync/v0.76.0-mobile.2.9.0` 的 `9c43d67c9`（包内 `CodexGitCommit=9c43d67c9`）。它与最终全量测试所用的 `ee6084b0e` 相比只多了测试文件与 Research 文档（`e76becc4b`、`9c43d67c9`），Sources/Shared/Package/打包脚本/version.env 无差异。
