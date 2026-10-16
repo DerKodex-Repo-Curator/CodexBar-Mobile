@@ -51,6 +51,10 @@ Date: 2026-10-15
 - [04-mac-release.md](04-mac-release.md) — Mac 签名、Draft 与发布状态
 - [06-ios-impact-audit.md](06-ios-impact-audit.md) — 上游逐项 iOS 影响审计
 
+## 本轮发现的上游未修复问题（不在本轮修）
+
+- **Codex 把旧 rollout 压缩成 `rollout-*.jsonl.zst`，上游成本扫描器只读 `.jsonl`**（上游 issue [#4523](https://github.com/steipete/CodexBar/issues/4523)，开放 PR [#4534](https://github.com/steipete/CodexBar/pull/4534)：vendored zstd 解码器 + 镜像目录，约 2.9 万行，含新 C target，尚未经维护者 review）。本机 `~/.codex` 在 2026-10-13 后出现 640 个 `.zst`（T2 快照 930 个 jsonl，T3 只剩 58 个 jsonl + 883 个 zst），codex-cli 0.142.1。影响：全新扫描的 Codex 历史从压缩点之后开始；已缓存的行是否保留见 03 的成本验证。0.74.1.1 与 0.76.0.1 行为相同，不是本轮回归；等上游合并后下一轮同步跟进（或届时单独移植）。
+
 ## 授权边界
 
 本 Goal 不包括 live release、TestFlight 上传、tag 发布、merge 与 push；遇到发布凭证、CloudKit schema deploy 或无法判断的 iOS scope 时暂停询问。Mac Draft 按 Goal 用本机凭证生成（与 074 相同的 `--draft-no-tag-push` 方式）。

@@ -12,7 +12,9 @@ Status: `in-progress`
 | 测试 target 编译 | `swift build --build-tests` | 第一次失败：`CostUsageStoreReadWorkTests` 合并后参数顺序（`detailsAreComplete` 必须在 `bucketTimeZoneIdentifier` 之前）；修正后通过 | build-tests1.log、build-tests2.log |
 | lint（第一次） | `bash Scripts/lint.sh lint` | swiftformat 1 处：新加的前驱 hash 注释超过行宽；其余（acknowledgements、CI policy、parser hash、fork README guard）通过。修正后待复跑 | lint1.log |
 | 定向（第一次） | `swift test --filter 'SyncV076Bridge\|CostUsageCodexAutoReview\|QuotaProviderList\|MockProvider\|AccountIdentityComputer\|ProviderArchitectureGatekeeper\|CostUsageStoreTests\|CostUsageStoreReadWork'` | 337 项，8 处失败，全部是预期中的计数与指纹更新：mock 115/105/110 → 119/109/114；gatekeeper 两处允许列表（`mapProviderAmount` 新增 claudeplatform、`AccountIdentityComputer` 新增 4 个）；`SyncV076BridgeTests` 的 FLORA 用例——FLORA 需要 API key 才会被 Mac 标为可用，改用浏览器会话型的 Parallel 走完整发布路径，FLORA 改为直接测 `mapSyncedDetails` | t-focused1.log |
-| 定向（第二次） | 同上 | （待填） | t-focused2.log |
+| 定向（第二次） | `swift test --filter 'SyncV076Bridge\|MockProvider\|ProviderArchitectureGatekeeper'` | 127 项通过（计数、指纹、Parallel/FLORA 用例修正后） | t-focused2.log |
+| 定向（第三到六次） | `swift test --filter 'SyncV076Bridge\|ProviderArchitectureGatekeeper\|SyncCoordinatorTests\|SyncV074Bridge\|CostUsageCodexAutoReview'` | 第三次：Claude budget 推断误加在插件路径导致编译失败；第四、五次：gatekeeper 把新的 `provider == .claude` 并入相邻的 alibabatokenplan/perplexity 集群、随后新 helper 的 guard 与已有锚点同文、说明注释不在紧邻行；抽成独立 `inferredBudgetReset` helper 并用单行 `Provider-specific by design` 注释后，第六次 53 项通过（含 98 项的第四次集合在前几轮已通过的部分） | t-focused3.log … t-focused6.log |
+| 定向（parser hash 复核） | `bash Scripts/lint.sh lint` 第二次 | 发现 `CodexParserHash` 过期（`codexPricingIsEstimated` 改动在重生成之后），重生成为 `e34dea88998a523f` | lint2.log |
 
 ## iOS
 
@@ -22,7 +24,8 @@ Status: `in-progress`
 | 模拟器构建 | `xcodebuild build`（CodexBar iOS 27 iPhone 18 Pro） | 通过 | ios-build1.log |
 | 四语言 | `bash Scripts/lint.sh audit-i18n` | 三个 xcstrings 全部 translated；source-vs-catalog 408 个 key 齐全 | — |
 | 完整单元测试（第一次） | `xcodebuild test -only-testing:CodexBarMobileTests` | 编译失败：新测试把 `String` 变量当作 `#expect` 的 `Comment`，改为字面量插值 | ios-unit1.log |
-| 完整单元测试（第二次） | 同上 | （待填） | ios-unit2.log |
+| 完整单元测试（第二次） | 同上 | 9 处失败，都在新测试：`ProviderWindowLabel.localized` 的 switch 没有 "API credit" / "Purchased credit" 的显式 case（落到 "Extra usage" 默认分支），以及 "Monthly cap" 没加入 `semanticLabels`。修复后 | ios-unit2.log |
+| 完整单元测试（第三次） | 同上 | **TEST SUCCEEDED**：Swift Testing 1093 项 / 67 个 suite 全部通过，XCTest 全部通过（含 `WidgetSnapshotBuilderTests`） | ios-unit3.log、ios-unit3.xcresult |
 
 ## 同步兼容 gate（2 Mac × 2 iPhone）
 
