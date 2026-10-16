@@ -13,7 +13,7 @@
 ### Changed
 
 - Sync upstream v0.75.0 and v0.76.0 in one fork release, retaining the complete upstream provider, Claude, Codex, OpenAI, menu bar, Settings, CLI, localization, packaging, and Linux changes listed below.
-- Codex cost caches written by 0.74.1.1 are kept and upgraded in place like upstream 0.74.1 caches instead of being rebuilt, so saved history and pricing stay visible while Auto-review creator accounts are re-read in the background.
+- Codex cost caches written by 0.74.1.1 are kept and upgraded in place instead of being rebuilt: the fork re-reads only each rollout's leaf session_meta for the Auto-review creator account, so saved rows, history and pricing stay visible and complete immediately (upstream reparses every older file from the start under the scan budget, which lowers day totals for many refreshes).
 - Preserve fork CloudKit Production publishing, mobile payloads, download entrypoints, About links, and the fast PR / post-merge CI policy.
 
 ### Added
