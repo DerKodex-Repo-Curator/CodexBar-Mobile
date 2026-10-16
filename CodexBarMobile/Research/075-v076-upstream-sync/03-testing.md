@@ -26,7 +26,7 @@ Status: `done`（合并前；实体四设备矩阵为替代验证）
 | 多账号 / 多设备 | `swift test --filter 'AccountIdentity\|MultiAccount\|DualZoneReader\|CodexAccountScopedRefresh'` | 通过（见 t-multiaccount.log） | t-multiaccount.log |
 | 上游测试调整 | `swift test --filter 'CodexPaginatedHistoryAccounting\|CostUsageForkParserRevision\|CodexDayAttribution\|CostUsageCodexSourceRecovery\|CostUsageCodexAutoReview'` | 那条上游测试把 `currentCodexParserRevision - 1` 当作“任意陈旧 revision”并期望从头重解析修正人为注入的虚高 `days`；fork 对 12→13 原地升级保留缓存，于是结果取决于分页续写页的枚举顺序（首轮失败、重试通过）。改为 `- 2`（更旧的 stale revision 仍走上游重解析），6 个 suite 32 项通过；该 suite 单独循环 5 次全部通过。其他使用 `- 1` 的上游测试（DayAttribution、SourceRecovery、AutoReview）与原地升级兼容，均通过 | t-revision3.log、t-pag-1..5.log |
 | lint（第八次，最终 HEAD `ca74e7954`） | `bash Scripts/lint.sh lint` | 退出码 0 | lint8.log |
-| **最终 HEAD 全量分片 0/1**（`ca74e7954`，之后的提交只改 Research 文档） | `Scripts/test.sh` ×2 | **两个分片退出码 0**，无失败 suite | mac-final2-s0.log、mac-final2-s1.log |
+| **最终 HEAD 全量分片 0/1**（`ca74e7954`，之后的提交只改 Research 文档） | `Scripts/test.sh` ×2 | **两个分片退出码 0**，无失败 suite（分片 0：7953 项，Timed out groups 0；分片 1：7275 项，1 个组整体超时后由 `test.sh` 拆成 12 个 isolated selection 重跑全部通过，与本机同时在跑的打包/诊断任务争抢 CPU 有关） | mac-final2-s0.log、mac-final2-s1.log |
 | 定向（parser hash 复核） | `bash Scripts/lint.sh lint` 第二次 | 发现 `CodexParserHash` 过期（`codexPricingIsEstimated` 改动在重生成之后），重生成为 `e34dea88998a523f` | lint2.log |
 
 ## iOS
