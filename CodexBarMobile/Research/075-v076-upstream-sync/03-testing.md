@@ -1,6 +1,6 @@
 # 测试
 
-Status: `in-progress`
+Status: `done`（合并前；实体四设备矩阵为替代验证）
 
 日志目录：`/Volumes/StudioSSD/Developer/BuildScratch/CodexBar/upstream-v076/`（下文只写文件名）。
 

@@ -1,7 +1,7 @@
 # Mac 0.76.0.1 签名、公证与 Draft
 
-Status: `in-progress`
-Date: 2026-10-15
+Status: `done`（Draft 已生成，未公开；见下文）
+Date: 2026-10-16
 
 ## 授权与边界
 
@@ -20,4 +20,31 @@ TMPDIR=$S/release-tmp CODEXBAR_RELEASE_STAGE_BASE=$S/release-stage \
 
 ## 过程
 
-（待填：在 Mac 全量测试、lint 与 review 清零之后执行。）
+- 第一次（mac-release-draft0-nohup-failed.log）：用 `nohup` 启动，phase1 的 `lint.sh lint` 在 `test_swift_test_process_cleanup.py` 的 `test_keyboard_interrupt_drains_children_and_propagates` 失败——`nohup` 把 SIGINT 设为忽略，测试依赖 SIGINT 触发 `KeyboardInterrupt`。在构建、签名、上传之前就停止，GitHub 上没有留下任何东西。
+- 第二次（mac-release-draft1.log）：改用 Python `os.setsid()` 脱离会话（保留默认信号处理）启动。lint 0 违规 → Release 构建（arm64 + x86_64）→ Widget 扩展 → 签名 → 公证 `Accepted` → staple → dSYM 配对 → 启动 smoke（无 Aqua 会话，只检查 resource-bundle fatal 签名）→ Draft 创建，退出码 0。
+
+## 版本与资产
+
+- `0.76.0.1` / `169.1` / Mobile `2.9.0`；包内 `CFBundleVersion = 169.1.2.9.0`（= Sparkle `sparkle:version`，大于已发布的 `167.1.2.8.0`），`CFBundleShortVersionString = 0.76.0.1`。
+- 构建源码：分支 `upstream-sync/v0.76.0-mobile.2.9.0` 的 `9c43d67c9`（包内 `CodexGitCommit=9c43d67c9`）。它与最终全量测试所用的 `ee6084b0e` 相比只多了测试文件与 Research 文档（`e76becc4b`、`9c43d67c9`），Sources/Shared/Package/打包脚本/version.env 无差异。
+- Draft：https://github.com/o1xhack/CodexBar-Mobile/releases/tag/untagged-091dead320bd4660a6c2（`isDraft=true`，标题 `CodexBar 0.76.0.1 Mobile 2.9.0`，tag 名 `v0.76.0.1-mobile.2.9.0` 尚未创建，target 占位为 `mobile-dev`）。说明正文是根 CHANGELOG 的 fork 0.76.0.1 段。
+- `CodexBar-0.76.0.1-mobile.2.9.0.zip`：88,967,383 bytes，SHA256 `f99b8b37ae42d293a832455f87b5fad7bd38750d04fb6b9421f2a35104a392a9`。
+- `CodexBar-0.76.0.1-mobile.2.9.0.dSYM.zip`：71,583,011 bytes，SHA256 `b72a0baf86fb2850208dbd025c9f96c442bed121d8f0c51367f0f07be1c253d6`。
+- 本地 SHA256 与 GitHub asset digest 一致。没有创建 tag，没有推送分支，`appcast.xml` 与 mobile-dev 相同。
+
+## 实际包验证
+
+从发行 ZIP 解包（`$S/verify-zip`）：
+- 架构 `x86_64 arm64`；
+- `codesign --verify --deep --strict`：valid on disk，satisfies its Designated Requirement；
+- Gatekeeper：`source=Notarized Developer ID`，`Developer ID Application: Yuxiao Wang (3TUERHN53E)`；
+- `stapler validate`：The validate action worked；
+- entitlements：`com.apple.developer.icloud-container-environment = Production`，容器 `iCloud.com.o1xhack.codexbar`，没有 `aps-environment`；
+- `Contents/embedded.provisionprofile` 存在。
+
+## 公开发布前还需要（需另行授权）
+
+1. push 分支并开 PR → Codex Code Review 循环直到当前 head clean → `Scripts/check_pr_review_gate.sh <pr>` → merge 到 mobile-dev。
+2. 如果 review 修改改动了 Mac 二进制的输入，删除这个 Draft 后从合并后的 mobile-dev 重新生成；否则按脚本输出的步骤在 mobile-dev 上打 tag、push tag，并把 Draft 的 target 改到 reviewed commit。
+3. 合并后 Final CI 通过、用户 QA 通过 → `./Scripts/release.sh --finalize`（公开发布 + 签名 appcast + push）。
+4. 公开发布后回复并关闭 #193（以及 monitor 为 v0.76.0 自动创建的 issue）；iOS 2.9.0 (242) 的 TestFlight 与送审另行授权（2.8.0 仍在审核中，MOBILE_VERSION/tag 已指向 2.9.0，发布顺序需注意）。

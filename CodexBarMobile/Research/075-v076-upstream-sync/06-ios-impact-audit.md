@@ -1,6 +1,6 @@
 # 上游变化与 iOS 数据通道逐项审计
 
-Status: `in-progress`（设计期审计；实现与测试证据见 02/03）
+Status: `done`（设计期审计；实现与测试证据见 02/03）
 
 审计方法：上游代码用 `git show v0.76.0:<path>`、`git diff v0.74.1 v0.76.0` 和只读 worktree `wt-up-0.76.0` 读取，fork 现状读合并前的 mobile-dev（`f1f547b90`）。数据路径按插件 `fetchUsage` → `ProviderPluginSnapshotMapper.map` → `UsageSnapshot` → fork `SyncCoordinator.buildProviderUsageSnapshot` / `mapProviderAmount` / `mapSyncedDetails` → Shared `ProviderUsageSnapshot`（CloudKit opaque JSON）→ iOS 卡片、详情、widget 逐段追踪。三份独立只读审计（新 provider 落点、已有 provider 数据变化、同步层与基础设施）的结论合入下文。
 
