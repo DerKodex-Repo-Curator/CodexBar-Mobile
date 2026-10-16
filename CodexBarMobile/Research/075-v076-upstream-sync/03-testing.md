@@ -28,6 +28,8 @@ Status: `in-progress`
 | 完整单元测试（第一次） | `xcodebuild test -only-testing:CodexBarMobileTests` | 编译失败：新测试把 `String` 变量当作 `#expect` 的 `Comment`，改为字面量插值 | ios-unit1.log |
 | 完整单元测试（第二次） | 同上 | 9 处失败，都在新测试：`ProviderWindowLabel.localized` 的 switch 没有 "API credit" / "Purchased credit" 的显式 case（落到 "Extra usage" 默认分支），以及 "Monthly cap" 没加入 `semanticLabels`。修复后 | ios-unit2.log |
 | 完整单元测试（第三次） | 同上 | **TEST SUCCEEDED**：Swift Testing 1093 项 / 67 个 suite 全部通过，XCTest 全部通过（含 `WidgetSnapshotBuilderTests`） | ios-unit3.log、ios-unit3.xcresult |
+| 完整单元测试（第四次，review 修复后） | 同上 | 1 处失败：新加的希伯来历 locale 用例把日/月顺序写死（实际 "Expires 28 Oct (UTC)"，公历日期正确）；断言改为检查公历日与月 | ios-unit4.log |
+| 完整单元测试（第五次） | 同上 | **TEST SUCCEEDED**：1093 项 / 67 个 suite 全部通过 | ios-unit5.log、ios-unit5.xcresult |
 
 ## 同步兼容 gate（2 Mac × 2 iPhone）
 
