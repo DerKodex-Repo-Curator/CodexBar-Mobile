@@ -509,7 +509,7 @@ enum CostUsagePricing {
     /// stores rebuild instead of adopting rows corrupted by the 0.72 request-ledger migration.
     /// Version 21: v0.74.0-v0.74.1 merged Codex turn-performance timing, cached-input coverage, and shared
     /// turn identifiers; published 0.73.0.1 stores adopt like upstream 0.73.0 stores.
-    static let parserLogicVersion = 21
+    static let parserLogicVersion = 22
 
     /// Stable string fingerprint of the pricing tables + parser logic.
     /// `CostUsageCacheIO.load` compares this against the value stored

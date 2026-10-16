@@ -108,7 +108,10 @@ public enum AccountIdentityComputer {
              // Upstream v0.74.0 API-key / console-session providers expose no
              // cross-Mac account identifier used by the mobile merger.
              .xapi, .tavily, .linkup, .tinyapi, .exa, .cosmic, .aerostack,
-             .sailresearch, .sofya:
+             .sailresearch, .sofya,
+             // Upstream v0.75.0–v0.76.0 API-key / browser-session providers
+             // expose no cross-Mac account identifier used by the mobile merger.
+             .fal, .flora, .parallel, .claudeplatform:
             // Non-Tier-A providers: no stable account model required by
             // iOS today. Return nil → iOS falls back to per-device legacy
             // bucket. If a future provider needs cross-Mac merging, add

@@ -256,6 +256,9 @@ final class SettingsStore {
     @ObservationIgnored var configPersistWriteTask: Task<Void, Never>?
     @ObservationIgnored var configFileWatcher: ConfigFileWatcher?
     @ObservationIgnored var configLoading = false
+    @ObservationIgnored let configPersistenceCoordinator = SettingsConfigPersistenceCoordinator()
+    @ObservationIgnored var configNeedsReload = false
+
     @ObservationIgnored var cachedCodexAccountReconciliationSnapshot:
         CachedCodexAccountReconciliationSnapshot?
     @ObservationIgnored var cachedCodexAccountMenuProjection: CachedCodexAccountMenuProjection?
@@ -275,6 +278,8 @@ final class SettingsStore {
     var backgroundWorkSettingsRevision: Int = 0
     var costUsageSettingsRevision: UInt64 = 0
     var providerOrder: [ProviderInstanceID] = []
+    var providerOrderUndo: ProviderOrderUndo?
+    @ObservationIgnored weak var providerOrderUndoManager: UndoManager?
     var providerEnablement: [ProviderInstanceID: Bool] = [:]
     @ObservationIgnored var providerEnablementRevisions: [ProviderInstanceID: UInt64] = [:]
     @ObservationIgnored var providerConfigRevisions: [ProviderInstanceID: UInt64] = [:]
@@ -371,11 +376,20 @@ final class SettingsStore {
             ampCookieStore: ampCookieStore,
             copilotTokenStore: copilotTokenStore,
             tokenAccountStore: tokenAccountStore)
-        let config = CodexBarConfigMigrator.loadOrMigrate(
-            configStore: configStore,
-            userDefaults: userDefaults,
-            keychainAccessDisabled: keychainAccessPolicy.isExplicitlyDisabled(),
-            stores: legacyStores)
+        let config: CodexBarConfig
+        do {
+            config = try CodexBarConfigMigrator.loadOrMigrate(
+                configStore: configStore,
+                userDefaults: userDefaults,
+                keychainAccessDisabled: keychainAccessPolicy.isExplicitlyDisabled(),
+                stores: legacyStores)
+        } catch {
+            config = CodexBarConfig.makeDefault().normalized()
+            self.configNeedsReload = true
+            CodexBarLog.logger(LogCategories.configMigration).error(
+                "Config load failed; preserving the file until it can be reloaded",
+                metadata: ["error": "\(error)"])
+        }
         _ = Self.initializeOpenAIWebAccessPreference(
             userDefaults: userDefaults, config: config, hadExistingConfig: hadExistingConfig)
         self.userDefaults = userDefaults
@@ -616,6 +630,7 @@ extension SettingsStore {
             storedMenuBarLayout: storedMenuBarLayout,
             menuBarLayoutConditionals: menuBarLayoutConditionals,
             menuBarLayoutOverridesRaw: menuBarLayoutOverridesRaw,
+            menuBarLayoutMonospacedDigits: userDefaults.bool(forKey: "menuBarLayoutMonospacedDigits"),
             menuBarLayoutSizeRaw: userDefaults.string(forKey: "menuBarLayoutSize")
                 ?? MenuBarLayoutSize.regular.rawValue,
             menuBarLayoutGapRaw: userDefaults.string(forKey: "menuBarLayoutGap")
@@ -689,6 +704,7 @@ extension SettingsStore {
             providerDetectionCompleted: userDefaults.object(forKey: "providerDetectionCompleted") as? Bool ?? false,
             providersSortedAlphabetically: userDefaults.object(
                 forKey: "providersSortedAlphabetically") as? Bool ?? false,
+            providersEnabledOnly: userDefaults.bool(forKey: "providersEnabledOnly"),
             appLanguageRaw: userDefaults.string(forKey: "appLanguage"),
             terminalAppRaw: userDefaults.string(forKey: "terminalApp"),
             agentSessionsEnabled: userDefaults.object(forKey: "agentSessionsEnabled") as? Bool ?? false,
@@ -843,6 +859,7 @@ extension SettingsStore {
     private static func loadMenuBarLayout(userDefaults: UserDefaults) -> MenuBarLayout? {
         MenuBarLayoutPersistence.loadLayout(
             current: self.decodeMenuBarLayout(userDefaults.data(forKey: MenuBarLayoutUserDefaultsKey.layoutCurrent)),
+            v4: self.decodeMenuBarLayout(userDefaults.data(forKey: MenuBarLayoutUserDefaultsKey.layoutV4)),
             v3: self.decodeMenuBarLayout(userDefaults.data(forKey: MenuBarLayoutUserDefaultsKey.layoutV3)),
             released: self.decodeMenuBarLayout(
                 userDefaults.data(forKey: MenuBarLayoutUserDefaultsKey.layoutReleased)),
@@ -856,6 +873,9 @@ extension SettingsStore {
         MenuBarLayoutPersistence.loadLibrary(
             current: self.decodeMenuBarLayoutConditionals(
                 userDefaults.data(forKey: MenuBarLayoutUserDefaultsKey.conditionalsCurrent)),
+            v4: self
+                .decodeMenuBarLayoutConditionals(userDefaults
+                    .data(forKey: MenuBarLayoutUserDefaultsKey.conditionalsV4)),
             v3: self.decodeMenuBarLayoutConditionals(
                 userDefaults.data(forKey: MenuBarLayoutUserDefaultsKey.conditionalsV3)),
             released: self.decodeMenuBarLayoutConditionals(
@@ -878,6 +898,7 @@ extension SettingsStore {
         MenuBarLayoutPersistence.loadOverrides(
             current: self.decodeMenuBarLayoutOverrides(
                 userDefaults.data(forKey: MenuBarLayoutUserDefaultsKey.overridesCurrent)),
+            v4: self.decodeMenuBarLayoutOverrides(userDefaults.data(forKey: MenuBarLayoutUserDefaultsKey.overridesV4)),
             v3: self.decodeMenuBarLayoutOverrides(
                 userDefaults.data(forKey: MenuBarLayoutUserDefaultsKey.overridesV3)),
             released: self.decodeMenuBarLayoutOverrides(
@@ -987,6 +1008,9 @@ extension SettingsStore {
     }
 
     func updateProviderState(config: CodexBarConfig) {
+        if let undo = self.providerOrderUndo, config.providers.map(\.id) != undo.after {
+            self.clearProviderOrderUndo()
+        }
         let rawOrder = config.providers.map(\.id.rawValue)
         self.providerOrder = Self.effectiveProviderOrder(raw: rawOrder)
         let metadata = ProviderDescriptorRegistry.metadata

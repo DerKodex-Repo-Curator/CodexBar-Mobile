@@ -716,6 +716,12 @@
 "link_website" = "Website";
 "link_twitter" = "Twitteren";
 "link_email" = "E-mail";
+"link_acknowledgements" = "Dankbetuigingen";
+"acknowledgements_footer" = "CodexBar is gebouwd met deze opensourceprojecten.";
+"acknowledgements_others" = "%d anderen";
+"acknowledgements_author" = "Auteur";
+"acknowledgements_authors" = "Auteurs";
+"acknowledgements_license" = "Licentie";
 "check_updates_auto" = "Automatisch controleren op updates";
 "update_channel" = "Kanaal bijwerken";
 "check_for_updates" = "Controleer op updates…";
@@ -1149,17 +1155,12 @@
 "CodexBar found another managed account that already uses the current system account. Resolve the duplicate account before switching." = "CodexBar heeft een ander beheerd account gevonden dat al gebruikmaakt van het huidige systeemaccount. Los het dubbele account op voordat u overstapt.";
 "CodexBar will ask macOS Keychain for “%@” so it can decrypt browser cookies and authenticate your account. Click OK to continue." = "CodexBar vraagt ​​macOS-sleutelhanger om “%@”, zodat browsercookies kunnen worden gedecodeerd en uw account kan worden geverifieerd. Klik op OK om door te gaan.";
 "CodexBar will ask macOS Keychain for the Claude Code OAuth token so it can fetch your Claude usage. Click OK to continue." = "CodexBar zal macOS Keychain om het Claude Code OAuth-token vragen, zodat het uw Claude-gebruik kan ophalen. Klik op OK om door te gaan.";
-"CodexBar will ask macOS Keychain for your Amp cookie header so it can fetch usage. Click OK to continue." = "CodexBar zal macOS Keychain om je Amp-cookieheader vragen, zodat deze het gebruik kan ophalen. Klik op OK om door te gaan.";
-"CodexBar will ask macOS Keychain for your Augment cookie header so it can fetch usage. Click OK to continue." = "CodexBar zal macOS Keychain om uw Augment-cookie-header vragen, zodat deze het gebruik kan ophalen. Klik op OK om door te gaan.";
+"CodexBar will ask macOS Keychain for your %@ cookie header so it can fetch usage. Click OK to continue." = "CodexBar zal macOS Keychain om uw %@-cookieheader vragen, zodat deze het gebruik kan ophalen. Klik op OK om door te gaan.";
 "CodexBar will ask macOS Keychain for your Claude cookie header so it can fetch Claude web usage. Click OK to continue." = "CodexBar zal macOS Keychain om uw Claude-cookieheader vragen, zodat deze het webgebruik van Claude kan ophalen. Klik op OK om door te gaan.";
-"CodexBar will ask macOS Keychain for your Cursor cookie header so it can fetch usage. Click OK to continue." = "CodexBar zal macOS Keychain om uw Cursor-cookieheader vragen, zodat deze het gebruik kan ophalen. Klik op OK om door te gaan.";
-"CodexBar will ask macOS Keychain for your Factory cookie header so it can fetch usage. Click OK to continue." = "CodexBar zal macOS Keychain om uw Factory-cookieheader vragen, zodat deze het gebruik kan ophalen. Klik op OK om door te gaan.";
 "CodexBar will ask macOS Keychain for your GitHub Copilot token so it can fetch usage. Click OK to continue." = "CodexBar zal macOS Keychain om uw GitHub Copilot-token vragen, zodat deze het gebruik kan ophalen. Klik op OK om door te gaan.";
 "CodexBar will ask macOS Keychain for your Kimi auth token so it can fetch usage. Click OK to continue." = "CodexBar vraagt ​​macOS Keychain om je Kimi-authenticatietoken, zodat het gebruik kan worden opgehaald. Klik op OK om door te gaan.";
 "CodexBar will ask macOS Keychain for your MiniMax API token so it can fetch usage. Click OK to continue." = "CodexBar zal macOS Keychain om uw MiniMax API-token vragen, zodat deze het gebruik kan ophalen. Klik op OK om door te gaan.";
-"CodexBar will ask macOS Keychain for your MiniMax cookie header so it can fetch usage. Click OK to continue." = "CodexBar zal macOS Keychain om uw MiniMax-cookieheader vragen, zodat deze het gebruik kan ophalen. Klik op OK om door te gaan.";
 "CodexBar will ask macOS Keychain for your OpenAI cookie header so it can fetch Codex dashboard extras. Click OK to continue." = "CodexBar zal macOS Keychain om uw OpenAI-cookieheader vragen, zodat deze extra's op het Codex-dashboard kan ophalen. Klik op OK om door te gaan.";
-"CodexBar will ask macOS Keychain for your OpenCode cookie header so it can fetch usage. Click OK to continue." = "CodexBar zal macOS Keychain om uw OpenCode-cookieheader vragen, zodat deze het gebruik kan ophalen. Klik op OK om door te gaan.";
 "CodexBar will ask macOS Keychain for your Synthetic API key so it can fetch usage. Click OK to continue." = "CodexBar vraagt ​​macOS-sleutelhanger om uw synthetische API-sleutel, zodat deze het gebruik kan ophalen. Klik op OK om door te gaan.";
 "CodexBar will ask macOS Keychain for your z.ai API token so it can fetch usage. Click OK to continue." = "CodexBar zal macOS Keychain om uw z.ai API-token vragen, zodat deze het gebruik kan ophalen. Klik op OK om door te gaan.";
 "Could not open Cursor login in your browser." = "Kan Cursor-login niet openen in uw browser.";
@@ -1410,6 +1411,7 @@
 "menu_bar_layout_preset_icon_only" = "Alleen pictogram";
 "menu_bar_layout_preset_percent_reset" = "Percentage en reset";
 "menu_bar_layout_preset_compact_stacked" = "Compact gestapeld";
+"menu_bar_layout_preset_bars_stacked" = "Voortgangsbalken gestapeld";
 "menu_bar_layout_preset_custom" = "Aangepast";
 "menu_bar_layout_live_preview" = "Livevoorvertoning";
 "menu_bar_layout_default_preview" = "Voorbeeld van standaardindeling";
@@ -1426,6 +1428,8 @@
 "menu_bar_layout_size" = "Grootte";
 "menu_bar_layout_size_small" = "Klein";
 "menu_bar_layout_size_regular" = "Normaal";
+"menu_bar_layout_size_large" = "Groot";
+"menu_bar_layout_monospaced_digits" = "Cijfers met vaste breedte";
 "menu_bar_layout_gap" = "Tussenruimte";
 "menu_bar_layout_gap_tight" = "Krap";
 "menu_bar_layout_gap_regular" = "Normaal";
@@ -1447,7 +1451,7 @@
 "menu_bar_layout_token_reset_at" = "Reset om";
 "menu_bar_layout_token_runs_out" = "Op";
 "menu_bar_layout_token_cost_today" = "Kosten vandaag";
-"menu_bar_layout_token_cost_30d" = "Kosten 30 dagen";
+"menu_bar_layout_token_cost_window" = "Kosten (Geschiedenisvenster)";
 "menu_bar_layout_token_space" = "Spatie";
 "menu_bar_layout_token_line_break" = "Regeleinde";
 "menu_bar_layout_token_separator_accessibility" = "Scheidingspunt";
@@ -1465,7 +1469,6 @@
 "Reset time unavailable" = "Reset om: Niet beschikbaar";
 "Run-out estimate unavailable" = "Op: Niet beschikbaar";
 "Cost today unavailable" = "Kosten vandaag: Niet beschikbaar";
-"30-day cost unavailable" = "Kosten 30 dagen: Niet beschikbaar";
 "Resets" = "Resetten";
 "codex_workspaces_cost_unavailable" = "Kosten niet beschikbaar";
 "codex_workspaces_elevated_usage" = "Verhoogd gebruik";
@@ -1621,6 +1624,7 @@
 "5-hour usage" = "5-uursgebruik";
 "7-day usage" = "7-dagengebruik";
 "Total usage" = "Totaal gebruik";
+"claude_oauth_keychain_access_disabled" = "Toegang tot Keychain is uitgeschakeld, waardoor CodexBar de aanmeldgegevens van Claude niet kan lezen.";
 "claude_oauth_keychain_access_revoked" = "De toegang tot de Claude-sleutelhanger is ingetrokken door de tokenrotatie van Claude Code. Klik op Vernieuwen om opnieuw toegang te verlenen of zet de Claude-gebruiksbron op CLI/Web.";
 "claude_showing_last_known_usage" = "De laatst bekende gebruiksgegevens worden weergegeven (vastgelegd: %@).";
 "claude_limited_usage_detail" = "Beperkte gebruiksdetails";
@@ -2489,6 +2493,7 @@
 
 "X API cost history is not available." = "Kostengeschiedenis voor X API is niet beschikbaar.";
 "Paste a console.x.com Cookie header containing auth_token and ct0." = "Plak een Cookie-header van console.x.com met auth_token en ct0.";
+"Paste a platform.claude.com Cookie header containing sessionKey." = "Plak een Cookie-header van platform.claude.com met sessionKey.";
 "Open X Developer Console" = "X-ontwikkelaarsconsole openen";
 "update_available_notification_body" = "Klik om de update-instellingen te openen en de nieuwe versie te installeren.";
 // Structured session performance layout.
@@ -2590,5 +2595,120 @@
 "Pace sign" = "Teken van gebruikstempo";
 "Ahead of pace is +" = "Boven het tempo is +";
 "Reserve is +" = "Reserve krijgt +";
+
+"cost_reset_inferred_tooltip" = "Afgeleid: %@ meldt deze datum niet. Maandelijkse bestedingslimieten worden op de 1e om 00:00 UTC gereset.";
+/* fal provider credentials */
+"Key with billing read access (BILLING or READONLY preset). Or set FAL_KEY." = "Sleutel met leestoegang tot facturering (preset BILLING of READONLY). Of stel FAL_KEY in.";
+
+/* FLORA provider credentials */
+"Needs billing permission on the workspace. Or set FLORA_API_KEY." = "Vereist factureringsrechten voor de workspace. Of stel FLORA_API_KEY in.";
+"Required. The ws_… ID of the workspace the key can bill. Or set FLORA_WORKSPACE_ID." = "Verplicht. De ws_…-ID van de workspace die de sleutel mag factureren. Of stel FLORA_WORKSPACE_ID in.";
+"ak_…" = "ak_…";
+"ws_…" = "ws_…";
+
+"Plan renewal / expiry" = "Verlenging / vervaldatum van abonnement";
+
+"Hidden by the global optional credits, spending & billing setting." = "Verborgen door de algemene instelling voor optionele tegoeden, uitgaven en factureringsgegevens.";
+
+"Provider order updated" = "Volgorde van aanbieders bijgewerkt";
+"Undo" = "Ongedaan maken";
+"Clear filters" = "Filters wissen";
+"Change provider order" = "Volgorde van aanbieders wijzigen";
+"Provider sorting" = "Aanbieders sorteren";
+"Only enabled providers" = "Alleen ingeschakelde aanbieders";
+"Restore default order" = "Standaardvolgorde herstellen";
+"Also restores the provider order in the menu bar. Can be undone." = "Herstelt ook de volgorde van aanbieders in de menubalk. Kan ongedaan worden gemaakt.";
+"Local Codex details; excluded from combined totals." = "Lokale Codex-details; niet opgenomen in de gecombineerde totalen.";
+
+"Auto uses an API key when configured, otherwise browser cookies." = "Auto uses an API key when configured, otherwise browser cookies.";
+"Stored in the CodexBar config file. You can also set COMMAND_CODE_API_KEY." = "Stored in the CodexBar config file. You can also set COMMAND_CODE_API_KEY.";
+/* OpenAI organization rate limits and live usage */
+"%@ tokens · %@ requests" = "%@ tokens · %@ verzoeken";
+"15m" = "15 min";
+"1h" = "1 u";
+"5-min avg" = "Gem. over 5 min";
+"6h" = "6 u";
+"All models" = "Alle modellen";
+"Input %@ · cached %@ · output %@" = "Invoer %@ · gecachet %@ · uitvoer %@";
+"Live Usage" = "Livegebruik";
+"Loading live usage…" = "Livegebruik laden…";
+"Minute" = "Minuut";
+"Model" = "Model";
+"No API traffic in this window" = "Geen API-verkeer in deze periode";
+"Open OpenAI Settings" = "OpenAI-instellingen openen";
+"OpenAI Admin Usage API · 1-minute buckets · the newest minute can arrive late" = "OpenAI Admin Usage API · intervallen van 1 minuut · de nieuwste minuut kan later aankomen";
+"OpenAI Live Usage" = "OpenAI-livegebruik";
+"Other" = "Overige";
+"Peak" = "Piek";
+"Peak TPM" = "Piek-TPM";
+"Project: %@" = "Project: %@";
+"Range" = "Periode";
+"Rate limited; retrying in %ds" = "Snelheidslimiet bereikt; opnieuw over %ds";
+"Requests in window" = "Verzoeken in periode";
+"Tokens in window" = "Tokens in periode";
+"Tokens per minute" = "Tokens per minuut";
+"Uncached input" = "Niet-gecachete invoer";
+"Uncached input %@ · cached input %@ · output %@" = "Niet-gecachete invoer %@ · gecachete invoer %@ · uitvoer %@";
+"Organization rate limits" = "Snelheidslimieten van de organisatie";
+"Open organization Limits" = "Organisatielimieten openen";
+"RPM (optional)" = "RPM (optioneel)";
+"Enter a model and positive limits, such as 40M TPM and 15k RPM." = "Voer een model en positieve limieten in, zoals 40M TPM en 15k RPM.";
+"Add model" = "Model toevoegen";
+"Org TPM limit" = "TPM-limiet organisatie";
+"Org limit %@ TPM" = "Organisatielimiet %@ TPM";
+"Org limit %@ TPM (off scale)" = "Organisatielimiet %@ TPM (buiten schaal)";
+"Limits…" = "Limieten…";
+"Highest utilization" = "Hoogste benutting";
+"%@ of limit" = "%@ van limiet";
+"Limit" = "Limiet";
+"Peak RPM: %@ of limit" = "Piek-RPM: %@ van limiet";
+"Peak % of limit" = "Piek in % van limiet";
+
+/* OpenAI live usage errors */
+"Configure an OpenAI organization Admin API key in Settings → Providers → OpenAI." = "Stel een OpenAI Admin API-sleutel voor de organisatie in via Instellingen → Providers → OpenAI.";
+"An OpenAI organization Admin API key with usage and project read permissions is required." = "Een OpenAI Admin API-sleutel voor de organisatie met leesrechten voor gebruik en projecten is vereist.";
+"OpenAI API is rate limited." = "De OpenAI API heeft de snelheidslimiet bereikt.";
+"OpenAI API failed (HTTP %d)." = "OpenAI API mislukt (HTTP %d).";
+"Could not parse the OpenAI API response." = "Het OpenAI API-antwoord kon niet worden verwerkt.";
+"Live usage supports 15-minute, 1-hour, and 6-hour windows." = "Livegebruik ondersteunt perioden van 15 minuten, 1 uur en 6 uur.";
+
+/* Live usage reporting and project caps */
+"Latest · %@" = "Meest recent · %@";
+"Latest TPM" = "Recentste TPM";
+"reporting…" = "wachten op gegevens…";
+"Org limit not set" = "Organisatielimiet niet ingesteld";
+"project cap %@" = "projectlimiet %@";
+"Set org limit…" = "Organisatielimiet instellen…";
+"Org limits come from Settings — OpenAI's API doesn't expose them." = "Organisatielimieten komen uit Instellingen — de API van OpenAI biedt ze niet aan.";
+"Project caps are the highest per-project limit across %d active projects; org-wide traffic can exceed them." = "Projectlimieten zijn de hoogste limieten per project van %d actieve projecten; organisatiebreed verkeer kan deze overschrijden.";
+"Project sample capped at 25; higher project caps may exist." = "De steekproef is beperkt tot 25 projecten; er kunnen hogere projectlimieten bestaan.";
+"Project caps unavailable" = "Projectlimieten niet beschikbaar";
+"OpenAI's API doesn't expose organization rate limits. Copy them from your organization's Limits page. Model IDs match dated snapshots (gpt-5 covers gpt-5-2025-…)." = "De API van OpenAI biedt geen organisatielimieten aan. Kopieer ze van de Limits-pagina van je organisatie. Model-ID’s gelden ook voor gedateerde versies (gpt-5 omvat gpt-5-2025-…).";
+"Tokens / min · last hour" = "Tokens / min · afgelopen uur";
+"Latest %@ · Peak %@ at %@" = "Laatste %@ · Piek %@ om %@";
+"%@ · peak %@ · %@ of org limit" = "%@ · piek %@ · %@ van organisatielimiet";
+"Tokens / min" = "Tokens / min";
+"Latest tokens per minute (OpenAI Admin API)" = "Laatste tokens per minuut (OpenAI Admin API)";
+"Fetches 1-minute usage each refresh for the menu card chart and the menu bar Tokens/min token." = "Haalt bij elke vernieuwing het minuutverbruik op voor de grafiek in de menukaart en het element Tokens/min in de menubalk.";
+"Live Usage…" = "Livegebruik…";
+"Batch API %@ · not counted in %% of limit" = "Batch API %@ · telt niet mee in %% van limiet";
+"% of limit counts all input, including cached input, plus output, as OpenAI's rate limiter does, and excludes Batch API traffic, which has separate limits. The limiter also reserves max_tokens up front, so short bursts can still hit limits." = "% van limiet telt alle invoer, inclusief gecachte invoer, plus uitvoer, zoals de snelheidsbegrenzer van OpenAI, en sluit Batch API-verkeer uit, waarvoor aparte limieten gelden. De begrenzer reserveert ook vooraf max_tokens, waardoor korte pieken nog steeds de limieten kunnen bereiken.";
+
+"Tokens / min graph" = "Tokens / min-grafiek";
+"Last hour of tokens per minute (OpenAI Admin API)" = "Tokens per minuut in het afgelopen uur (OpenAI Admin API)";
+"Tokens per minute, latest %@" = "Tokens per minuut, laatste waarde %@";
+
+"Live" = "Live";
+
+"Chart" = "Grafiek";
+
+"Daily spend · %@" = "Dagelijkse uitgaven · %@";
+"Applies to the selected token account “%@”. Each account keeps its own limits." = "Geldt voor het geselecteerde tokenaccount ‘%@’. Elk account behoudt zijn eigen limieten.";
+"Applies to the OpenAI API key, not to token accounts." = "Geldt voor de OpenAI API-sleutel, niet voor tokenaccounts.";
+"CodexBar will ask macOS Keychain for the Muse Code login token so it can fetch your Muse Code subscription usage. Click OK to continue." = "CodexBar zal macOS Keychain om het Muse Code login-token vragen, zodat het uw Muse Code-abonnementsgebruik kan ophalen. Klik op OK om door te gaan.";
+/* Claude Platform provider */
+"API credit" = "API-tegoed";
+"Purchased credit" = "Gekocht tegoed";
+"Claude Platform exposes Console credit balance and monthly spend, not local token cost history." = "Claude Platform toont het Console-tegoed en de maandelijkse uitgaven, niet de lokale tokenkostengeschiedenis.";
 "Voice slots" = "Stemplaatsen";
 "Professional voices" = "Professionele stemmen";
