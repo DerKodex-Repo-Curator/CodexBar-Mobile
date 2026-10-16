@@ -3961,7 +3961,7 @@ enum CostUsageScanner {
                 .map { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty } ?? false)
     }
 
-    private static func parseCodexSessionMetadata(
+    static func parseCodexSessionMetadata(
         fileURL: URL,
         checkCancellation: CancellationCheck? = nil) throws -> CodexSessionMetadata?
     {
@@ -5529,6 +5529,10 @@ enum CostUsageScanner {
             return .deferred
         }
         var cached = cache.files[metadata.path]
+        if let adopted = Self.codexFileUsageAdoptingCreatorAccountRevision(cached, fileURL: fileURL) {
+            cache.files[metadata.path] = adopted
+            cached = adopted
+        }
         var input = CodexFileScanInput(fileURL: fileURL, metadata: metadata, cached: cached)
         if try Self.keepCachedCodexFileIfFresh(input: input, context: context, cache: &cache, state: &state) {
             return .processed

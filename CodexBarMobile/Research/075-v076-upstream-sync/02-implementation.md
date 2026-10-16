@@ -20,7 +20,7 @@ Status: `in-progress`
 
 ## Codex 成本缓存与 parser 版本
 
-- 上游 0.75/0.76 改动了 parser-hash 覆盖的文件（`CostUsageScanner.swift`、`+CacheHelpers`、`+PricingRows`、`+TemporalBuckets`、`+TurnPerformance`、`CostUsageCacheModels`）。按发布清单，`CostUsagePricing.parserLogicVersion` 从 21 升到 22，并重新生成 `CodexParserHash`，结果 `e34dea88998a523f`。
+- 上游 0.75/0.76 改动了 parser-hash 覆盖的文件（`CostUsageScanner.swift`、`+CacheHelpers`、`+PricingRows`、`+TemporalBuckets`、`+TurnPerformance`、`CostUsageCacheModels`）。按发布清单，`CostUsagePricing.parserLogicVersion` 从 21 升到 22，并重新生成 `CodexParserHash`，结果 `55900964921884fb`。
 - 上游把自家 v0.74.1 的 store（`f406dae284de4a55`，“Revision 13 reparses rows to record the session creator account for Auto-review”）和 `fc698834d6329beb` 登记为可沿用前驱，通过 revision 迁移重新解析行。fork 已发布的 0.74.1.1 store（`68cbd75ed0e591d9`）等于上游 0.74.1 的解析逻辑加上 fork 的 ledger 重新定价（与 074 处理 0.73.0.1 时相同的关系），因此也登记为 `compatiblePredecessorParserHashes`，并加入测试的前驱参数表，使 0.74.1.1 用户升级后不全量重扫 Codex 日志。0.73.0.1 的 `0d41437dcd95c17e` 继续保留。
 
 ## 编译修复
