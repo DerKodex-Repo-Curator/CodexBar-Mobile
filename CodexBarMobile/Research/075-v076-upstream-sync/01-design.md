@@ -16,7 +16,7 @@ Status: `in-progress`
 
 ## Mac → iOS 数据通道
 
-原则：只用已有字段或已有 opaque JSON 里的值，不提升 `providerPayloadVersion`，不新增 schema 层的 record type、field 或 index，只在尾部追加运行时 zone subscription（第 2 点），不同步 credential、cookie、路径或环境变量。本轮 `Shared/` 零改动。
+原则：只用已有字段或已有 opaque JSON 里的值，不提升 `providerPayloadVersion`，不新增 schema 层的 record type、field 或 index，只在尾部追加运行时 zone subscription（第 2 点），不同步 credential、cookie、路径或环境变量。本轮 Shared 模型零改动，`Shared/` 只有 `QuotaProviderList` 尾部追加 1 个运行时 zone provider。
 
 1. `mapProviderAmount` 新增 `.claudeplatform`：`balance != nil` 时发布 Console 预付 credit 总余额（负数也发布），period 用 `providerCost.period`，没有时用 "Prepaid credits"。插件不报 limit，`budget` 通道保持为空。
 2. `QuotaProviderList` 尾部追加 `claudeplatform`（两个百分比窗口会触发 Mac quota warning；87 → 88 个 provider，261 → 264 个 zone）。fal、FLORA、Parallel 只有余额详情，不追加。
@@ -37,7 +37,7 @@ Status: `in-progress`
 
 ## CloudKit 判断
 
-见 [03-testing.md](03-testing.md#cloudkit-production-schema-审计)。预判：`NO_DEPLOY`（Shared 零 diff）。
+见 [03-testing.md](03-testing.md#cloudkit-production-schema-审计)。预判：`NO_DEPLOY`（Shared 模型零 diff，只追加运行时 zone provider）。
 
 ## 测试与完成门
 

@@ -82,6 +82,12 @@ struct V076ProviderPresentationTests {
             "$124.75 of $200.00 left · Expires Oct 28 (UTC)", providerID: "claudeplatform", locale: zh)
         #expect(combined.hasPrefix("剩余 $124.75（共 $200.00） · "), "\(combined)")
         #expect(combined.hasSuffix(" 到期 (UTC)"), "\(combined)")
+        // A year-free leap day keeps its day in every reader year and non-Gregorian system calendars.
+        let leap = ProviderDetailLocalization.localizedValue("Expires Feb 29 (UTC)", providerID: "claudeplatform", locale: zh)
+        #expect(leap.contains("2月29日"), "\(leap)")
+        let hebrew = ProviderDetailLocalization.localizedValue(
+            "Expires Oct 28 (UTC)", providerID: "claudeplatform", locale: Locale(identifier: "en_US@calendar=hebrew"))
+        #expect(hebrew == "Expires Oct 28 (UTC)", "\(hebrew)")
         #expect(ProviderDetailLocalization.localizedValue("Unavailable", providerID: "claudeplatform", locale: zh) == "不可用")
         // Unknown shapes and dynamic text stay verbatim.
         #expect(ProviderDetailLocalization.localizedValue("Expires someday (UTC)", providerID: "claudeplatform", locale: zh)

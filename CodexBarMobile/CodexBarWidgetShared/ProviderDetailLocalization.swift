@@ -292,10 +292,10 @@ enum ProviderDetailLocalization {
     /// Upstream v0.75 FLORA: fixed scope, cadence and unavailability notes next to currency amounts.
     /// Amounts keep the Mac's formatting; unknown text stays verbatim.
     static func localizedFloraValue(_ value: String, locale: Locale = .current) -> String {
-        let fixed: Set<String> = [
+        let fixed = Set([
             "Workspace pool", "Your allowance", "Monthly", "All time", "Unavailable", "Not reported",
             "Plan has no usage reporting", "Needs billing permission", "Totals not computed; try again",
-        ]
+        ])
         guard fixed.contains(value) else { return value }
         return MobileLocalizedString.value(value, defaultValue: value, locale: locale)
     }
@@ -340,28 +340,27 @@ enum ProviderDetailLocalization {
         let dayText = String(value.dropFirst(prefix.count).dropLast(suffix.count))
         guard let day = self.claudePlatformUTCDay(dayText) else { return nil }
         let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = locale
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.setLocalizedDateFormatFromTemplate(day.includesYear ? "yMMMd" : "MMMd")
         return self.localizedFormat("Expires %@ (UTC)", argument: formatter.string(from: day.date), locale: locale)
     }
 
-    /// Parses the Mac's `MMM d` / `MMM d, yyyy` expiry (en-US month names, UTC). A date without a year
-    /// is the Mac's current UTC year, so it is rendered without one as well.
+    /// Parses the Mac's `MMM d` / `MMM d, yyyy` expiry (en-US month names, Gregorian, UTC). A date
+    /// without a year keeps the parser's leap reference year and is rendered without one, so "Feb 29"
+    /// never rolls over and a December reader never attaches the wrong year to a January expiry.
     private static func claudePlatformUTCDay(_ text: String) -> (date: Date, includesYear: Bool)? {
         let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.isLenient = false
         formatter.dateFormat = "MMM d, yyyy"
         if let date = formatter.date(from: text) { return (date, true) }
         formatter.dateFormat = "MMM d"
         guard let monthDay = formatter.date(from: text) else { return nil }
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = formatter.timeZone
-        var components = calendar.dateComponents([.month, .day], from: monthDay)
-        components.year = calendar.component(.year, from: Date())
-        guard let date = calendar.date(from: components) else { return nil }
-        return (date, false)
+        return (monthDay, false)
     }
 
     static func localizedAixyBudgetLabel(_ value: String, locale: Locale = .current) -> String? {

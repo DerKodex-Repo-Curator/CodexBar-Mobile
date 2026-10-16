@@ -12,6 +12,7 @@ All notable changes to the CodexBar iOS companion app will be documented in this
 ### Changed
 - Claude accounts: Mac 0.76.0.1 publishes the OAuth sign-in email (upstream #4493), so the account identity moves from the per-device legacy bucket to `claude:email:` and Macs signed in to the same Claude account merge into one card; the cost ledger follows the new owner through the existing ownership migration.
 - Claude Web accounts without a 5-hour window no longer receive a 0 % placeholder Session window from Mac 0.76.0.1 (upstream #4480); this app already filtered synthetic placeholders, older versions show the Weekly window instead.
+- Claude monthly spend caps (budget lane) from Mac 0.76.0.1 carry the inferred UTC month-end reset when Claude reports none (upstream #4480), so the budget row shows "Resets …" as the Mac meter does; an explicit provider reset is unchanged.
 - Codex days with ChatGPT-created Auto-review requests from 2026-10-06 arrive as known $0 costs instead of an unknown lower bound (upstream #4452); the Mac's estimate marker is not set for them.
 - OpenAI token totals from Mac 0.76.0.1 no longer double count audio tokens; days outside the Mac's history window keep their earlier values.
 

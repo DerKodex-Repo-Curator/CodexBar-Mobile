@@ -41,7 +41,7 @@ Status: `in-progress`（设计期审计；实现与测试证据见 02/03）
 
 ## 同步层与基础设施
 
-- `Shared/`、`CloudConstants.swift`（`providerPayloadVersion = 1`）、上游 `Sources/CodexBar/Sync/`（CloudSyncEngine 等）、entitlements、`Scripts/package_app.sh` 全部零 diff。`SyncModels.swift` 新增的 `modelRateLimits`、`claudeResetCreditsVisibilityMigrated` 只属于上游 Mac fleet 的 `ProviderIntent` record JSON。
+- `Shared/Models`、`CloudConstants.swift`（`providerPayloadVersion = 1`）、上游 `Sources/CodexBar/Sync/`（CloudSyncEngine 等）、entitlements、`Scripts/package_app.sh` 全部零 diff；`Shared/` 只有 `QuotaProviderList` 尾部追加 claudeplatform。`SyncModels.swift` 新增的 `modelRateLimits`、`claudeResetCreditsVisibilityMigrated` 只属于上游 Mac fleet 的 `ProviderIntent` record JSON。
 - `AccountIdentityComputer` 是 fork 独有的穷举 switch，4 个新 provider 归入 per-device（fal 的 username、Claude Platform 的组织名都不是稳定的跨 Mac 标识）。
 - 上游 #4509 配置文件读失败不覆盖：fork 独有代码不调用这些 API；与 app-group 迁移无关。残余风险：读失败时内存为默认配置，fleet `queueCurrentConfigurationAndPreferences` 仍可能把默认配置推给其他 Mac（上游自身行为，本轮不改）。
 - cookie import Keychain gate（#4443/#4464）：新 `BrowserCookiePromptContractTests` 会打开 gate 但所有密钥读取都注入 `FakeKeychain`，设计上不触真实 SecItem；首次单独运行并留意弹窗。

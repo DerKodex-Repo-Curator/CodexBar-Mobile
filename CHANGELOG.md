@@ -16,10 +16,14 @@
 - Codex cost caches written by 0.74.1.1 are kept and upgraded in place like upstream 0.74.1 caches instead of being rebuilt, so saved history and pricing stay visible while Auto-review creator accounts are re-read in the background.
 - Preserve fork CloudKit Production publishing, mobile payloads, download entrypoints, About links, and the fast PR / post-merge CI policy.
 
-### Fixed
+### Added
 
 - Mobile snapshots publish the Claude Platform Console credit balance (including negative balances) as a prepaid balance, and Claude Platform joins the quota-alert provider list so iPhones can subscribe to its grant warnings.
-- Days containing $0 ChatGPT-created Auto-review requests are published to the iPhone as exact costs rather than estimates.
+
+### Fixed
+
+- Claude monthly spend caps that report no rollover publish the same inferred UTC month-end reset the Mac meter shows, so iPhones of every version show when the cap resets.
+- Days containing $0 ChatGPT-created Auto-review requests are published to the iPhone as exact costs rather than as lower bounds.
 
 ## 0.76.0 — 2026-10-15
 

@@ -19,7 +19,7 @@ Date: 2026-10-15
 - 同步层：`Shared/` **零 diff**；`Sources/CodexBarCore/Sync/SyncModels.swift` 只给上游 Mac fleet 的 `ProviderIntentPayload` 增加可选 `modelRateLimits`、`claudeResetCreditsVisibilityMigrated`（既有 `ProviderIntent` record 的 JSON 内部）。
 - parser-hash 覆盖文件有改动（`CostUsageScanner*.swift`、`CostUsageCacheModels.swift`）→ 需要升 `parserLogicVersion` 并重新生成 `CodexParserHash`。
 - 依赖：SweetCookieKit 0.5.5 → 0.5.7。
-- `git merge-tree` 预览 42 个冲突文件（CI、AGENTS、CHANGELOG、README、About、23 个 Localizable.strings、UsageStore/UsageFetcher、CostUsage store/scanner 与测试、parser hash、appcast、version.env），见 `merge-conflicts.txt`。
+- `git merge-tree` 预览 42 个冲突文件（实际 merge 报 41 个：预览多算了一个自动合并成功的文件）（CI、AGENTS、CHANGELOG、README、About、23 个 Localizable.strings、UsageStore/UsageFetcher、CostUsage store/scanner 与测试、parser hash、appcast、version.env），见 `merge-conflicts.txt`。
 
 ## 分支
 
