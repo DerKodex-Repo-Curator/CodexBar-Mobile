@@ -570,6 +570,35 @@ struct ProviderColorPaletteTests {
         }
     }
 
+    @Test("v0.76 provider colors use upstream brand tints and Claude Platform never borrows Claude's orange")
+    func v076ProviderColorsMatchUpstreamBrands() {
+        let expected: [(String, String, UInt32)] = [
+            ("claudeplatform", "Claude Platform", 0xCC7C5E), ("fal", "fal", 0x7C3AED),
+            ("flora", "FLORA", 0x111111), ("parallel", "Parallel", 0x1D1C1A),
+        ]
+        for (id, name, rgb) in expected {
+            let color = UIColor(
+                red: CGFloat((rgb >> 16) & 0xFF) / 255,
+                green: CGFloat((rgb >> 8) & 0xFF) / 255,
+                blue: CGFloat(rgb & 0xFF) / 255,
+                alpha: 1)
+            #expect(
+                UIColor(ProviderColorPalette.color(for: id))
+                    .isApproximately(ProviderColorPalette.darkened(color)),
+                "\(id)")
+            #expect(
+                UIColor(ProviderColorPalette.color(for: id))
+                    .isApproximately(UIColor(ProviderColorPalette.color(for: name))),
+                "\(name)")
+        }
+        let claude = UIColor(ProviderColorPalette.color(for: "claude"))
+        for platform in ["claudeplatform", "Claude Platform"] {
+            #expect(!UIColor(ProviderColorPalette.color(for: platform)).isApproximately(claude), "\(platform)")
+        }
+        // The generic Claude rule is untouched.
+        #expect(UIColor(ProviderColorPalette.color(for: "claude-code")).isApproximately(claude))
+    }
+
     @Test("v0.74 provider colors use upstream brand tints and Exa never tints Vertex AI")
     func v074ProviderColorsMatchUpstreamBrands() {
         let expected: [(String, String, UInt32)] = [

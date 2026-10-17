@@ -21,6 +21,8 @@ enum ProviderDetailLocalization {
         // (Qwen Cloud Team Token Plan, Ollama credit wallet, JetBrains top-up credits).
         "aerostack", "cosmic", "exa", "jetbrains", "linkup", "ollama", "qwencloud", "sailresearch",
         "sofya", "tavily", "tinyapi", "xapi",
+        // Upstream v0.75.0–v0.76.0 bundled plugins.
+        "claudeplatform", "fal", "flora", "parallel",
     ]
 
     /// Stable semantic labels currently emitted by bundled provider detail
@@ -73,6 +75,10 @@ enum ProviderDetailLocalization {
         "Live remaining (est.)", "Monthly AI tokens", "Monthly credits used", "Monthly reset", "Next refill",
         "Organization billing", "Output tokens", "Pay as you go", "Plan credits", "Purchased credits", "Seats",
         "Team Token Plan", "Tokens used",
+        // Upstream v0.75–v0.76: FLORA workspace balances, Parallel pending debits and Claude Platform grants.
+        "Member limit", "Other credit grants", "Pending debit", "Runs this month", "Workspace balance",
+        // Claude Extra usage budget periods (the v0.75 CLI parser now publishes "Monthly cap").
+        "Monthly cap", "Spend limit",
     ]
 
     /// These sections deliberately use provider-returned account, team, model,
@@ -81,6 +87,8 @@ enum ProviderDetailLocalization {
     private static let verbatimRowSections: [String: Set<String>] = [
         "bifrost": ["Budgets", "Models"],
         "claude": ["Cost items"],
+        // Grant names come from the Console; a grant called "Balance" must stay verbatim.
+        "claudeplatform": ["Other credit grants"],
         "groq": ["Models"],
         "ibmbob": ["Bobcoin usage"],
         "llmproxy": ["Providers"],
@@ -213,6 +221,10 @@ enum ProviderDetailLocalization {
             return self.localizedAmountLeft(value, locale: locale) ?? value
         case "aerostack", "cosmic", "qwencloud", "sailresearch", "sofya", "tavily", "tinyapi":
             return self.localizedV074Value(value, locale: locale)
+        case "flora":
+            return self.localizedFloraValue(value, locale: locale)
+        case "claudeplatform":
+            return self.localizedClaudePlatformValue(value, locale: locale)
         case "kiro":
             break
         default:
@@ -275,6 +287,80 @@ enum ProviderDetailLocalization {
             }
         }
         return value
+    }
+
+    /// Upstream v0.75 FLORA: fixed scope, cadence and unavailability notes next to currency amounts.
+    /// Amounts keep the Mac's formatting; unknown text stays verbatim.
+    static func localizedFloraValue(_ value: String, locale: Locale = .current) -> String {
+        let fixed = Set([
+            "Workspace pool", "Your allowance", "Monthly", "All time", "Unavailable", "Not reported",
+            "Plan has no usage reporting", "Needs billing permission", "Totals not computed; try again",
+        ])
+        guard fixed.contains(value) else { return value }
+        return MobileLocalizedString.value(value, defaultValue: value, locale: locale)
+    }
+
+    /// Upstream v0.76 Claude Platform: "<left> of <granted> left", "Expires <MMM d[, yyyy]> (UTC)", the
+    /// window description that joins both with " · ", and the fixed "Unavailable" spend state. Amounts
+    /// keep the Mac's formatting; the expiry stays a UTC calendar day in the reader's date format.
+    static func localizedClaudePlatformValue(_ value: String, locale: Locale = .current) -> String {
+        if value == "Unavailable" {
+            return MobileLocalizedString.value(value, defaultValue: value, locale: locale)
+        }
+        let fragments = value.components(separatedBy: " · ")
+        if fragments.count == 2,
+           let left = self.localizedClaudePlatformLeft(fragments[0], locale: locale),
+           let expiry = self.localizedClaudePlatformExpiry(fragments[1], locale: locale)
+        {
+            return "\(left) · \(expiry)"
+        }
+        if let left = self.localizedClaudePlatformLeft(value, locale: locale) {
+            return left
+        }
+        if let expiry = self.localizedClaudePlatformExpiry(value, locale: locale) {
+            return expiry
+        }
+        return value
+    }
+
+    private static func localizedClaudePlatformLeft(_ value: String, locale: Locale) -> String? {
+        let suffix = " left"
+        guard value.hasSuffix(suffix) else { return nil }
+        let amounts = String(value.dropLast(suffix.count)).components(separatedBy: " of ")
+        guard amounts.count == 2, !amounts[0].isEmpty, !amounts[1].isEmpty,
+              !amounts[0].contains(" "), !amounts[1].contains(" ")
+        else { return nil }
+        return self.localizedFormat("%@ of %@ left", arguments: amounts, locale: locale)
+    }
+
+    private static func localizedClaudePlatformExpiry(_ value: String, locale: Locale) -> String? {
+        let prefix = "Expires "
+        let suffix = " (UTC)"
+        guard value.hasPrefix(prefix), value.hasSuffix(suffix) else { return nil }
+        let dayText = String(value.dropFirst(prefix.count).dropLast(suffix.count))
+        guard let day = self.claudePlatformUTCDay(dayText) else { return nil }
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = locale
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.setLocalizedDateFormatFromTemplate(day.includesYear ? "yMMMd" : "MMMd")
+        return self.localizedFormat("Expires %@ (UTC)", argument: formatter.string(from: day.date), locale: locale)
+    }
+
+    /// Parses the Mac's `MMM d` / `MMM d, yyyy` expiry (en-US month names, Gregorian, UTC). A date
+    /// without a year keeps the parser's leap reference year and is rendered without one, so "Feb 29"
+    /// never rolls over and a December reader never attaches the wrong year to a January expiry.
+    private static func claudePlatformUTCDay(_ text: String) -> (date: Date, includesYear: Bool)? {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.isLenient = false
+        formatter.dateFormat = "MMM d, yyyy"
+        if let date = formatter.date(from: text) { return (date, true) }
+        formatter.dateFormat = "MMM d"
+        guard let monthDay = formatter.date(from: text) else { return nil }
+        return (monthDay, false)
     }
 
     static func localizedAixyBudgetLabel(_ value: String, locale: Locale = .current) -> String? {

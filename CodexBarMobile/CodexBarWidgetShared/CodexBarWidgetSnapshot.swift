@@ -27,11 +27,13 @@ struct CodexBarWidgetProviderSummary: Codable, Equatable, Identifiable, Sendable
     /// window of at least one day with a usable observation.
     let quotaPace: CodexBarWidgetPaceSummary?
     /// Next weekly reset (`WeeklyResetWindow`, Research/073) when the
-    /// summary was built; nil without a weekly window. Orders the overview's
-    /// "By weekly reset" selection.
+    /// summary was built; nil without a weekly window that reports a reset.
+    /// Orders the overview's "By weekly reset" selection.
     let weeklyResetsAt: Date?
-    /// Used percent of that weekly window while it is current; the "By
-    /// weekly reset" overview shows it next to `weeklyResetsAt`.
+    /// Used percent of the weekly window every overview tile shows
+    /// (Research/076): the window behind `weeklyResetsAt` while it is
+    /// current, or the fullest reset-less weekly window when none reports a
+    /// reset. Nil without a weekly window, or after a missed reset.
     let weeklyUsedPercent: Double?
 
     init(
@@ -592,8 +594,8 @@ struct CodexBarWidgetSnapshot: Codable, Equatable, Sendable {
                     providerName: "Claude",
                     providerID: "claude",
                     loginMethod: "Max",
-                    usagePercent: 42,
-                    resetsAt: now.addingTimeInterval(0.6 * 86400),
+                    usagePercent: 71,
+                    resetsAt: self.sampleWeeklyReset(now: now, days: 3.6),
                     todayCostUSD: 6.78,
                     thirtyDayCostUSD: 129.44,
                     tokensToday: 456_000,
@@ -907,6 +909,13 @@ enum CodexBarWidgetSnapshotBuilder {
         let resetsAt = budgetLeads ? provider.budget?.resetsAt : leadingWindow?.resetsAt
         let accountKey = provider.accountEmail ?? "_"
         let weekly = WeeklyResetWindow.soonest(for: provider, now: now)
+        // A weekly window whose reset has passed is stale and shows no usage; only a
+        // provider without any weekly reset falls back to the resetless weekly usage.
+        let weeklyUsed: Double? = if let weekly {
+            WeeklyResetWindow.currentUsedPercent(of: weekly.window, now: now)
+        } else {
+            WeeklyResetWindow.resetlessUsedPercent(for: provider)
+        }
         return CodexBarWidgetProviderSummary(
             id: "\(provider.providerID)|\(accountKey)",
             providerName: provider.providerName,
@@ -923,7 +932,7 @@ enum CodexBarWidgetSnapshotBuilder {
             lastUpdated: provider.lastUpdated,
             quotaPace: CodexBarWidgetPaceSummary(provider: provider, now: now),
             weeklyResetsAt: weekly?.nextReset,
-            weeklyUsedPercent: weekly.flatMap { WeeklyResetWindow.currentUsedPercent(of: $0.window, now: now) })
+            weeklyUsedPercent: weeklyUsed)
     }
 
     private static func todayTotals(

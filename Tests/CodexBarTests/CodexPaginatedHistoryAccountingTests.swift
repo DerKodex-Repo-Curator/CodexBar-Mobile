@@ -483,7 +483,9 @@ struct CodexPaginatedHistoryAccountingTests {
         let dayKey = CostUsageScanner.CostUsageDayRange.dayKey(from: day)
         let normalized = CostUsagePricing.normalizeCodexModel(model)
         pageTwo.days = [dayKey: [normalized: [1250, 960, 105]]]
-        pageTwo.codexParserRevision = CostUsageFileUsage.currentCodexParserRevision - 1
+        // Fork: the immediately previous revision (12 -> 13) is adopted in place because it only recorded the
+        // leaf creator account; an older stale revision still reparses the inflated continuation.
+        pageTwo.codexParserRevision = CostUsageFileUsage.currentCodexParserRevision - 2
         legacy.files[pageTwoPath] = pageTwo
         legacy.days = [dayKey: [normalized: [2250, 1760, 185]]]
         CostUsageStoreAccess.replace(cacheRoot: env.cacheRoot, cache: legacy)

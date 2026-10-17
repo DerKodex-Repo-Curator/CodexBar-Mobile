@@ -376,7 +376,9 @@ private struct UsageTab: View {
     private var sortClockKey: String {
         guard self.sortsByWeeklyReset else { return "off" }
         let resets = self.cards
-            .map { "\($0.id)=\(UsageCardOrdering.weeklyResetDate(for: $0.snapshot, now: self.sortReferenceDate)?.timeIntervalSince1970 ?? 0)" }
+            .map {
+                "\($0.id)=\(UsageCardOrdering.weeklyResetDate(for: $0.snapshot, now: self.sortReferenceDate)?.timeIntervalSince1970 ?? 0)"
+            }
             .joined(separator: ",")
         return "weekly|\(resets)"
     }
@@ -519,7 +521,7 @@ private struct UsageTab: View {
             ProviderSettingsView(group: group, store: self.cardPreferences)
         }
         .navigationSplitViewStyle(.balanced)
-        .environment(\.horizontalSizeClass, self.layout.usesListDetail ? .regular : .compact)
+            .environment(\.horizontalSizeClass, self.layout.usesListDetail ? .regular : .compact)
     }
 
     private func select(_ key: String) {
@@ -2431,7 +2433,8 @@ struct CostDashboardInsights: Sendable {
             let todayTokens = todayTotals.tokens ?? 0
             var fallbackSyncPoints = costSummary.reportingPeriodDaily.filter {
                 guard !costSummary.hasInvalidBucketTimeZoneIdentifier,
-                      let offset = costSummary.costDayOffset(for: $0.dayKey, from: now) else {
+                      let offset = costSummary.costDayOffset(for: $0.dayKey, from: now)
+                else {
                     return false
                 }
                 return offset >= -(aggregation.windowDays - 1) && offset <= 0
@@ -4949,8 +4952,32 @@ private struct ReleaseNotesVersion: Identifiable {
 private enum MobileReleaseNotesCatalog {
     static let versions: [ReleaseNotesVersion] = [
         ReleaseNotesVersion(
-            version: "2.8.0",
+            version: "2.9.0",
             status: String(localized: "Latest"),
+            summary: String(localized: "CodexBar 2.9 adds Claude Platform, fal, FLORA, and Parallel from your Mac."),
+            sections: [
+                .init(title: String(localized: "What's New"), items: [
+                    String(
+                        localized: "See Claude Platform, fal, FLORA, and Parallel from your Mac, each with its own color. Claude Platform can send quota alerts."),
+                    String(
+                        localized: "Claude Platform shows your Console API credit balance on its card, and each credit grant's remaining amount and expiry day in the details."),
+                    String(
+                        localized: "The CodexBar widget's Overview always shows a provider's weekly usage and reset when it has a weekly limit, instead of switching between its session, weekly, and model-only windows."),
+                    String(
+                        localized: "More provider details are translated, including FLORA workspace balances, Parallel pending debits, and Claude's monthly spend cap."),
+                    String(
+                        localized: "When your Mac reads the email of its Claude sign-in, Macs signed in to the same Claude account share one card."),
+                    String(
+                        localized: "Days with Codex Auto-review requests created in ChatGPT from October 6 show exact costs instead of a lower bound."),
+                ]),
+                .init(title: String(localized: "Required Mac version"), items: [
+                    String(
+                        localized: "Update CodexBar on Mac to 0.76.0.1 or later for these providers and details."),
+                ]),
+            ]),
+        ReleaseNotesVersion(
+            version: "2.8.0",
+            status: "",
             summary: String(localized: "CodexBar 2.8 adds nine providers and more details from your Mac."),
             sections: [
                 .init(title: String(localized: "What's New"), items: [

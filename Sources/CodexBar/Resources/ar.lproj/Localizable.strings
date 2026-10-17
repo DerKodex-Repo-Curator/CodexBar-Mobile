@@ -722,6 +722,12 @@
 "link_website" = "الموقع الإلكتروني";
 "link_twitter" = "تويتر";
 "link_email" = "البريد الإلكتروني";
+"link_acknowledgements" = "شكر وتقدير";
+"acknowledgements_footer" = "تم بناء CodexBar باستخدام هذه المشاريع مفتوحة المصدر.";
+"acknowledgements_others" = "%d آخرين";
+"acknowledgements_author" = "المؤلف";
+"acknowledgements_authors" = "المؤلفون";
+"acknowledgements_license" = "الترخيص";
 "check_updates_auto" = "تحقق تلقائيا من التحديثات";
 "update_channel" = "قناة التحديث";
 "check_for_updates" = "تحقق من التحديثات...";
@@ -1166,17 +1172,12 @@
 "CodexBar found another managed account that already uses the current system account. Resolve the duplicate account before switching." = "CodexBar وجدت حسابا مديرا آخر يستخدم حساب النظام الحالي بالفعل. قم بحل مشكلة الحساب المكرر قبل التغيير.";
 "CodexBar will ask macOS Keychain for “%@” so it can decrypt browser cookies and authenticate your account. Click OK to continue." = "سيطلب CodexBar macOS Keychain \"%@\" حتى يتمكن من فك تشفير ملفات تعريف الارتباط في المتصفح وتوثيق حسابك. انقر موافقا للمتابعة.";
 "CodexBar will ask macOS Keychain for the Claude Code OAuth token so it can fetch your Claude usage. Click OK to continue." = "سيطلب CodexBar macOS Keychain رمز Claude OAuth ليتمكن من جلب استخدامك Claude. انقر موافقا للمتابعة.";
-"CodexBar will ask macOS Keychain for your Amp cookie header so it can fetch usage. Click OK to continue." = "CodexBar سيطلب macOS Keychain رأس الكوكيز Amp الخاص بك حتى يتمكن من استخدام الاستخدام. انقر موافقا للمتابعة.";
-"CodexBar will ask macOS Keychain for your Augment cookie header so it can fetch usage. Click OK to continue." = "CodexBar سيطلب macOS Keychain رأس الكوكيز Augment الخاص بك حتى يتمكن من استخدام الاستخدام. انقر موافقا للمتابعة.";
+"CodexBar will ask macOS Keychain for your %@ cookie header so it can fetch usage. Click OK to continue." = "CodexBar سيطلب macOS Keychain رأس الكوكيز %@ الخاص بك حتى يتمكن من استخدام الاستخدام. انقر موافقا للمتابعة.";
 "CodexBar will ask macOS Keychain for your Claude cookie header so it can fetch Claude web usage. Click OK to continue." = "CodexBar ستطلب macOS Keychain رأس الكوكيز Claude الخاص بك حتى يتمكن من جلب Claude استخدام الويب. انقر موافقا للمتابعة.";
-"CodexBar will ask macOS Keychain for your Cursor cookie header so it can fetch usage. Click OK to continue." = "CodexBar سيطلب macOS Keychain رأس الكوكيز Cursor الخاص بك حتى يتمكن من استخدام الاستخدام. انقر موافقا للمتابعة.";
-"CodexBar will ask macOS Keychain for your Factory cookie header so it can fetch usage. Click OK to continue." = "CodexBar سيطلب macOS Keychain رأس الكوكيز Factory الخاص بك حتى يتمكن من استخدام الاستخدام. انقر موافقا للمتابعة.";
 "CodexBar will ask macOS Keychain for your GitHub Copilot token so it can fetch usage. Click OK to continue." = "CodexBar سيطلب macOS Keychain رمز GitHub Copilot الخاص بك حتى يتمكن من استدعاء الاستخدام. انقر موافقا للمتابعة.";
 "CodexBar will ask macOS Keychain for your Kimi auth token so it can fetch usage. Click OK to continue." = "CodexBar سيطلب macOS Keychain رمز التوثيق Kimi الخاص بك حتى يتمكن من استدعاء الاستخدام. انقر موافقا للمتابعة.";
 "CodexBar will ask macOS Keychain for your MiniMax API token so it can fetch usage. Click OK to continue." = "CodexBar سيطلب macOS Keychain رمز MiniMax API الخاص بك حتى يتمكن من استدعاء الاستخدام. انقر موافقا للمتابعة.";
-"CodexBar will ask macOS Keychain for your MiniMax cookie header so it can fetch usage. Click OK to continue." = "CodexBar سيطلب macOS Keychain رأس الكوكيز MiniMax الخاص بك حتى يتمكن من استخدام الاستخدام. انقر موافقا للمتابعة.";
 "CodexBar will ask macOS Keychain for your OpenAI cookie header so it can fetch Codex dashboard extras. Click OK to continue." = "سيطلب CodexBar macOS Keychain رأس الكوكيز OpenAI الخاص بك حتى يتمكن من جلب إضافات Codex لوحة التحكم. انقر موافقا للمتابعة.";
-"CodexBar will ask macOS Keychain for your OpenCode cookie header so it can fetch usage. Click OK to continue." = "CodexBar سيطلب macOS Keychain رأس الكوكيز OpenCode الخاص بك حتى يتمكن من استخدام الاستخدام. انقر موافقا للمتابعة.";
 "CodexBar will ask macOS Keychain for your Synthetic API key so it can fetch usage. Click OK to continue." = "CodexBar ستطلب macOS Keychain مفتاح Synthetic API الخاص بك حتى يتمكن من جلب الاستخدام. انقر موافقا للمتابعة.";
 "CodexBar will ask macOS Keychain for your z.ai API token so it can fetch usage. Click OK to continue." = "CodexBar سيطلب macOS Keychain رمز z.ai API الخاص بك حتى يتمكن من استدعاء الاستخدام. انقر موافقا للمتابعة.";
 "Could not open Cursor login in your browser." = "لم أتمكن من فتح Cursor تسجيل الدخول في متصفحك.";
@@ -1414,6 +1415,7 @@
 "menu_bar_layout_preset_icon_only" = "الأيقونة فقط";
 "menu_bar_layout_preset_percent_reset" = "النسبة وإعادة الضبط";
 "menu_bar_layout_preset_compact_stacked" = "مكدّس مضغوط";
+"menu_bar_layout_preset_bars_stacked" = "أشرطة التقدم المكدسة";
 "menu_bar_layout_preset_custom" = "العرف";
 "menu_bar_layout_live_preview" = "معاينة مباشرة";
 "menu_bar_layout_default_preview" = "معاينة التخطيط الافتراضي";
@@ -1430,6 +1432,8 @@
 "menu_bar_layout_size" = "الحجم";
 "menu_bar_layout_size_small" = "صغير";
 "menu_bar_layout_size_regular" = "عادي";
+"menu_bar_layout_size_large" = "كبير";
+"menu_bar_layout_monospaced_digits" = "أرقام متساوية العرض";
 "menu_bar_layout_gap" = "المسافة";
 "menu_bar_layout_gap_tight" = "ضيّق";
 "menu_bar_layout_gap_regular" = "عادي";
@@ -1451,7 +1455,7 @@
 "menu_bar_layout_token_reset_at" = "إعادة الضبط عند";
 "menu_bar_layout_token_runs_out" = "ينفد";
 "menu_bar_layout_token_cost_today" = "تكلفة اليوم";
-"menu_bar_layout_token_cost_30d" = "تكلفة 30 يوماً";
+"menu_bar_layout_token_cost_window" = "تكلفة (نافذة التاريخ)";
 "menu_bar_layout_token_space" = "مسافة";
 "menu_bar_layout_token_line_break" = "فاصل سطر";
 "menu_bar_layout_token_separator_accessibility" = "نقطة فاصلة";
@@ -1469,7 +1473,6 @@
 "Reset time unavailable" = "إعادة الضبط عند: غير متوفر";
 "Run-out estimate unavailable" = "ينفد: غير متوفر";
 "Cost today unavailable" = "تكلفة اليوم: غير متوفر";
-"30-day cost unavailable" = "تكلفة 30 يوماً: غير متوفر";
 "Resets" = "إعادات الضبط";
 "codex_workspaces_estimated_cost_short" = "التكلفة المقدّرة";
 "codex_workspaces_estimated_cost_value" = "مقدّر %@";
@@ -1543,7 +1546,7 @@
 "mobile_sync_status_syncing" = "جار المزامنة…";
 "mobile_sync_status_syncing_elapsed_format" = "جارٍ المزامنة — %@ · %d ث";
 "mobile_sync_status_syncing_phase_format" = "جارٍ المزامنة — %@…";
-"mobile_toggle_mock_subtitle" = "يدفع 115 لقطة وهمية ثابتة تغطي 105 معرّف مزوّد عند كل مزامنة، بما في ذلك حالات الحسابات المتعددة وsub2api وWayfinder والرجوع الاحتياطي للمزوّدات غير المعروفة. تستخدم رسائل البريد الوهمية نطاق المستوى الأعلى `.test`، لذلك يعرض iPhone شارة MOCK. يتيح إيقاف هذا الخيار لـ CloudKit إزالة السجلات الوهمية خلال دورة مزامنة واحدة تقريبًا. متوقف افتراضيًا.";
+"mobile_toggle_mock_subtitle" = "يدفع 119 لقطة وهمية ثابتة تغطي 109 معرّف مزوّد عند كل مزامنة، بما في ذلك حالات الحسابات المتعددة وsub2api وWayfinder والرجوع الاحتياطي للمزوّدات غير المعروفة. تستخدم رسائل البريد الوهمية نطاق المستوى الأعلى `.test`، لذلك يعرض iPhone شارة MOCK. يتيح إيقاف هذا الخيار لـ CloudKit إزالة السجلات الوهمية خلال دورة مزامنة واحدة تقريبًا. متوقف افتراضيًا.";
 "mobile_toggle_mock_title" = "حقن بيانات مزود وهمية";
 "mobile_toggle_push_subtitle" = "عند نفاد حصة الجلسة أو استعادتها، أرسل تنبيه دفع مرئيا إلى تطبيق iOS المرافق عبر iCloud. هذا مستقل عن إشعارات Mac المحلية — يمكنك إبقاء Mac صامتا مع الاستمرار في تلقي التنبيهات على iPhone.";
 "mobile_toggle_push_title" = "إشعارات الدفع إلى iOS";
@@ -1625,6 +1628,7 @@
 "5-hour usage" = "الاستخدام خلال 5 ساعات";
 "7-day usage" = "الاستخدام خلال 7 أيام";
 "Total usage" = "إجمالي الاستخدام";
+"claude_oauth_keychain_access_disabled" = "الوصول إلى Keychain معطّل، لذا لا يستطيع CodexBar قراءة معلومات تسجيل الدخول إلى Claude.";
 "claude_oauth_keychain_access_revoked" = "تم إلغاء وصول CodexBar إلى سلسلة مفاتيح Claude بسبب تدوير الرمز المميز في Claude Code. انقر على «تحديث» لمنح الوصول مجددًا، أو بدّل مصدر استخدام Claude إلى CLI/Web.";
 "claude_showing_last_known_usage" = "يتم عرض آخر بيانات استخدام معروفة، تم التقاطها %@.";
 "claude_limited_usage_detail" = "تفاصيل الاستخدام محدودة";
@@ -2494,6 +2498,7 @@
 
 "X API cost history is not available." = "سجل تكاليف X API غير متاح.";
 "Paste a console.x.com Cookie header containing auth_token and ct0." = "الصق ترويسة Cookie من console.x.com تحتوي على auth_token وct0.";
+"Paste a platform.claude.com Cookie header containing sessionKey." = "الصق ترويسة Cookie من platform.claude.com تحتوي على sessionKey.";
 "Open X Developer Console" = "افتح وحدة تحكم مطوري X";
 "update_available_notification_body" = "انقر لفتح إعدادات التحديث وتثبيت الإصدار الجديد.";
 // Structured session performance layout.
@@ -2595,5 +2600,122 @@
 "Pace sign" = "إشارة وتيرة الاستخدام";
 "Ahead of pace is +" = "تجاوز الوتيرة هو +";
 "Reserve is +" = "الاحتياطي هو +";
+
+"cost_reset_inferred_tooltip" = "مستنتَج: لا يُبلغ %@ عن هذا التاريخ. تتم إعادة تعيين حدود الإنفاق الشهرية في الساعة 00:00 بالتوقيت العالمي المنسق (UTC) في اليوم الأول من الشهر.";
+/* fal provider credentials */
+"Key with billing read access (BILLING or READONLY preset). Or set FAL_KEY." = "مفتاح بصلاحية قراءة الفوترة (الإعداد المسبق BILLING أو READONLY). أو اضبط FAL_KEY.";
+
+/* FLORA provider credentials */
+"Needs billing permission on the workspace. Or set FLORA_API_KEY." = "يتطلب صلاحية الفوترة على مساحة العمل. أو اضبط FLORA_API_KEY.";
+"Required. The ws_… ID of the workspace the key can bill. Or set FLORA_WORKSPACE_ID." = "مطلوب. معرّف ws_… لمساحة العمل التي يمكن للمفتاح فوترتها. أو اضبط FLORA_WORKSPACE_ID.";
+"ak_…" = "ak_…";
+"ws_…" = "ws_…";
+
+"Plan renewal / expiry" = "تجديد الخطة / انتهاؤها";
+
+"Hidden by the global optional credits, spending & billing setting." = "مخفي بواسطة الإعداد العام للأرصدة الاختيارية والإنفاق والفوترة.";
+
+"Provider order updated" = "تم تحديث ترتيب المزوّدين";
+"Undo" = "تراجع";
+"Clear filters" = "مسح عوامل التصفية";
+"Change provider order" = "تغيير ترتيب المزوّدين";
+"Provider sorting" = "ترتيب المزوّدين";
+"Only enabled providers" = "المزوّدون المفعّلون فقط";
+"Restore default order" = "استعادة الترتيب الافتراضي";
+"Also restores the provider order in the menu bar. Can be undone." = "يستعيد أيضاً ترتيب المزوّدين في شريط القوائم. يمكن التراجع عن هذا الإجراء.";
+"Local Codex details; excluded from combined totals." = "تفاصيل Codex المحلية؛ مستبعدة من الإجماليات المجمّعة.";
+
+"Auto uses an API key when configured, otherwise browser cookies." = "Auto uses an API key when configured, otherwise browser cookies.";
+"Stored in the CodexBar config file. You can also set COMMAND_CODE_API_KEY." = "Stored in the CodexBar config file. You can also set COMMAND_CODE_API_KEY.";
+/* OpenAI organization rate limits and live usage */
+"%@ tokens · %@ requests" = "%@ رمز · %@ طلب";
+"15m" = "15 دقيقة";
+"1h" = "ساعة واحدة";
+"5-min avg" = "متوسط 5 دقائق";
+"6h" = "6 ساعات";
+"All models" = "كل النماذج";
+"Input %@ · cached %@ · output %@" = "الإدخال %@ · المخزّن مؤقتًا %@ · الإخراج %@";
+"Live Usage" = "الاستخدام المباشر";
+"Loading live usage…" = "جارٍ تحميل الاستخدام المباشر…";
+"Minute" = "دقيقة";
+"Model" = "النموذج";
+"No API traffic in this window" = "لا توجد حركة API في هذه الفترة";
+"Open OpenAI Settings" = "فتح إعدادات OpenAI";
+"OpenAI Admin Usage API · 1-minute buckets · the newest minute can arrive late" = "OpenAI Admin Usage API · فترات من دقيقة واحدة · قد تتأخر بيانات أحدث دقيقة";
+"OpenAI Live Usage" = "استخدام OpenAI المباشر";
+"Other" = "أخرى";
+"Peak" = "الذروة";
+"Peak TPM" = "ذروة TPM";
+"Project: %@" = "المشروع: %@";
+"Range" = "الفترة";
+"Rate limited; retrying in %ds" = "تم بلوغ حد المعدل؛ إعادة المحاولة بعد %ds";
+"Requests in window" = "الطلبات في الفترة";
+"Tokens in window" = "الرموز في الفترة";
+"Tokens per minute" = "الرموز في الدقيقة";
+"Uncached input" = "إدخال غير مخزّن مؤقتًا";
+"Uncached input %@ · cached input %@ · output %@" = "إدخال غير مخزّن مؤقتًا %@ · إدخال مخزّن مؤقتًا %@ · إخراج %@";
+"Organization rate limits" = "حدود معدل المؤسسة";
+"Open organization Limits" = "فتح حدود المؤسسة";
+"RPM (optional)" = "RPM (اختياري)";
+"Enter a model and positive limits, such as 40M TPM and 15k RPM." = "أدخل نموذجًا وحدودًا موجبة، مثل 40M TPM و15k RPM.";
+"Add model" = "إضافة نموذج";
+"Org TPM limit" = "حد TPM للمؤسسة";
+"Org limit %@ TPM" = "حد المؤسسة %@ TPM";
+"Org limit %@ TPM (off scale)" = "حد المؤسسة %@ TPM (خارج المقياس)";
+"Limits…" = "الحدود…";
+"Highest utilization" = "أعلى استخدام";
+"%@ of limit" = "%@ من الحد";
+"Limit" = "الحد";
+"Peak RPM: %@ of limit" = "ذروة RPM: ‏%@ من الحد";
+"Peak % of limit" = "نسبة الذروة من الحد";
+
+/* OpenAI live usage errors */
+"Configure an OpenAI organization Admin API key in Settings → Providers → OpenAI." = "اضبط مفتاح Admin API لمؤسسة OpenAI في الإعدادات → المزوّدون → OpenAI.";
+"An OpenAI organization Admin API key with usage and project read permissions is required." = "يلزم مفتاح Admin API لمؤسسة OpenAI مع أذونات قراءة الاستخدام والمشاريع.";
+"OpenAI API is rate limited." = "تم بلوغ حد معدل API ‏OpenAI.";
+"OpenAI API failed (HTTP %d)." = "فشل API ‏OpenAI ‏(HTTP %d).";
+"Could not parse the OpenAI API response." = "تعذّر تحليل استجابة API ‏OpenAI.";
+"Live usage supports 15-minute, 1-hour, and 6-hour windows." = "يدعم الاستخدام المباشر فترات 15 دقيقة وساعة واحدة و6 ساعات.";
+
+/* Live usage reporting and project caps */
+
+/* Live usage reporting and project caps */
+"Latest · %@" = "الأحدث · %@";
+"Latest TPM" = "أحدث TPM";
+"reporting…" = "بانتظار البيانات…";
+"Org limit not set" = "لم يُضبط حد المؤسسة";
+"project cap %@" = "حد المشروع %@";
+"Set org limit…" = "ضبط حد المؤسسة…";
+"Org limits come from Settings — OpenAI's API doesn't expose them." = "تأتي حدود المؤسسة من الإعدادات — لا تتيحها واجهة API الخاصة بـ OpenAI.";
+"Project caps are the highest per-project limit across %d active projects; org-wide traffic can exceed them." = "حدود المشاريع هي أعلى حدود لكل مشروع عبر %d من المشاريع النشطة؛ وقد تتجاوزها حركة المؤسسة بأكملها.";
+"Project sample capped at 25; higher project caps may exist." = "تقتصر العينة على 25 مشروعًا؛ وقد توجد حدود مشاريع أعلى.";
+"Project caps unavailable" = "حدود المشاريع غير متاحة";
+"OpenAI's API doesn't expose organization rate limits. Copy them from your organization's Limits page. Model IDs match dated snapshots (gpt-5 covers gpt-5-2025-…)." = "لا تتيح واجهة API الخاصة بـ OpenAI حدود معدل المؤسسة. انسخها من صفحة Limits لمؤسستك. تطابق معرّفات النماذج الإصدارات المؤرخة (يشمل gpt-5 الإصدار gpt-5-2025-…).";
+"Tokens / min · last hour" = "الرموز / دقيقة · الساعة الأخيرة";
+"Latest %@ · Peak %@ at %@" = "الأحدث %@ · الذروة %@ عند %@";
+"%@ · peak %@ · %@ of org limit" = "%@ · الذروة %@ · %@ من حد المؤسسة";
+"Tokens / min" = "الرموز / دقيقة";
+"Latest tokens per minute (OpenAI Admin API)" = "أحدث عدد رموز في الدقيقة (OpenAI Admin API)";
+"Fetches 1-minute usage each refresh for the menu card chart and the menu bar Tokens/min token." = "يجلب الاستخدام بالدقيقة عند كل تحديث لرسم بطاقة القائمة وعنصر الرموز/دقيقة في شريط القوائم.";
+"Live Usage…" = "الاستخدام المباشر…";
+"Batch API %@ · not counted in %% of limit" = "Batch API %@ · لا يُحتسب ضمن %% من الحد";
+"% of limit counts all input, including cached input, plus output, as OpenAI's rate limiter does, and excludes Batch API traffic, which has separate limits. The limiter also reserves max_tokens up front, so short bursts can still hit limits." = "تحتسب نسبة % من الحد جميع رموز الإدخال، بما فيها الإدخال المخزّن مؤقتًا، إضافةً إلى الإخراج، كما يفعل محدد المعدّل في OpenAI، وتستثني حركة Batch API التي لها حدود منفصلة. يحجز المحدد أيضًا max_tokens مسبقًا، لذا قد تؤدي دفعات قصيرة إلى بلوغ الحدود.";
+
+"Tokens / min graph" = "رسم الرموز / دقيقة";
+"Last hour of tokens per minute (OpenAI Admin API)" = "الرموز في الدقيقة خلال الساعة الماضية (OpenAI Admin API)";
+"Tokens per minute, latest %@" = "الرموز في الدقيقة، أحدث قيمة %@";
+
+"Live" = "مباشر";
+
+"Chart" = "الرسم البياني";
+
+"Daily spend · %@" = "الإنفاق اليومي · %@";
+"Applies to the selected token account “%@”. Each account keeps its own limits." = "تنطبق على حساب الرمز المحدد «%@». يحتفظ كل حساب بحدوده الخاصة.";
+"Applies to the OpenAI API key, not to token accounts." = "تنطبق على مفتاح OpenAI API، وليس على حسابات الرموز.";
+"CodexBar will ask macOS Keychain for the Muse Code login token so it can fetch your Muse Code subscription usage. Click OK to continue." = "سيطلب CodexBar macOS Keychain رمز تسجيل دخول Muse Code ليتمكن من جلب استخدام اشتراك Muse Code. انقر موافقا للمتابعة.";
+/* Claude Platform provider */
+"API credit" = "رصيد API";
+"Purchased credit" = "رصيد مشترى";
+"Claude Platform exposes Console credit balance and monthly spend, not local token cost history." = "يعرض Claude Platform رصيد الائتمان في Console والإنفاق الشهري، وليس سجل تكلفة الرموز المحلي.";
 "Voice slots" = "خانات الأصوات";
 "Professional voices" = "الأصوات الاحترافية";

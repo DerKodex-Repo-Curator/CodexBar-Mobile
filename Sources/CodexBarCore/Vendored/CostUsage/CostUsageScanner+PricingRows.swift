@@ -129,6 +129,7 @@ extension CostUsageScanner {
         if let authoritativeCostNanos = row.knownCostNanos {
             return Double(authoritativeCostNanos) / self.costScale
         }
+        if row.isIncludedInPlan == true { return 0 }
         let priorityMetadata = row.turnID.flatMap { priorityTurns[$0] }
         let isPriority = priorityMetadata != nil || row.pricingMode == "priority"
         let pricedModel = self.codexPricingModel(for: row, priorityMetadata: priorityMetadata)
@@ -199,6 +200,13 @@ extension CostUsageScanner {
         }
     }
 
+    /// The model whose rates price `row`, as the custom overlay and catalogs look it up.
+    static func codexPricedModel(for row: CodexUsageRow, priorityTurns: [String: CodexPriorityTurnMetadata]) -> String {
+        row.turnID.flatMap { priorityTurns[$0] }.map { self.codexPriorityPricingModel(for: row, priorityMetadata: $0) }
+            ?? row.pricingModel
+            ?? row.model
+    }
+
     static func codexPriorityPricingModel(
         for row: CodexUsageRow,
         priorityMetadata: CodexPriorityTurnMetadata) -> String
@@ -226,6 +234,9 @@ extension CostUsageScanner {
         pricingResolver: CostUsagePricing.CodexResolver? = nil) -> Bool
     {
         guard row.knownCostNanos == nil else { return false }
+        // Upstream v0.75 (#4452): ChatGPT-created Auto-review requests are included in the plan and
+        // priced at $0 with certainty, so they must not mark the day as estimated for the iPhone.
+        if row.isIncludedInPlan == true { return false }
         let model = self.codexPricingModel(for: row, priorityMetadata: priorityMetadata)
         if customPricing?.rates(
             providerID: CostUsagePricing.codexModelsDevProviderID,

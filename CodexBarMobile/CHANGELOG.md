@@ -2,6 +2,24 @@
 
 All notable changes to the CodexBar iOS companion app will be documented in this file.
 
+## [2.9.0 (242)] — Upstream v0.75–v0.76 companion
+
+### Added
+- Upstream v0.75.0–v0.76.0 providers (Research 075): Claude Platform (`claudeplatform`), fal (`fal`), FLORA (`flora`) and Parallel (`parallel`) with upstream brand tints (Mac-tuned values darkened for Light Mode; all four match by exact ID or name so `claudeplatform` never takes the generic Claude orange and the three-letter `fal` never matches a substring), first-party detail localization, and a QuotaTransition subscription for Claude Platform (the only one with percentage windows), appended at the tail (88 providers × 3 states = 264 zones) so existing subscription IDs stay stable. fal, FLORA and Parallel are balance detail cards.
+- Claude Platform Console API credit balance on its card via the existing `providerAmount` (`kind: "balance"`, period "Prepaid credits", negative balances included). Its "API credit" / "Purchased credit" windows carry "<left> of <granted> left · Expires <day> (UTC)" descriptions without a reset time; iOS localizes the amounts and renders the expiry as a UTC calendar day in the reader's date format. The "Other credit grants" rows use Console grant names and stay verbatim. Requires Mac 0.76.0.1.
+- Quota window labels API credit and Purchased credit; detail labels and values for FLORA (Workspace balance, Member limit, Runs this month, Workspace pool / Your allowance, All time, the unavailable-spend notes), Parallel (Pending debit), Claude Platform (Other credit grants) and Claude's Extra usage budget periods "Monthly cap" / "Spend limit" (upstream v0.75 CLI accounts now publish a monthly cap budget), in all four languages.
+
+### Changed
+- CodexBar widget Overview (Research 076): every overview mode now shows a provider's weekly window instead of its fullest window; `WidgetProviderSelection.overviewFigures` ignores the selection mode for the figures. The window is the account-level weekly one from `WeeklyResetWindow.soonest` (Claude's model-only and routine carve-outs are used only when the account has no weekly window of its own); weekly windows that reset together show the fuller one; an account weekly window without a reset still shows its usage, without a countdown (new `WeeklyResetWindow.resetlessUsedPercent`); a reset that has passed since the data was built hides the stale usage and shows the next reset, as By Weekly Reset already did. Providers without any weekly window keep their most-used window. Automatic picks (no provider chosen) now rank by the same weekly figures; an explicit selection keeps its order. No wire or configuration change; already-placed widgets update on their next timeline.
+- Claude accounts: Mac 0.76.0.1 publishes the OAuth sign-in email (upstream #4493), so the account identity moves from the per-device legacy bucket to `claude:email:` and Macs signed in to the same Claude account merge into one card; the cost ledger follows the new owner through the existing ownership migration.
+- Claude Web accounts without a 5-hour window no longer receive a 0 % placeholder Session window from Mac 0.76.0.1 (upstream #4480); this app already filtered synthetic placeholders, older versions show the Weekly window instead.
+- Claude monthly spend caps (budget lane) from Mac 0.76.0.1 carry the inferred UTC month-end reset when Claude reports none (upstream #4480), so the budget row shows "Resets …" as the Mac meter does; an explicit provider reset is unchanged.
+- Codex days with ChatGPT-created Auto-review requests from 2026-10-06 arrive as known $0 costs instead of an unknown lower bound (upstream #4452); the Mac's estimate marker is not set for them.
+- OpenAI token totals from Mac 0.76.0.1 no longer double count audio tokens; days outside the Mac's history window keep their earlier values.
+
+### Notes
+- No new wire field or CloudKit schema change: all data rides existing optional payload fields; `providerPayloadVersion` stays 1 (Research 075 §CloudKit). OpenAI Live Usage throughput (`UsageSnapshot.throughput`) is not synced in this release.
+
 ## [2.8.0 (241)] — Upstream v0.74 companion
 
 ### Added

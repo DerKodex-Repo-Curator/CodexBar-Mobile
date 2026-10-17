@@ -1,0 +1,157 @@
+770158ec95522cf3577c00724c965aac9eb7aeb2
+.github/workflows/ci.yml
+AGENTS.md
+CHANGELOG.md
+README.md
+Scripts/ci_verify_test_jobs.sh
+Scripts/test_ci_path_gate.sh
+Scripts/test_swift_test_process_cleanup.py
+Sources/CodexBar/PreferencesAboutPane.swift
+Sources/CodexBar/Resources/ar.lproj/Localizable.strings
+Sources/CodexBar/Resources/ca.lproj/Localizable.strings
+Sources/CodexBar/Resources/de.lproj/Localizable.strings
+Sources/CodexBar/Resources/en.lproj/Localizable.strings
+Sources/CodexBar/Resources/es.lproj/Localizable.strings
+Sources/CodexBar/Resources/fa.lproj/Localizable.strings
+Sources/CodexBar/Resources/fr.lproj/Localizable.strings
+Sources/CodexBar/Resources/gl.lproj/Localizable.strings
+Sources/CodexBar/Resources/id.lproj/Localizable.strings
+Sources/CodexBar/Resources/it.lproj/Localizable.strings
+Sources/CodexBar/Resources/ja.lproj/Localizable.strings
+Sources/CodexBar/Resources/ko.lproj/Localizable.strings
+Sources/CodexBar/Resources/nl.lproj/Localizable.strings
+Sources/CodexBar/Resources/pl.lproj/Localizable.strings
+Sources/CodexBar/Resources/pt-BR.lproj/Localizable.strings
+Sources/CodexBar/Resources/ru.lproj/Localizable.strings
+Sources/CodexBar/Resources/sv.lproj/Localizable.strings
+Sources/CodexBar/Resources/th.lproj/Localizable.strings
+Sources/CodexBar/Resources/tr.lproj/Localizable.strings
+Sources/CodexBar/Resources/uk.lproj/Localizable.strings
+Sources/CodexBar/Resources/vi.lproj/Localizable.strings
+Sources/CodexBar/Resources/zh-Hans.lproj/Localizable.strings
+Sources/CodexBar/Resources/zh-Hant.lproj/Localizable.strings
+Sources/CodexBar/UsageStore.swift
+Sources/CodexBarCore/Generated/CodexParserHash.generated.swift
+Sources/CodexBarCore/UsageFetcher.swift
+Sources/CodexBarCore/Vendored/CostUsage/CostUsageScanner+CacheHelpers.swift
+Sources/CodexBarCore/Vendored/CostUsage/CostUsageScanner+PricingRows.swift
+Sources/CodexBarCore/Vendored/CostUsage/CostUsageStore.swift
+Tests/CodexBarTests/CostUsageStoreReadWorkTests.swift
+Tests/CodexBarTests/CostUsageStoreTests.swift
+appcast.xml
+version.env
+
+Auto-merging .github/workflows/ci.yml
+CONFLICT (content): Merge conflict in .github/workflows/ci.yml
+Auto-merging .github/workflows/release-cli.yml
+Auto-merging AGENTS.md
+CONFLICT (content): Merge conflict in AGENTS.md
+Auto-merging CHANGELOG.md
+CONFLICT (content): Merge conflict in CHANGELOG.md
+Auto-merging Package.swift
+Auto-merging README.md
+CONFLICT (content): Merge conflict in README.md
+Auto-merging Scripts/ci_verify_test_jobs.sh
+CONFLICT (content): Merge conflict in Scripts/ci_verify_test_jobs.sh
+Auto-merging Scripts/lint.sh
+Auto-merging Scripts/test_ci_path_gate.sh
+CONFLICT (content): Merge conflict in Scripts/test_ci_path_gate.sh
+Auto-merging Scripts/test_packaged_app_launch.py
+Auto-merging Scripts/test_swift_test_process_cleanup.py
+CONFLICT (content): Merge conflict in Scripts/test_swift_test_process_cleanup.py
+Auto-merging Sources/CodexBar/MenuCardView+ModelHelpers.swift
+Auto-merging Sources/CodexBar/MenuDescriptor.swift
+Auto-merging Sources/CodexBar/PreferencesAboutPane.swift
+CONFLICT (content): Merge conflict in Sources/CodexBar/PreferencesAboutPane.swift
+Auto-merging Sources/CodexBar/PreferencesSelection.swift
+Auto-merging Sources/CodexBar/PreferencesSidebar.swift
+Auto-merging Sources/CodexBar/PreferencesSpendDashboardPane.swift
+Auto-merging Sources/CodexBar/PreferencesView.swift
+Auto-merging Sources/CodexBar/Resources/ar.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/ar.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/ca.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/ca.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/de.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/de.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/en.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/en.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/es.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/es.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/fa.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/fa.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/fr.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/fr.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/gl.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/gl.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/id.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/id.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/it.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/it.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/ja.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/ja.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/ko.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/ko.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/nl.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/nl.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/pl.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/pl.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/pt-BR.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/pt-BR.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/ru.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/ru.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/sv.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/sv.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/th.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/th.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/tr.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/tr.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/uk.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/uk.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/vi.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/vi.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/zh-Hans.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/zh-Hans.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/Resources/zh-Hant.lproj/Localizable.strings
+CONFLICT (content): Merge conflict in Sources/CodexBar/Resources/zh-Hant.lproj/Localizable.strings
+Auto-merging Sources/CodexBar/SettingsStore+ConfigPersistence.swift
+Auto-merging Sources/CodexBar/SettingsStore+Defaults.swift
+Auto-merging Sources/CodexBar/SettingsStore+MenuObservation.swift
+Auto-merging Sources/CodexBar/SettingsStore.swift
+Auto-merging Sources/CodexBar/SettingsStoreState.swift
+Auto-merging Sources/CodexBar/SettingsWindowController.swift
+Auto-merging Sources/CodexBar/SpendDashboardModel.swift
+Auto-merging Sources/CodexBar/UsageStore+Refresh.swift
+Auto-merging Sources/CodexBar/UsageStore+TokenAccounts.swift
+Auto-merging Sources/CodexBar/UsageStore.swift
+CONFLICT (content): Merge conflict in Sources/CodexBar/UsageStore.swift
+Auto-merging Sources/CodexBarCLI/CLICostCommand.swift
+Auto-merging Sources/CodexBarCLI/TokenAccountCLI.swift
+Auto-merging Sources/CodexBarCore/CostUsageFetcher.swift
+Auto-merging Sources/CodexBarCore/CostUsageModels.swift
+Auto-merging Sources/CodexBarCore/Generated/CodexParserHash.generated.swift
+CONFLICT (content): Merge conflict in Sources/CodexBarCore/Generated/CodexParserHash.generated.swift
+Auto-merging Sources/CodexBarCore/Providers/Alibaba/AlibabaTokenPlanProviderDescriptor.swift
+Auto-merging Sources/CodexBarCore/Resources/Plugins/codexbar-plugin.d.ts
+Auto-merging Sources/CodexBarCore/Sync/SyncModels.swift
+Auto-merging Sources/CodexBarCore/UsageFetcher.swift
+CONFLICT (content): Merge conflict in Sources/CodexBarCore/UsageFetcher.swift
+Auto-merging Sources/CodexBarCore/Vendored/CostUsage/CostUsageCacheModels.swift
+Auto-merging Sources/CodexBarCore/Vendored/CostUsage/CostUsageScanner+CacheHelpers.swift
+CONFLICT (content): Merge conflict in Sources/CodexBarCore/Vendored/CostUsage/CostUsageScanner+CacheHelpers.swift
+Auto-merging Sources/CodexBarCore/Vendored/CostUsage/CostUsageScanner+PricingRows.swift
+CONFLICT (content): Merge conflict in Sources/CodexBarCore/Vendored/CostUsage/CostUsageScanner+PricingRows.swift
+Auto-merging Sources/CodexBarCore/Vendored/CostUsage/CostUsageScanner.swift
+Auto-merging Sources/CodexBarCore/Vendored/CostUsage/CostUsageStore.swift
+CONFLICT (content): Merge conflict in Sources/CodexBarCore/Vendored/CostUsage/CostUsageStore.swift
+Auto-merging Tests/CodexBarTests/CodexAccountUsageOverviewTests.swift
+Auto-merging Tests/CodexBarTests/CostUsageStoreReadWorkTests.swift
+CONFLICT (content): Merge conflict in Tests/CodexBarTests/CostUsageStoreReadWorkTests.swift
+Auto-merging Tests/CodexBarTests/CostUsageStoreTests.swift
+CONFLICT (content): Merge conflict in Tests/CodexBarTests/CostUsageStoreTests.swift
+Auto-merging Tests/CodexBarTests/OpenAIDashboardBrowserCookieImporterTests.swift
+Auto-merging Tests/CodexBarTests/ProviderArchitectureGatekeeperTests.swift
+Auto-merging Tests/CodexBarTests/SettingsPersistenceContractTests.swift
+Auto-merging appcast.xml
+CONFLICT (content): Merge conflict in appcast.xml
+Auto-merging version.env
+CONFLICT (content): Merge conflict in version.env

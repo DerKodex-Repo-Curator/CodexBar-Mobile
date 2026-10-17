@@ -443,6 +443,12 @@ enum CostUsagePricing {
     /// `CostUsageJsonl.swift` change vs origin/mobile-dev.
     ///
     /// History:
+    /// - `22` (0.76.0.1): merged upstream v0.75.0-v0.76.0 Codex scanner changes:
+    ///   ChatGPT-created Auto-review requests priced at $0 from 2026-10-06 via the
+    ///   session creator account (parser revision 13), identified request observers,
+    ///   and project-report completeness. The fork adopts revision 13 in place by
+    ///   re-reading each rollout's leaf session_meta, so the published 0.74.1.1 store
+    ///   keeps every row and token snapshot instead of being reparsed or rebuilt.
     /// - `18` (0.70.0.1): upstream sparse priority-day reconciliation, aliased model
     ///   pricing and Claude compact cache adoption; invalidate fork report fingerprints.
     /// - `14` (0.56.0.1): merged upstream v0.54.1-v0.56.0 Codex scanner semantics,
@@ -509,7 +515,7 @@ enum CostUsagePricing {
     /// stores rebuild instead of adopting rows corrupted by the 0.72 request-ledger migration.
     /// Version 21: v0.74.0-v0.74.1 merged Codex turn-performance timing, cached-input coverage, and shared
     /// turn identifiers; published 0.73.0.1 stores adopt like upstream 0.73.0 stores.
-    static let parserLogicVersion = 21
+    static let parserLogicVersion = 22
 
     /// Stable string fingerprint of the pricing tables + parser logic.
     /// `CostUsageCacheIO.load` compares this against the value stored

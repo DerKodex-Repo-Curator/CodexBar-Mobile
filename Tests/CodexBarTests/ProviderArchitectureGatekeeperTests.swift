@@ -156,9 +156,9 @@ struct ProviderArchitectureGatekeeperTests {
             Self.hash(descriptor.branding.burnDownWidgetColor, into: &burnDownFingerprint)
         }
 
-        // Both provider batches extend the palette without changing existing provider colors.
-        #expect(widgetFingerprint == 14_588_483_983_924_548_755)
-        #expect(burnDownFingerprint == 14_027_062_183_472_836_508)
+        // fal, FLORA, Parallel, and Claude Platform extend the palette without changing existing provider colors.
+        #expect(widgetFingerprint == 9_322_051_552_041_008_511)
+        #expect(burnDownFingerprint == 6_428_902_102_265_645_629)
     }
 
     @Test
@@ -198,12 +198,12 @@ struct ProviderArchitectureGatekeeperTests {
         let descriptors = ProviderDescriptorRegistry.all
         #expect(Set(descriptors.filter(\.metadata.balanceOnly).map(\.id)) == [
             .deepseek, .deepinfra, .moonshot, .poe, .hyper, .atlascloud, .vercel, .lithosai, .xapi, .linkup, .tinyapi,
-            .sailresearch, .sofya,
+            .sailresearch, .sofya, .fal, .flora, .parallel,
         ])
         #expect(Set(descriptors.filter(\.metadata.usesDetailBackedWindow).map(\.id)) == [
             .perplexity,
             .warp, .kilo, .mistral, .deepseek, .deepinfra, .qoder, .chutes, .longcat, .litellm, .bifrost, .manus,
-            .mimo, .neuralwatt, .abacus, .v0, .llmman, .aixy, .raycast, .workbuddy,
+            .mimo, .neuralwatt, .abacus, .v0, .llmman, .aixy, .raycast, .workbuddy, .claudeplatform,
         ])
         // Antigravity charts calendar days for the same reason Codex does: a day with no local row
         // is still a real day in the window.
@@ -233,9 +233,7 @@ struct ProviderArchitectureGatekeeperTests {
         #expect(BedrockProviderDescriptor.descriptor.tokenCost.menuHintLines == [
             .literal("AWS Cost Explorer billing can lag."),
         ])
-        #expect(OpenAIAPIProviderDescriptor.descriptor.tokenCost.menuHintLines == [
-            .literal("Reported by OpenAI Admin API organization usage."),
-        ])
+        #expect(OpenAIAPIProviderDescriptor.descriptor.tokenCost.menuHintLines.isEmpty)
         #expect(MistralProviderDescriptor.descriptor.tokenCost.menuHintLines == [
             .literal("Reported by Mistral billing usage."),
         ])
@@ -1745,6 +1743,20 @@ struct ProviderArchitectureGatekeeperTests {
     /// Anchors match trimmed source lines exactly; repeated text requires a 1-based occurrence.
     private static let allowedProviderConstructs: [AllowedProviderConstruct] = [
         AllowedProviderConstruct(
+            path: "Sources/CodexBar/MenuCardView+Costs.swift",
+            anchor: "showsInProviderDetails: style != .claude,",
+            expectedProviderIDs: ["claude"],
+            expectedReferenceCount: 4,
+            expectedReferenceFingerprint: ["claude@0", "claude@2", "claude@3", "claude@8"],
+            reason: "Shared cost formatting preserves Claude balance, visibility, fill preference and cloud-credit policy."),
+        AllowedProviderConstruct(
+            path: "Sources/CodexBar/MenuCardView+ModelHelpers.swift",
+            anchor: "style: .claude,",
+            expectedProviderIDs: ["claude"],
+            expectedReferenceCount: 1,
+            expectedReferenceFingerprint: ["claude@0"],
+            reason: "The monthly cap metric reuses Claude's currency caption instead of duplicating cost formatting."),
+        AllowedProviderConstruct(
             path: "Sources/CodexBar/CodexOwnershipContext.swift",
             anchor: "snapshot?.accountEmail(for: .codex) ??",
             expectedProviderIDs: ["codex"],
@@ -1837,10 +1849,10 @@ struct ProviderArchitectureGatekeeperTests {
             reason: "This exact shared renderer maps provider-owned presentation data into the generic UI model."),
         AllowedProviderConstruct(
             path: "Sources/CodexBar/MenuCardView+Costs.swift",
-            anchor: "if style == .claude {",
+            anchor: "if style == .apiSpend || (style == .claude && isClaudeAdminAPI) {",
             expectedProviderIDs: ["claude"],
-            expectedReferenceCount: 1,
-            expectedReferenceFingerprint: ["claude@0"],
+            expectedReferenceCount: 2,
+            expectedReferenceFingerprint: ["claude@0", "claude@10"],
             reason: "This exact shared renderer maps provider-owned presentation data into the generic UI model."),
         AllowedProviderConstruct(
             path: "Sources/CodexBar/MenuCardView+Kiro.swift",
@@ -1895,8 +1907,8 @@ struct ProviderArchitectureGatekeeperTests {
             path: "Sources/CodexBar/MenuCardView+ModelHelpers.swift",
             anchor: "if input.provider == .codex, !input.showOptionalCreditsAndExtraUsage {",
             expectedProviderIDs: ["claude", "codex", "copilot"],
-            expectedReferenceCount: 4,
-            expectedReferenceFingerprint: ["codex@0", "copilot@3", "codex@6", "claude@11"],
+            expectedReferenceCount: 5,
+            expectedReferenceFingerprint: ["claude@0", "codex@10", "copilot@13", "codex@16", "claude@21"],
             reason: "This exact shared renderer maps provider-owned presentation data into the generic UI model."),
         AllowedProviderConstruct(
             path: "Sources/CodexBar/MenuCardView+ModelHelpers.swift",
@@ -3320,7 +3332,7 @@ struct ProviderArchitectureGatekeeperTests {
             anchor: "guard self.provider(for: record) == .claude else { return .cli }",
             expectedProviderIDs: ["claude", "codex", "pi"],
             expectedReferenceCount: 4,
-            expectedReferenceFingerprint: ["pi@0", "pi@1", "claude@13", "codex@19"],
+            expectedReferenceFingerprint: ["pi@0", "pi@1", "claude@13", "codex@21"],
             reason: "This exact host integration maps a provider-owned process, path, or window contract."),
         AllowedProviderConstruct(
             path: "Sources/CodexBarCore/AgentSession.swift",
@@ -4373,9 +4385,10 @@ struct ProviderArchitectureGatekeeperTests {
             line: 1267,
             anchor: "case .neuralwatt, .zenmux, .lithosai:",
             expectedProviderIDs: [
-                "aiand", "claude", "codex", "fireworks", "grok", "lithosai", "neuralwatt", "xai", "xapi", "zenmux",
+                "aiand", "claude", "claudeplatform", "codex", "fireworks", "grok", "lithosai", "neuralwatt", "xai",
+                "xapi", "zenmux",
             ],
-            expectedReferenceCount: 10,
+            expectedReferenceCount: 11,
             expectedReferenceFingerprint: [
                 "lithosai@0",
                 "neuralwatt@0",
@@ -4385,8 +4398,9 @@ struct ProviderArchitectureGatekeeperTests {
                 "codex@8",
                 "claude@16",
                 "xapi@20",
-                "xai@26",
-                "grok@29",
+                "claudeplatform@26",
+                "xai@33",
+                "grok@36",
             ],
             reason: "The Mac-to-iOS bridge maps provider-owned account identity, quota, cost, and details into stable optional payload fields."),
         AllowedProviderConstruct(
@@ -4733,13 +4747,16 @@ struct ProviderArchitectureGatekeeperTests {
                 "aiand",
                 "atlascloud",
                 "bifrost",
+                "claudeplatform",
                 "clinepass",
                 "coderabbit",
                 "cosmic",
                 "deepinfra",
                 "devpass",
                 "exa",
+                "fal",
                 "fireworks",
+                "flora",
                 "gitkraken",
                 "helmcode",
                 "huggingface",
@@ -4755,6 +4772,7 @@ struct ProviderArchitectureGatekeeperTests {
                 "neuralwatt",
                 "notion",
                 "nous",
+                "parallel",
                 "pi",
                 "qwencloud",
                 "raycast",
@@ -4775,7 +4793,7 @@ struct ProviderArchitectureGatekeeperTests {
                 "zenmux",
                 "zoommate",
             ],
-            expectedReferenceCount: 45,
+            expectedReferenceCount: 49,
             expectedReferenceFingerprint: [
                 "clinepass@0",
                 "deepinfra@0",
@@ -4814,6 +4832,7 @@ struct ProviderArchitectureGatekeeperTests {
                 "workbuddy@16", "langdock@18",
                 "aerostack@21", "cosmic@21", "exa@21", "linkup@21", "tavily@21", "tinyapi@21", "xapi@21",
                 "sailresearch@22", "sofya@22",
+                "claudeplatform@25", "fal@25", "flora@25", "parallel@25",
             ],
             reason: "Account identity keys follow provider-specific credential scope contracts."),
         AllowedProviderConstruct(
