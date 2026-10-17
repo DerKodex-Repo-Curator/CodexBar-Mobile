@@ -1,6 +1,6 @@
 # v0.75.0–v0.76.0 单版本上游同步 + iOS 2.9.0
 
-Status: `in-progress`（代码、测试、review、Mac Draft 完成；等待用户授权 push/PR/merge、公开发布与 TestFlight，见 04）
+Status: `in-progress`（代码、测试、review、Mac Draft 完成；2026-10-16 用户授权开 PR 并走完 PR 流程：分支已推送，PR [#194](https://github.com/o1xhack/CodexBar-Mobile/pull/194) 进入 Codex 评审循环；公开发布与 TestFlight 仍需另行授权，见 04）
 Date: 2026-10-15
 
 ## 范围与依据
@@ -57,7 +57,7 @@ Date: 2026-10-15
 
 ## 最终交付状态（2026-10-16，合并前）
 
-- **分支**：所有工作都在 `upstream-sync/v0.76.0-mobile.2.9.0`（worktree `CodexBar-upstream-v076`）完成，没有动 mobile-dev。本地 commit（未推送）：
+- **分支**：所有工作都在 `upstream-sync/v0.76.0-mobile.2.9.0`（worktree `CodexBar-upstream-v076`）完成，没有动 mobile-dev。2026-10-16 推送到 origin 并开 PR #194（含 Research 076 的小组件概览改动 `cdb6a2ede`）。commit：
 
   | Commit | 内容 |
   |---|---|
@@ -76,6 +76,7 @@ Date: 2026-10-15
 - **同步兼容 gate**：16 个组合都已列出，均为 substituted（冻结 wire：64 次读取、32 次新旧合并，全部 PASS，最终提交复跑），没有 fail。
 - **CloudKit**：`NO_DEPLOY`（已写入 `docs/cloudkit-deploy-audit.md`）。
 - **Review**：独立 review 两轮。第 1 轮无阻塞、5 项应修已修；第 2 轮 1 项阻塞（原地升级删除 token snapshots）已修并用真实 store 复验，应修与小问题已处理或记录。最终阻塞问题为 0。
+- **PR**：[#194](https://github.com/o1xhack/CodexBar-Mobile/pull/194)（base mobile-dev）。评审循环与 gate 结果记录在 02 的 review 表与本文件。
 - **issue**：#193 保持 open。按发布清单，正式 release 公开后再回复并关闭（v0.76.0 若由 monitor 另开 issue，一并关闭）。
 - **未覆盖风险**：
   - 没有实体 2 Mac × 2 iPhone、Production CloudKit 收敛与 APNs 时序的验证；

@@ -56,7 +56,7 @@ TMPDIR=$S/release-tmp CODEXBAR_RELEASE_STAGE_BASE=$S/release-stage \
 
 ## 公开发布前还需要（需另行授权）
 
-1. push 分支并开 PR → Codex Code Review 循环直到当前 head clean → `Scripts/check_pr_review_gate.sh <pr>` → merge 到 mobile-dev。
+1. push 分支并开 PR → Codex Code Review 循环直到当前 head clean → `Scripts/check_pr_review_gate.sh <pr>` → merge 到 mobile-dev。（2026-10-16 已获授权执行：PR [#194](https://github.com/o1xhack/CodexBar-Mobile/pull/194)。）
 2. 如果 review 修改改动了 Mac 二进制的输入，删除这个 Draft 后从合并后的 mobile-dev 重新生成；否则按脚本输出的步骤在 mobile-dev 上打 tag、push tag，并把 Draft 的 target 改到 reviewed commit。
 3. 合并后 Final CI 通过、用户 QA 通过 → `./Scripts/release.sh --finalize`（公开发布 + 签名 appcast + push）。
 4. 公开发布后回复并关闭 #193（以及 monitor 为 v0.76.0 自动创建的 issue）；iOS 2.9.0 (242) 的 TestFlight 与送审另行授权（2.8.0 仍在审核中，MOBILE_VERSION/tag 已指向 2.9.0，发布顺序需注意）。
