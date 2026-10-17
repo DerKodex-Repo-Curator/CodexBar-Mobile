@@ -1,6 +1,6 @@
 # v0.75.0–v0.76.0 单版本上游同步 + iOS 2.9.0
 
-Status: `in-progress`（代码、测试、review、Mac Draft 完成；2026-10-16 用户授权开 PR 并走完 PR 流程：分支已推送，PR [#194](https://github.com/o1xhack/CodexBar-Mobile/pull/194) 进入 Codex 评审循环；公开发布与 TestFlight 仍需另行授权，见 04）
+Status: `done`（PR [#194](https://github.com/o1xhack/CodexBar-Mobile/pull/194) 已合并 `3edebd906`；Mac 0.76.0.1 已于 2026-10-16 公开发布，#193 已关闭；iOS 2.9.0 (242) 已上 TestFlight 并提交 App Store 审核（`WAITING_FOR_REVIEW`，MANUAL）。见 04）
 Date: 2026-10-15
 
 ## 范围与依据
@@ -76,8 +76,9 @@ Date: 2026-10-15
 - **同步兼容 gate**：16 个组合都已列出，均为 substituted（冻结 wire：64 次读取、32 次新旧合并，全部 PASS，最终提交复跑），没有 fail。
 - **CloudKit**：`NO_DEPLOY`（已写入 `docs/cloudkit-deploy-audit.md`）。
 - **Review**：独立 review 两轮。第 1 轮无阻塞、5 项应修已修；第 2 轮 1 项阻塞（原地升级删除 token snapshots）已修并用真实 store 复验，应修与小问题已处理或记录。最终阻塞问题为 0。
-- **PR**：[#194](https://github.com/o1xhack/CodexBar-Mobile/pull/194)（base mobile-dev）。评审循环与 gate 结果记录在 02 的 review 表与本文件。
-- **issue**：#193 保持 open。按发布清单，正式 release 公开后再回复并关闭（v0.76.0 若由 monitor 另开 issue，一并关闭）。
+- **PR**：[#194](https://github.com/o1xhack/CodexBar-Mobile/pull/194)（base mobile-dev）。Codex Code Review 对 head `3af59f7f2` 一轮即 "Didn't find any major issues"，0 个评审线程；`Scripts/check_pr_review_gate.sh 194` 通过（rounds=1, unresolved=0）；PR Fast Checks SUCCESS。2026-10-16 以 merge commit 合并（`3edebd906`）。
+- **Final CI**：run [38994087619](https://github.com/o1xhack/CodexBar-Mobile/actions/runs/38994087619)（pull_request closed 触发）。lint、changes、Linux CLI 构建、Linux musl CLI 通过；6 个 macOS 测试分片在 Mac 公开发布时仍在运行（用户指示不等待），最终结果另行回填。`Linux desktop and Omarchy`（push 触发）首轮 x86_64 在 QML 测试全部 PASS 后于 `test_syntheticRender` 段错误（exit 139；本 PR 对 Linux 只带入上游 `package.py` 改动，上游同工作流连续通过），重跑后两个架构都通过。
+- **issue**：#193 已于 2026-10-16 回复 release 链接并关闭；monitor 没有为 v0.76.0 另开 issue。
 - **未覆盖风险**：
   - 没有实体 2 Mac × 2 iPhone、Production CloudKit 收敛与 APNs 时序的验证；
   - 新 provider 没有真实账号数据；
