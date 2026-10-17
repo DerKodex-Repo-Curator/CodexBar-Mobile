@@ -376,7 +376,9 @@ private struct UsageTab: View {
     private var sortClockKey: String {
         guard self.sortsByWeeklyReset else { return "off" }
         let resets = self.cards
-            .map { "\($0.id)=\(UsageCardOrdering.weeklyResetDate(for: $0.snapshot, now: self.sortReferenceDate)?.timeIntervalSince1970 ?? 0)" }
+            .map {
+                "\($0.id)=\(UsageCardOrdering.weeklyResetDate(for: $0.snapshot, now: self.sortReferenceDate)?.timeIntervalSince1970 ?? 0)"
+            }
             .joined(separator: ",")
         return "weekly|\(resets)"
     }
@@ -519,7 +521,7 @@ private struct UsageTab: View {
             ProviderSettingsView(group: group, store: self.cardPreferences)
         }
         .navigationSplitViewStyle(.balanced)
-        .environment(\.horizontalSizeClass, self.layout.usesListDetail ? .regular : .compact)
+            .environment(\.horizontalSizeClass, self.layout.usesListDetail ? .regular : .compact)
     }
 
     private func select(_ key: String) {
@@ -2431,7 +2433,8 @@ struct CostDashboardInsights: Sendable {
             let todayTokens = todayTotals.tokens ?? 0
             var fallbackSyncPoints = costSummary.reportingPeriodDaily.filter {
                 guard !costSummary.hasInvalidBucketTimeZoneIdentifier,
-                      let offset = costSummary.costDayOffset(for: $0.dayKey, from: now) else {
+                      let offset = costSummary.costDayOffset(for: $0.dayKey, from: now)
+                else {
                     return false
                 }
                 return offset >= -(aggregation.windowDays - 1) && offset <= 0
@@ -4958,6 +4961,8 @@ private enum MobileReleaseNotesCatalog {
                         localized: "See Claude Platform, fal, FLORA, and Parallel from your Mac, each with its own color. Claude Platform can send quota alerts."),
                     String(
                         localized: "Claude Platform shows your Console API credit balance on its card, and each credit grant's remaining amount and expiry day in the details."),
+                    String(
+                        localized: "The CodexBar widget's Overview always shows a provider's weekly usage and reset when it has a weekly limit, instead of switching between its session, weekly, and model-only windows."),
                     String(
                         localized: "More provider details are translated, including FLORA workspace balances, Parallel pending debits, and Claude's monthly spend cap."),
                     String(

@@ -33,10 +33,17 @@ struct SoonestWeeklyResetTests {
         _ id: String,
         name: String? = nil,
         email: String? = nil,
-        windows: [SyncRateWindow],
+        windows rawWindows: [SyncRateWindow],
+        usedPercents: [Double]? = nil,
         isError: Bool = false) -> ProviderUsageSnapshot
     {
-        ProviderUsageSnapshot(
+        let windows = rawWindows.enumerated().map { index, window in
+            guard let used = usedPercents?[index] else { return window }
+            return SyncRateWindow(
+                id: window.id, label: window.label, usedPercent: used, windowMinutes: window.windowMinutes,
+                period: window.period, resetsAt: window.resetsAt, resetDescription: window.resetDescription)
+        }
+        return ProviderUsageSnapshot(
             providerID: id,
             providerName: name ?? id.capitalized,
             primary: windows.first,
@@ -59,21 +66,24 @@ struct SoonestWeeklyResetTests {
         _ id: String,
         name: String? = nil,
         account: String = "a",
-        weeklyResetInHours hours: Double?) -> CodexBarWidgetProviderSummary
+        weeklyResetInHours hours: Double?,
+        usagePercent: Double = 10,
+        weeklyUsedPercent: Double? = nil) -> CodexBarWidgetProviderSummary
     {
         CodexBarWidgetProviderSummary(
             id: "\(id)|\(account)",
             providerName: name ?? id.capitalized,
             providerID: id,
             loginMethod: nil,
-            usagePercent: 10,
+            usagePercent: usagePercent,
             todayCostUSD: nil,
             thirtyDayCostUSD: nil,
             tokensToday: nil,
             isError: false,
             statusMessage: nil,
             lastUpdated: self.now,
-            weeklyResetsAt: hours.map { Self.now.addingTimeInterval($0 * 3600) })
+            weeklyResetsAt: hours.map { Self.now.addingTimeInterval($0 * 3600) },
+            weeklyUsedPercent: weeklyUsedPercent)
     }
 
     // MARK: Weekly window rule
@@ -320,8 +330,9 @@ struct SoonestWeeklyResetTests {
             lastUpdated: now,
             weeklyResetsAt: now.addingTimeInterval(50 * 3600),
             weeklyUsedPercent: 35)
+        // Every overview mode shows the weekly window, not the fullest (session) one.
         let manual = WidgetProviderSelection.overviewFigures(for: claude, selection: .manual, now: now)
-        #expect(manual.usagePercent == 80 && manual.resetsAt == now.addingTimeInterval(3600))
+        #expect(manual.usagePercent == 35 && manual.resetsAt == now.addingTimeInterval(50 * 3600))
         let soonest = WidgetProviderSelection.overviewFigures(
             for: claude, selection: .soonestWeeklyReset(count: 2), now: now)
         #expect(soonest.usagePercent == 35 && soonest.resetsAt == now.addingTimeInterval(50 * 3600))
@@ -330,11 +341,110 @@ struct SoonestWeeklyResetTests {
         let rolled = WidgetProviderSelection.overviewFigures(
             for: claude, selection: .soonestWeeklyReset(count: 2), now: later)
         #expect(rolled.usagePercent == nil && rolled.resetsAt == now.addingTimeInterval((50 + 168) * 3600))
-        // Without a weekly reset the tile keeps its usual figures.
+        // Without a weekly reset the tile keeps its usual figures in both modes.
         let openRouter = Self.summary("openrouter", weeklyResetInHours: nil)
         let fallback = WidgetProviderSelection.overviewFigures(
             for: openRouter, selection: .soonestWeeklyReset(count: 2), now: now)
         #expect(fallback.usagePercent == openRouter.usagePercent && fallback.resetsAt == openRouter.resetsAt)
+        let manualFallback = WidgetProviderSelection.overviewFigures(for: openRouter, selection: .manual, now: now)
+        #expect(manualFallback.usagePercent == openRouter.usagePercent && manualFallback.resetsAt == openRouter
+            .resetsAt)
+        // A stale weekly reset in manual mode also hides the stale usage instead of showing another window.
+        let rolledManual = WidgetProviderSelection.overviewFigures(for: claude, selection: .manual, now: later)
+        #expect(rolledManual.usagePercent == nil && rolledManual.resetsAt == now.addingTimeInterval((50 + 168) * 3600))
+    }
+
+    @Test func `Overview tiles show the weekly window from the synced snapshot in every mode`() {
+        // Session 80, Weekly 35 and a fuller model-only window: the tile shows Weekly.
+        let claude = Self.provider("claude", windows: [
+            Self.window(id: "primary", label: "Session", minutes: 300, resetInHours: 1),
+            Self.window(id: "secondary", label: "Weekly", minutes: 10080, resetInHours: 50),
+            Self.window(id: "claude-weekly-scoped-fable", label: "Fable only", minutes: 10080, resetInHours: 30),
+        ], usedPercents: [80, 35, 90])
+        let summary = CodexBarWidgetSnapshotBuilder.summary(for: claude, now: Self.now)
+        #expect(summary.usagePercent == 90)
+        let figures = WidgetProviderSelection.overviewFigures(for: summary, selection: .manual, now: Self.now)
+        #expect(figures.usagePercent == 35 && figures.resetsAt == Self.now.addingTimeInterval(50 * 3600))
+        // An account weekly window without a reset still wins over Session and Fable only, without a countdown.
+        let resetless = Self.provider("claude", windows: [
+            Self.window(id: "primary", label: "Session", minutes: 300, resetInHours: 1),
+            Self.window(id: "secondary", label: "Weekly", minutes: 10080, resetInHours: nil),
+            Self.window(id: "claude-weekly-scoped-fable", label: "Fable only", minutes: 10080, resetInHours: 30),
+        ], usedPercents: [80, 35, 90])
+        let resetlessSummary = CodexBarWidgetSnapshotBuilder.summary(for: resetless, now: Self.now)
+        #expect(resetlessSummary.weeklyResetsAt == nil && resetlessSummary.weeklyUsedPercent == 35)
+        let resetlessFigures = WidgetProviderSelection.overviewFigures(
+            for: resetlessSummary, selection: .manual, now: Self.now)
+        #expect(resetlessFigures.usagePercent == 35 && resetlessFigures.resetsAt == nil)
+        // Weekly windows that reset together show the fuller one.
+        let antigravity = Self.provider("antigravity", windows: [
+            Self.window(
+                id: "antigravity-quota-summary-gemini-weekly",
+                label: "Gemini",
+                minutes: 10080,
+                resetInHours: 40),
+            Self.window(id: "antigravity-quota-summary-3p-weekly", label: "3P", minutes: 10080, resetInHours: 40),
+        ], usedPercents: [30, 55])
+        #expect(CodexBarWidgetSnapshotBuilder.summary(for: antigravity, now: Self.now).weeklyUsedPercent == 55)
+        // A window with unknown usage never wins the tie, however large its raw figure.
+        let unknownUsage = Self.provider("antigravity", windows: ["gemini", "3p"].map { model in
+            let known = model == "3p"
+            return SyncRateWindow(
+                id: "antigravity-quota-summary-\(model)-weekly", label: model, usedPercent: known ? 55 : 99,
+                usageKnown: known, windowMinutes: 10080, resetsAt: Self.now.addingTimeInterval(40 * 3600),
+                resetDescription: nil)
+        })
+        #expect(CodexBarWidgetSnapshotBuilder.summary(for: unknownUsage, now: Self.now).weeklyUsedPercent == 55)
+        // A provider with no weekly window keeps its most-used window.
+        let balance = Self.provider("openrouter", windows: [
+            Self.window(id: "primary", label: "Daily", minutes: 1440, resetInHours: 5),
+        ], usedPercents: [12])
+        let balanceFigures = WidgetProviderSelection.overviewFigures(
+            for: CodexBarWidgetSnapshotBuilder.summary(for: balance, now: Self.now), selection: .manual, now: Self.now)
+        #expect(balanceFigures.usagePercent == 12 && balanceFigures.resetsAt == Self.now.addingTimeInterval(5 * 3600))
+    }
+
+    @Test func `Automatic overview picks follow the weekly figures the tiles show`() {
+        // Codex leads on its session window but Claude leads weekly: Claude takes the first tile.
+        let codex = Self.summary("codex", weeklyResetInHours: 60, usagePercent: 78, weeklyUsedPercent: 39)
+        let claude = Self.summary("claude", weeklyResetInHours: 80, usagePercent: 42, weeklyUsedPercent: 54)
+        let openRouter = Self.summary("openrouter", weeklyResetInHours: nil, usagePercent: 60)
+        let picks = WidgetProviderSelection.resolve(
+            from: [codex, claude, openRouter], selected: nil, family: .systemMedium, now: Self.now)
+        #expect(picks.map(\.providerID) == ["openrouter", "claude", "codex"])
+        let small = WidgetProviderSelection.resolve(
+            from: [codex, claude, openRouter], selected: nil, family: .systemSmall, now: Self.now)
+        #expect(small.map(\.providerID) == ["openrouter", "claude"])
+        // An explicit selection is never reordered.
+        let chosen = WidgetProviderSelection.resolve(
+            from: [codex, claude, openRouter],
+            selected: [
+                WidgetProviderEntity(id: "codex", name: "Codex"),
+                WidgetProviderEntity(id: "claude", name: "Claude"),
+            ],
+            family: .systemMedium, now: Self.now)
+        #expect(chosen.map(\.providerID) == ["codex", "claude"])
+    }
+
+    @Test func `Automatic overview picks keep providers in error behind working ones`() {
+        // A failed provider keeps its last figure (92%) but must not take the first tile.
+        let failed = CodexBarWidgetProviderSummary(
+            id: "openrouter|a", providerName: "OpenRouter", providerID: "openrouter",
+            loginMethod: nil, usagePercent: 92, todayCostUSD: nil, thirtyDayCostUSD: nil,
+            tokensToday: nil, isError: true, statusMessage: "Sync Error", lastUpdated: Self.now)
+        let codex = Self.summary("codex", weeklyResetInHours: 60, usagePercent: 78, weeklyUsedPercent: 39)
+        let claude = Self.summary("claude", weeklyResetInHours: 80, usagePercent: 42, weeklyUsedPercent: 54)
+        let picks = WidgetProviderSelection.resolve(
+            from: [failed, codex, claude], selected: nil, family: .systemMedium, now: Self.now)
+        #expect(picks.map(\.providerID) == ["claude", "codex", "openrouter"])
+        let small = WidgetProviderSelection.resolve(
+            from: [failed, codex, claude], selected: nil, family: .systemSmall, now: Self.now)
+        #expect(small.map(\.providerID) == ["claude", "codex"])
+        // The gallery placeholder leads with working providers, not the failed sample.
+        let placeholder = WidgetProviderSelection.resolve(
+            from: CodexBarWidgetSnapshot.placeholder(now: Self.now).topProviders,
+            selected: nil, family: .systemSmall, now: Self.now)
+        #expect(placeholder.map(\.providerID) == ["claude", "codex"])
     }
 
     @Test func `Summaries encoded without a weekly reset still decode`() throws {
@@ -544,7 +654,7 @@ struct SoonestWeeklyResetTests {
         #expect(app.first == "grok")
     }
 
-    @Test func `Manual selection keeps the existing overview`() {
+    @Test func `Manual selection resolves the same tiles as resolve for every family`() {
         let providers = CodexBarWidgetSnapshot.placeholder(now: Self.now).topProviders
         let selected = [WidgetProviderEntity(id: "claude", name: "Claude")]
         for family in [WidgetFamily.systemSmall, .systemMedium, .systemLarge] {

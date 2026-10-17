@@ -134,16 +134,25 @@ enum WidgetProviderSelection {
             .map(\.provider)
     }
 
-    /// The usage and reset an overview tile shows. "By weekly reset" shows
-    /// the weekly window it sorts by, so the order reads soonest first; a
-    /// provider without a weekly reset, and manual selection, keep the
-    /// provider's most-used window as before.
+    /// The usage and reset an overview tile shows (Research/076). Every
+    /// overview mode shows the provider's weekly window: the account-level one
+    /// when it exists (`WeeklyResetWindow.soonest` only falls back to Claude's
+    /// model-only or routine carve-outs when the account has no weekly window
+    /// of its own), so a tile no longer switches between the session, weekly
+    /// and model-only windows depending on which one is fullest. A weekly
+    /// window without a reset shows its usage without a countdown; a provider
+    /// without any weekly window keeps its most-used window. The selection no
+    /// longer changes the figures; the parameter stays so callers and tests
+    /// keep naming the mode they render.
     static func overviewFigures(
         for provider: CodexBarWidgetProviderSummary,
-        selection: WidgetOverviewSelection,
+        selection _: WidgetOverviewSelection,
         now: Date) -> (usagePercent: Double?, resetsAt: Date?)
     {
-        guard case .soonestWeeklyReset = selection, let weeklyReset = provider.weeklyResetsAt else {
+        guard let weeklyReset = provider.weeklyResetsAt else {
+            if let weeklyUsed = provider.weeklyUsedPercent {
+                return (weeklyUsed, nil)
+            }
             return (provider.usagePercent, provider.resetsAt)
         }
         let next = WeeklyResetWindow.nextOccurrence(of: weeklyReset, after: now)
@@ -160,7 +169,17 @@ enum WidgetProviderSelection {
         var seen = Set<String>()
         let unique = providers.filter { seen.insert($0.providerID).inserted }
         guard let selected, !selected.isEmpty else {
-            return Array(unique.prefix(family == .systemSmall ? 2 : 4))
+            // Automatic picks follow the figures the tiles show (weekly usage,
+            // Research/076), so the fullest weekly windows lead; providers in
+            // error stay behind working ones as before, and ties keep the
+            // snapshot order.
+            let ranked = unique.enumerated().sorted { lhs, rhs in
+                if lhs.element.isError != rhs.element.isError { return !lhs.element.isError }
+                let left = self.overviewFigures(for: lhs.element, selection: .manual, now: now).usagePercent ?? -1
+                let right = self.overviewFigures(for: rhs.element, selection: .manual, now: now).usagePercent ?? -1
+                return left != right ? left > right : lhs.offset < rhs.offset
+            }
+            return Array(ranked.map(\.element).prefix(family == .systemSmall ? 2 : 4))
         }
         seen.removeAll()
         return selected.filter { seen.insert($0.id).inserted }.prefix(4).map { entity in

@@ -72,7 +72,7 @@ Date: 2026-10-15
 
 - **Mac**：已同步到上游 v0.76.0（包含 v0.75.0）。`0.76.0.1 / 169.1 / Mobile 2.9.0`（Sparkle `169.1.2.9.0`）已签名、公证、staple，并生成 **Draft**：https://github.com/o1xhack/CodexBar-Mobile/releases/tag/untagged-87deca90011959e5f109（没有 tag，构建源码 `0e6408597`，详见 04；第一次 Draft 已因 review 后的源码变更删除重做）。
 - **iOS**：2.9.0 (242)，全部 target 同步；CHANGELOG、应用内说明（2.9.0 Latest，2.8.0 不再标 Latest）、AppStoreMetadata/2.9.0 四语言。没有上传 TestFlight。
-- **测试**（详见 03）：Mac `Scripts/test.sh` 两个分片在 `ee6084b0e` 上 8071 + 7275 项通过（第三轮 review 后的最终 HEAD `ca74e7954` 再跑一次全量，结果见 03）；`lint.sh lint` 0 违规；多账号/多设备 filter 通过；iOS 完整单测 1093 项通过；iOS Release 设备构建未单独跑（模拟器构建与单测通过）；四语言审计通过；真实日志成本验证（plan2/3/4）证明 0.74.1.1 缓存沿用与基线一致。
+- **测试**（详见 03）：Mac `Scripts/test.sh` 两个分片在 `ee6084b0e` 上 8071 + 7275 项通过（第三轮 review 后的最终 HEAD `ca74e7954` 再跑一次全量，结果见 03）；`lint.sh lint` 0 违规；多账号/多设备 filter 通过；iOS 完整单测 1096 项通过（含 Research 076 小组件概览统一每周窗口的新用例）；iOS Release 设备构建未单独跑（模拟器构建与单测通过）；四语言审计通过；真实日志成本验证（plan2/3/4）证明 0.74.1.1 缓存沿用与基线一致。
 - **同步兼容 gate**：16 个组合都已列出，均为 substituted（冻结 wire：64 次读取、32 次新旧合并，全部 PASS，最终提交复跑），没有 fail。
 - **CloudKit**：`NO_DEPLOY`（已写入 `docs/cloudkit-deploy-audit.md`）。
 - **Review**：独立 review 两轮。第 1 轮无阻塞、5 项应修已修；第 2 轮 1 项阻塞（原地升级删除 token snapshots）已修并用真实 store 复验，应修与小问题已处理或记录。最终阻塞问题为 0。

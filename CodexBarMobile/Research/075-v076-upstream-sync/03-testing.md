@@ -41,6 +41,7 @@ Status: `done`（合并前；实体四设备矩阵为替代验证）
 | 完整单元测试（第三次） | 同上 | **TEST SUCCEEDED**：Swift Testing 1093 项 / 67 个 suite 全部通过，XCTest 全部通过（含 `WidgetSnapshotBuilderTests`） | ios-unit3.log、ios-unit3.xcresult |
 | 完整单元测试（第四次，review 修复后） | 同上 | 1 处失败：新加的希伯来历 locale 用例把日/月顺序写死（实际 "Expires 28 Oct (UTC)"，公历日期正确）；断言改为检查公历日与月 | ios-unit4.log |
 | 完整单元测试（第五次） | 同上 | **TEST SUCCEEDED**：1093 项 / 67 个 suite 全部通过 | ios-unit5.log、ios-unit5.xcresult |
+| 小组件概览统一每周窗口（Research 076）后完整测试 | `xcodebuild test`（含 UI 测试） | **TEST SUCCEEDED**：Swift Testing 1096 项 / 67 个 suite，XCTest 单元 60 项，UI 24 项（6 项跳过）；小组件四套件与 review 记录见 Research/076 | ios-full3.log、ios-widget5.log |
 
 ## 同步兼容 gate（2 Mac × 2 iPhone）
 

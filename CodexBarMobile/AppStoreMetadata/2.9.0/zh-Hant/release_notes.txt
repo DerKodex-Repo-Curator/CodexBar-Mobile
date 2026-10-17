@@ -1,5 +1,6 @@
 • 可以查看 Mac 上的 Claude Platform、fal、FLORA 和 Parallel，每個都有自己的顏色。Claude Platform 可以傳送額度提醒。
 • Claude Platform 卡片顯示 Console API 額度餘額，詳細資訊中可查看每筆額度授予的剩餘金額和到期日。
+• 「CodexBar」小工具的概覽只要服務商有每週額度，就固定顯示每週用量和重設時間，不再在當前週期、每週和僅限某個模型的額度之間來回切換。
 • 更多服務商詳細資訊已翻譯，包括 FLORA 工作區餘額、Parallel 待扣款和 Claude 的每月支出上限。
 • 當 Mac 讀取到 Claude 登入帳號的電子郵件後，登入同一 Claude 帳號的多台 Mac 會合併為一張卡片。
 • 10 月 6 日起，包含在 ChatGPT 中發起的 Codex Auto-review 請求的日期會顯示準確費用，而不再是下限。

@@ -100,7 +100,35 @@ enum WeeklyResetWindow {
                     (window: candidate.window, nextReset: self.nextOccurrence(of: $0, after: now))
                 }
             }
-            .min { $0.nextReset < $1.nextReset }
+            // Windows that reset together (Antigravity's per-model weeklies) hand the
+            // tile to the fuller one with known usage, as the Mac's most-constrained
+            // rule picks the fuller window.
+            .min {
+                if $0.nextReset != $1.nextReset { return $0.nextReset < $1.nextReset }
+                let leftKnown = $0.window.usageKnown && $0.window.usedPercent.isFinite
+                let rightKnown = $1.window.usageKnown && $1.window.usedPercent.isFinite
+                if leftKnown != rightKnown { return leftKnown }
+                return $0.window.usedPercent > $1.window.usedPercent
+            }
+    }
+
+    /// Used percent of the fullest weekly window from the same pool as `soonest`
+    /// when none of them reports a reset time (Research/076): the overview tile
+    /// still shows weekly usage, just without a countdown. Nil when the pool is
+    /// empty or no window has known, finite usage.
+    static func resetlessUsedPercent(for provider: ProviderUsageSnapshot) -> Double? {
+        let weekly = QuotaPaceWindowSelection.candidates(for: provider).filter { candidate in
+            self.isWeekly(candidate.window, observedAt: provider.lastUpdated)
+        }
+        let account = weekly.filter {
+            QuotaPaceWindowSelection.isAccountWeeklyCandidate($0, providerID: provider.providerID)
+        }
+        let pool = account.isEmpty ? weekly : account
+        guard pool.allSatisfy({ $0.window.resetsAt == nil }) else { return nil }
+        return pool.map(\.window)
+            .filter { $0.usageKnown && $0.usedPercent.isFinite }
+            .map { min(100, max(0, $0.usedPercent)) }
+            .max()
     }
 
     /// Used percent of that window while its observation is current: known
